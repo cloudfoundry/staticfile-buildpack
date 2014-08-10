@@ -14,7 +14,7 @@ touch Staticfile
 cf push my-site -m 64M
 ```
 
-Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M [[reference](http://wiki.nginx.org/WhyUseIt)]; rather than the default 1G allocated to Cloud Foundry containers.
+Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M [[reference](http://wiki.nginx.org/WhyUseIt)]. The `-m 64M` reduces the RAM allocation from the default 1G allocated to Cloud Foundry containers.
 
 Configuration
 =============
@@ -42,6 +42,24 @@ Adminstrator Upload
 
 Everyone can automatically use this buildpack if your Cloud Foundry Adminstrator uploads it.
 
+[Releases](https://github.com/cloudfoundry-community/staticfile-buildpack/releases) are publicly downloadable.
+
+To initially install, say v0.2.0:
+
+```
+wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.2.0/staticfile-buildpack-v0.2.0.zip
+cf create-buildpack staticfiles_buildpack ../staticfile-buildpack-v0.2.0.zip 1
+```
+
+Subsequently update the buildpack, say v0.3.0:
+
+```
+wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.3.0/staticfile-buildpack-v0.3.0.zip
+cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack-v0.3.0.zip
+```
+
+### To create/upload from source repository
+
 ```
 zip -r ../staticfile-buildpack.zip *
 cf create-buildpack staticfiles_buildpack ../staticfile-buildpack.zip 1
@@ -51,7 +69,7 @@ Subsequently, update the buildpack with:
 
 ```
 zip -r ../staticfile-buildpack.zip *
-cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip -i 1
+cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip
 ```
 
 Test that it correctly detects the buildpack:
@@ -96,6 +114,34 @@ Finally, destroy the vagrant VM:
 
 ```
 vagrant destroy
+```
+
+Buildpack release process
+=========================
+
+Each tagged release should include an uploaded `staticfile-buildpack-vX.Y.Z.zip` to Github to make it easy to download by administrators.
+
+These instructions use the [github-release](https://github.com/aktau/github-release) tool.
+
+```
+tag=vX.Y.Z
+git tag $tag
+git push --tags
+github-release release \
+    --user cloudfoundry-community \
+    --repo staticfile-buildpack \
+    --tag $tag \
+    --name "Staticfile Buildpack $tag" \
+    --description "USEFUL DESCRIPTION"
+
+zip -r ../staticfile-buildpack-$tag.zip *
+
+github-release upload \
+    --user cloudfoundry-community \
+    --repo staticfile-buildpack \
+    --tag $tag \
+    --name staticfile-buildpack-$tag.zip \
+    --file ../staticfile-buildpack-$tag.zip
 ```
 
 Acknowledgements
