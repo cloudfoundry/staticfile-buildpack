@@ -23,23 +23,19 @@ Configuration
 
 Protect your website with a user/password configured via environment variables.
 
+![basic-auth](http://cl.ly/image/13402a2d0R1i/basicauth.png)
+
 Convert the username / password to the required format: http://www.htaccesstools.com/htpasswd-generator/
 
-For example, username `bob` and password `bob` become `bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0`. Use single quotes when running `cf set-env APP AUTH '<string>'`
+For example, username `bob` and password `bob` becomes `bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0`.
+
+Create a file in the root of your application `Staticfile.auth`. This becomes the `.htpasswd` file for nginx to project your site. It can include one or more user/password lines.
 
 ```
-cf set-env my-site AUTH 'bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0'
-cf restage
+bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0
 ```
 
-You need to restage your application, rather than restart it, so that the nginx configuration is updated.
-
-To disable basic authentication:
-
-```
-cf unset-env my-site AUTH
-cf restage
-```
+Push your application to apply changes to basic auth. Remove the file and push to disable basic auth.
 
 Upload
 ======
