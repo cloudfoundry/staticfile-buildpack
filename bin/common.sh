@@ -10,13 +10,13 @@ status() {
 protip() {
   tip=$1
   help_url=$2
-  echo
+  echo ""
   echo "PRO TIP: $tip" | indent
   if [[ "${2}X" != "X" ]]; then
-    echo "Visit $2"
+    echo "Visit $2" | indent
   fi
-  echo
-  echo
+  echo ""
+  echo ""
 }
 
 # sed -l basically makes sed replace and buffer through stdin to stdout

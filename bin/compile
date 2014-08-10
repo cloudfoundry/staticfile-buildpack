@@ -40,6 +40,7 @@ if [[ "${AUTH}X" != "X" ]]; then
   echo $AUTH | indent
   echo
 fi
+env
 protip "Learn about basic authentication", "https://github.com/drnic/staticfile-buildpack#basic-authentication"
 
 
@@ -48,14 +49,6 @@ cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 
 [[ -f public/nginx.conf ]] && mv public/nginx.conf nginx/conf/nginx.conf
 [[ -f public/mime.types ]] && mv public/mime.types nginx/conf/mime.types
-
-status "nginx.conf"
-cat nginx/conf/nginx.conf | indent
-echo ""
-
-status "mine.types"
-cat nginx/conf/mime.types | indent
-echo ""
 
 # echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
 # rm -f public/{manifest,stackato}.yml
