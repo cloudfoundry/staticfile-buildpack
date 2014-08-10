@@ -42,7 +42,7 @@ cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 [[ -f public/mime.types ]] && mv public/mime.types nginx/conf/mime.types
 
 status "nginx.conf"
-cat nginx/conf/nginx.conf | index
+cat nginx/conf/nginx.conf | indent
 echo ""
 
 status "mine.types"
