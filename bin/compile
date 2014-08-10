@@ -30,7 +30,6 @@ if [[ "${root_dir}X" != "X" ]]; then
 else
   root_dir="."
   status "Using root folder"
-  protip "Add 'root: path' in Staticfile for alternate root folder"
 fi
 
 status "Copying project files into public/"
