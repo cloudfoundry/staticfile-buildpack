@@ -1,3 +1,4 @@
 .kitchen/
 .kitchen.local.yml
 .bundle
+cf-ssh.yml
