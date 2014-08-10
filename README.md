@@ -1,3 +1,20 @@
+Upload
+======
+
+Adminstrators can upload this buildpack for everyone to automatically use.
+
+```
+zip -r ../staticfile-buildpack.zip *
+cf create-buildpack staticfiles_buildpack ../staticfile-buildpack.zip 1
+```
+
+Subsequently, update the buildpack with:
+
+```
+zip -r ../staticfile-buildpack.zip *
+cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip -i 1
+```
+
 Local development
 =================
 
