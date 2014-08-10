@@ -10,6 +10,14 @@ build_dir=$1
 cache_dir=$2
 env_dir=$3
 
+echo $env_dir
+ls -al $env_dir
+for e in $(ls $env_dir); do
+  echo $e
+  cat $env_dir/$e
+  echo $(cat $env_dir/$e)
+done
+
 # Version
 nginx_version="1.5.10"
 # nginx_version="1.7.4"
