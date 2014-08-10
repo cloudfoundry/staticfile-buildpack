@@ -73,3 +73,8 @@ Finally, destroy the vagrant VM:
 ```
 vagrant destroy
 ```
+
+Acknowledgements
+================
+
+This buildpack is based heavily upon Jordon Bedwell's [nginx-buildpack](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
