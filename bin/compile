@@ -22,27 +22,31 @@ source $compile_buildpack_dir/bin/common.sh
 compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
 cd $build_dir
 
+status "Copying project files into public/"
 mkdir -p $cache_dir/public
 mv * $cache_dir/public
 mv $cache_dir/public .
 # [[ -f public/Procfile ]] && mv public/Procfile .
 
+status "Setting up nginx"
 tar xzf $compile_nginx_tgz
-
 cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
 cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 
 [[ -f public/nginx.conf ]] && mv public/nginx.conf nginx/conf/nginx.conf
 [[ -f public/mime.types ]] && mv public/mime.types nginx/conf/mime.types
 
-if [[ -f Staticfile.auth ]]; then
+if [[ -f public/Staticfile.auth ]]; then
   status "Enabling basic authentication"
-  cat Staticfile.auth | indent
+  mv public/Staticfile.auth nginx/conf/.htpasswd
+  cat nginx/conf/.htpasswd | indent
   echo
   protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
 fi
 
 # echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
 # rm -f public/{manifest,stackato}.yml
+
+rm -f public/Staticfile*
 
 cp $compile_buildpack_bin/boot.sh .
