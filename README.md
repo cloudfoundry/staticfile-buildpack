@@ -129,7 +129,8 @@ Inside vagrant:
 
 ```
 cd /vagrant
-./bin/build_nginx exit
+./bin/build_nginx
+exit
 ```
 
 Nginx will be stuffed into a tarball in the `vendor/` folder.
@@ -171,4 +172,4 @@ github-release upload \
 Acknowledgements
 ================
 
-This buildpack is based heavily upon Jordon Bedwell's [nginx-buildpack](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
+This buildpack is based heavily upon Jordon Bedwell's Heroku buildpack and the modifications by David Laing for Cloud Foundry [nginx-buildpack](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
