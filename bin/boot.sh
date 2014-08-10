@@ -25,6 +25,9 @@ erb $APP_ROOT/nginx/conf/orig.conf > $APP_ROOT/nginx/conf/nginx.conf
 
 # ------------------------------------------------------------------------------------------------
 
+touch $APP_ROOT/nginx/logs/access.log
+touch $APP_ROOT/nginx/logs/error.log
+
 (tail -f -n 0 $APP_ROOT/nginx/logs/*.log &)
 exec $APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
 
