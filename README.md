@@ -16,56 +16,88 @@ cf push my-site -m 64M
 
 Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M [[reference](http://wiki.nginx.org/WhyUseIt)]; rather than the default 1G allocated to Cloud Foundry containers.
 
+Configuration
+=============
+
+### Basic authentication
+
+Protect your website with a user/password configured via environment variables.
+
+Convert the username / password to the required format: http://www.htaccesstools.com/htpasswd-generator/
+
+For example, username `bob` and password `bob` become `bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0`. Use single quotes when running `cf set-env APP AUTH '<string>'`
+
+```
+cf set-env my-site AUTH 'bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0'
+cf restage
+```
+
+You need to restage your application, rather than restart it, so that the nginx configuration is updated.
+
+To disable basic authentication:
+
+```
+cf unset-env my-site AUTH
+cf restage
+```
+
 Upload
 ======
 
 Adminstrators can upload this buildpack for everyone to automatically use.
 
 ```
-zip -r ../staticfile-buildpack.zip *
-cf create-buildpack staticfiles_buildpack ../staticfile-buildpack.zip 1
+
+zip -r ../staticfile-buildpack.zip * cf create-buildpack staticfiles_buildpack ../staticfile-buildpack.zip 1
+
 ```
 
 Subsequently, update the buildpack with:
 
 ```
-zip -r ../staticfile-buildpack.zip *
-cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip -i 1
+
+zip -r ../staticfile-buildpack.zip * cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip -i 1
+
 ```
 
 Test that it correctly detects the buildpack:
 
 ```
-cf push staticfile -p test/fixtures/staticfile_app
-...
-Staging failed: An application could not be detected by any available buildpack
+
+cf push staticfile -p test/fixtures/staticfile_app ... Staging failed: An application could not be detected by any available buildpack
+
 ```
 
 Test that it correctly ignores the buildpack if `Staticfile` file is missing:
 
 ```
+
 cf push non_staticfile_app -p test/fixtures/non_staticfile_app
+
 ```
 
 Local development
 =================
 
 ```
+
 cf push staticfile -p test/fixtures/staticfile_app -b https://github.com/drnic/staticfile-buildpack.git
+
 ```
 
 Building Nginx
 ==============
 
 ```
-vagrant up
-vagrant ssh
+
+vagrant up vagrant ssh
+
 ```
 
 ```
-cd /vagrant
-./bin/build_nginx
-exit
+
+cd /vagrant ./bin/build_nginx exit
+
 ```
 
 Nginx will be stuffed into a tarball in the `vendor/` folder.
@@ -73,8 +105,8 @@ Nginx will be stuffed into a tarball in the `vendor/` folder.
 Finally, destroy the vagrant VM:
 
 ```
-vagrant destroy
-```
+
+vagrant destroy```
 
 Acknowledgements
 ================
