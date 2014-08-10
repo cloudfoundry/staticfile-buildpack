@@ -9,7 +9,7 @@ sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 
 src=~/src
-build=~/build
+build=/usr/local
 target=/vagrant/vendor
 
 mkdir -p $src
@@ -18,19 +18,20 @@ cd $src
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
 tar -xzvf pcre-$pcre_version.tar.gz
 cd pcre-$pcre_version/
-./configure --prefix=$build/nginx
+
+./configure --prefix=$build
 make
-make install
-ldconfig # this is important otherwise nginx will compile but fail to load
+sudo make install
+sudo ldconfig # this is important otherwise nginx will compile but fail to load
 
 cd $src
 wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
-./configure --prefix=$build/nginx
 
+./configure --prefix=$build
 make
-make install
+sudo make install
 
 mkdir -p $target
 cd $build
