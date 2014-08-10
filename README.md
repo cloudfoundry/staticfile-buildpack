@@ -61,10 +61,10 @@ bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0
 
 Push your application to apply changes to basic auth. Remove the file and push to disable basic auth.
 
-Adminstrator Upload
-===================
+Administrator Upload
+====================
 
-Everyone can automatically use this buildpack if your Cloud Foundry Adminstrator uploads it.
+Everyone can automatically use this buildpack if your Cloud Foundry Administrator uploads it.
 
 [Releases](https://github.com/cloudfoundry-community/staticfile-buildpack/releases) are publicly downloadable.
 
