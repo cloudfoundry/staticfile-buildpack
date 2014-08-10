@@ -1,4 +1,3 @@
-.kitchen/
-.kitchen.local.yml
+.vagrant
 .bundle
 cf-ssh.yml

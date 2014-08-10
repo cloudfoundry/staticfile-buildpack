@@ -1,0 +1,116 @@
+I, [2014-08-09T17:02:33.735774 #45275]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:02:34.309127 #45275]  INFO -- Kitchen: -----> Creating <default-ubuntu-1004>...
+I, [2014-08-09T17:05:08.317531 #45384]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:05:08.719006 #45384]  INFO -- Kitchen: -----> Creating <default-ubuntu-1004>...
+I, [2014-08-09T17:09:52.809391 #45384]  INFO -- Kitchen: -----> Converging <default-ubuntu-1004>...
+I, [2014-08-09T17:09:52.880056 #45384]  INFO -- Kitchen: -----> Kitchen is finished. (4m44.56s)
+I, [2014-08-09T17:11:21.275887 #45974]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:11:21.567560 #45974]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:11:21.626666 #45974] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:11:37.811037 #45994]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:11:38.093926 #45994]  INFO -- Kitchen: -----> Converging <default-ubuntu-1004>...
+I, [2014-08-09T17:11:38.172565 #45994]  INFO -- Kitchen: -----> Kitchen is finished. (0m0.36s)
+I, [2014-08-09T17:11:40.591597 #46014]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:11:40.878014 #46014]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:11:40.944018 #46014] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:11:43.982018 #46034]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:11:44.277882 #46034]  INFO -- Kitchen: -----> Cleaning up any prior instances of <default-ubuntu-1004>
+I, [2014-08-09T17:11:44.279183 #46034]  INFO -- Kitchen: -----> Destroying <default-ubuntu-1004>...
+I, [2014-08-09T17:11:48.423481 #46034]  INFO -- Kitchen: -----> Testing <default-ubuntu-1004>
+I, [2014-08-09T17:11:48.423735 #46034]  INFO -- Kitchen: -----> Creating <default-ubuntu-1004>...
+I, [2014-08-09T17:12:21.559345 #46034]  INFO -- Kitchen: -----> Converging <default-ubuntu-1004>...
+I, [2014-08-09T17:12:21.644023 #46034]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:12:21.703552 #46034] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:13:08.213148 #46163]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:13:08.505151 #46163]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:13:08.579460 #46163] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:15:20.635107 #46213]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+E, [2014-08-09T17:15:20.637792 #46213] ERROR -- Kitchen: ------Exception-------
+E, [2014-08-09T17:15:20.637856 #46213] ERROR -- Kitchen: Class: Kitchen::ClientError
+E, [2014-08-09T17:15:20.637888 #46213] ERROR -- Kitchen: Message: Could not load the 'vagrant' driver from the load path. Please ensure that your driver is installed as a gem or included in your Gemfile if using Bundler.
+E, [2014-08-09T17:15:20.637917 #46213] ERROR -- Kitchen: ---Nested Exception---
+E, [2014-08-09T17:15:20.637943 #46213] ERROR -- Kitchen: Class: LoadError
+E, [2014-08-09T17:15:20.637968 #46213] ERROR -- Kitchen: Message: cannot load such file -- kitchen/driver/vagrant
+E, [2014-08-09T17:15:20.637992 #46213] ERROR -- Kitchen: ------Backtrace-------
+E, [2014-08-09T17:15:20.638037 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/driver.rb:50:in `rescue in for_plugin'
+E, [2014-08-09T17:15:20.638072 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/driver.rb:40:in `for_plugin'
+E, [2014-08-09T17:15:20.638100 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:124:in `new_driver'
+E, [2014-08-09T17:15:20.638126 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:130:in `new_instance'
+E, [2014-08-09T17:15:20.638151 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:73:in `block in build_instances'
+E, [2014-08-09T17:15:20.638206 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:72:in `map'
+E, [2014-08-09T17:15:20.638238 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:72:in `with_index'
+E, [2014-08-09T17:15:20.638265 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:72:in `build_instances'
+E, [2014-08-09T17:15:20.638322 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:52:in `instances'
+E, [2014-08-09T17:15:20.638350 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command.rb:64:in `get_filtered_instances'
+E, [2014-08-09T17:15:20.638376 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command.rb:85:in `parse_subcommand'
+E, [2014-08-09T17:15:20.638400 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command/action.rb:37:in `block in call'
+E, [2014-08-09T17:15:20.638427 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/rubies/ruby-2.1.0/lib/ruby/2.1.0/benchmark.rb:279:in `measure'
+E, [2014-08-09T17:15:20.638453 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command/action.rb:36:in `call'
+E, [2014-08-09T17:15:20.638478 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:47:in `perform'
+E, [2014-08-09T17:15:20.638509 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:118:in `block (2 levels) in <class:CLI>'
+E, [2014-08-09T17:15:20.638555 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/thor-0.19.1/lib/thor/command.rb:27:in `run'
+E, [2014-08-09T17:15:20.638586 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/thor-0.19.1/lib/thor/invocation.rb:126:in `invoke_command'
+E, [2014-08-09T17:15:20.638612 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:233:in `invoke_task'
+E, [2014-08-09T17:15:20.638638 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/thor-0.19.1/lib/thor.rb:359:in `dispatch'
+E, [2014-08-09T17:15:20.638665 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/thor-0.19.1/lib/thor/base.rb:440:in `start'
+E, [2014-08-09T17:15:20.638690 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/bin/kitchen:13:in `block in <top (required)>'
+E, [2014-08-09T17:15:20.638714 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/errors.rb:81:in `with_friendly_errors'
+E, [2014-08-09T17:15:20.638751 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/gems/test-kitchen-1.2.1/bin/kitchen:13:in `<top (required)>'
+E, [2014-08-09T17:15:20.638797 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/bin/kitchen:23:in `load'
+E, [2014-08-09T17:15:20.638811 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/bin/kitchen:23:in `<main>'
+E, [2014-08-09T17:15:20.638823 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/bin/ruby_executable_hooks:15:in `eval'
+E, [2014-08-09T17:15:20.638836 #46213] ERROR -- Kitchen: /Users/drnic/.rvm/gems/ruby-2.1.0/bin/ruby_executable_hooks:15:in `<main>'
+E, [2014-08-09T17:15:20.638848 #46213] ERROR -- Kitchen: ----------------------
+I, [2014-08-09T17:16:31.417414 #46236]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:16:31.719723 #46236]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:16:31.782204 #46236] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:18:34.600794 #46296]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:18:34.890154 #46296]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:18:34.958224 #46296] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:25:54.973199 #46426]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:25:55.285347 #46426]  INFO -- Kitchen: -----> Destroying <default-ubuntu-1004>...
+I, [2014-08-09T17:25:59.464459 #46426]  INFO -- Kitchen: -----> Kitchen is finished. (0m4.49s)
+I, [2014-08-09T17:26:04.235824 #46471]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:26:04.557694 #46471]  INFO -- Kitchen: -----> Creating <default-ubuntu-1004>...
+I, [2014-08-09T17:30:50.932215 #46471]  INFO -- Kitchen: -----> Converging <default-ubuntu-1004>...
+I, [2014-08-09T17:30:53.759480 #46471]  INFO -- Kitchen: -----> Kitchen is finished. (4m49.52s)
+I, [2014-08-09T17:31:03.058991 #46642]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:31:03.360013 #46642]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:31:05.969945 #46642] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:34:11.180686 #46705]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:34:11.499237 #46705]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:34:14.104317 #46705] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:34:25.246469 #46723]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:34:25.544345 #46723]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:34:28.604437 #46723] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:37:04.078725 #46755]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:37:04.388053 #46755]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:37:06.986935 #46755] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:37:44.306550 #46774]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:37:44.597478 #46774]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:37:47.204464 #46774] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:39:54.163252 #46851]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:39:54.483508 #46851]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:39:57.080016 #46851] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:40:03.067939 #46869]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:40:03.371093 #46869]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:40:05.969149 #46869] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:40:37.994493 #46888]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:40:38.315738 #46888]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:40:40.919063 #46888] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:40:57.068099 #46906]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:40:57.361260 #46906]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+I, [2014-08-09T17:41:59.626081 #46925]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:41:59.933318 #46925]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:42:02.532482 #46925] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:42:25.890574 #46945]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:42:26.213413 #46945]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+E, [2014-08-09T17:42:28.810278 #46945] ERROR -- Kitchen: Setup failed on instance <default-ubuntu-1004>.
+I, [2014-08-09T17:43:06.443338 #46972]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:43:06.787829 #46972]  INFO -- Kitchen: -----> Setting up <default-ubuntu-1004>...
+I, [2014-08-09T17:43:54.512679 #46996]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T17:43:54.821520 #46996]  INFO -- Kitchen: -----> Converging <default-ubuntu-1004>...
+I, [2014-08-09T17:43:57.437167 #46996]  INFO -- Kitchen: -----> Kitchen is finished. (0m2.92s)
+I, [2014-08-09T18:10:57.202138 #48268]  INFO -- Kitchen: -----> Starting Kitchen (v1.2.1)
+I, [2014-08-09T18:10:57.589325 #48268]  INFO -- Kitchen: -----> Destroying <default-ubuntu-1004>...
+I, [2014-08-09T18:11:02.295961 #48268]  INFO -- Kitchen: -----> Kitchen is finished. (0m5.09s)
