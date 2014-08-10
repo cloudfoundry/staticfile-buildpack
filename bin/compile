@@ -41,7 +41,7 @@ if [[ "${AUTH}X" != "X" ]]; then
   echo
 fi
 env
-protip "Learn about basic authentication", "https://github.com/drnic/staticfile-buildpack#basic-authentication"
+protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
 
 
 cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
