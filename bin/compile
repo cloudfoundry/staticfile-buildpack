@@ -25,8 +25,13 @@ cd $build_dir
 # Alternate root location (default is root of project) for html/js/css
 # root: dist/
 root_dir=$(grep root: Staticfile | sed -e 's/^root: *//')
-root_dir=${root_dir:-.}
-status "Root folder $root_dir"
+if [[ "${root_dir}X" != "X" ]]; then
+  status "Root folder $root_dir"
+else
+  root_dir="."
+  status "Using root folder"
+  protip "Add 'root: path' in Staticfile for alternate root folder"
+fi
 
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
