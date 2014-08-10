@@ -10,7 +10,11 @@ build_dir=$1
 cache_dir=$2
 env_dir=$3
 
-bp_dir=$(cd $(dirname $0); cd ..; pwd)
+# Version
+nginx="1.7.4"
+
+compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
+compile_buildpack_bin=$compile_buildpack_dir/bin
 
 # CF Common
 BUILDPACK_PATH=$bp_dir
@@ -24,9 +28,37 @@ if [ -d "$env_dir" ]; then
   export_env_dir $env_dir
 fi
 
+compile_nginx_tgz="$bp_dir/vendor/nginx-$nginx.tar.gz"
+cd $build_dir
+
+mkdir -p $cache_dir/public
+mv * $cache_dir/public
+mv $cache_dir/public .
+# [[ -f public/Procfile ]] && mv public/Procfile .
+
+tar xzf $compiled_nginx_tgz
+
+cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
+cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
+
+[[ -f public/nginx.conf ]] && mv public/nginx.conf nginx/conf/nginx.conf
+[[ -f public/mime.types ]] && mv public/mime.types nginx/conf/mime.types
+
+status "nginx.conf"
+cat nginx/conf/nginx.conf | index
+echo ""
+
+status "mine.types"
+cat nginx/conf/mime.types | indent
+echo ""
+
+# echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
+# rm -f public/{manifest,stackato}.yml
+
+
 # env | indent
 # echo "This is an important message" | indent
 # status "This is a status"
 # protip "Add basic authentication in Staticfile"
 
-error "Buildpack not implemented"
+cp $compile_buildpack_bin/boot.sh .

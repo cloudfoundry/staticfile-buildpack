@@ -1,5 +1,6 @@
 #!/bin/sh
 # http://jamie.curle.io/blog/compiling-nginx-ubuntu/
+# https://github.com/cloudfoundry-community/nginx-buildpack#building-the-nginx-package
 
 pcre_version=8.35
 nginx_version=1.7.4
