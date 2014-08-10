@@ -18,7 +18,7 @@ cd $src
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
 tar -xzvf pcre-$pcre_version.tar.gz
 cd pcre-$pcre_version/
-./configure --prefix=$build
+./configure --prefix=$build/nginx
 make
 make install
 ldconfig # this is important otherwise nginx will compile but fail to load
@@ -27,10 +27,11 @@ cd $src
 wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
-./configure --prefix=$build
+./configure --prefix=$build/nginx
 
 make
 make install
 
 mkdir -p $target
-tar -zcvpf $target/nginx-$nginx_version.tar.gz $build/
+cd $build
+tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
