@@ -1,0 +1,35 @@
+#!/bin/sh
+# http://jamie.curle.io/blog/compiling-nginx-ubuntu/
+
+pcre_version=8.35
+nginx_version=1.7.4
+
+sudo apt-get update
+sudo apt-get install -fy build-essential zlib1g-dev
+
+src=~/src
+build=~/build
+target=/vagrant/vendor
+
+mkdir -p $src
+cd $src
+
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
+tar -xzvf pcre-$pcre_version.tar.gz
+cd pcre-$pcre_version/
+./configure --prefix=$build
+make
+make install
+ldconfig # this is important otherwise nginx will compile but fail to load
+
+cd $src
+wget http://nginx.org/download/nginx-$nginx_version.tar.gz
+tar -xvzf nginx-$nginx_version.tar.gz
+cd nginx-$nginx_version
+./configure --prefix=$build
+
+make
+make install
+
+mkdir -p $target
+tar -zcvpf $target/nginx-$nginx_version.tar.gz $build/
