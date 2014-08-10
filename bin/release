@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-cat << EOF
-addons: []
-default_process_types: {}
-EOF
+echo -e "---\ndefault_process_types:\n  web: sh boot.sh"
