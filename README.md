@@ -19,6 +19,18 @@ Your static assets will be served by [Nginx](http://nginx.com/) and it only requ
 Configuration
 =============
 
+### Alternate root folder
+
+By default, the buildpack will serve `index.html` and all other assets from the root folder of your project.
+
+In many cases, you may have an alternate folder where your HTML/CSS/JavaScript files are to be served from, such as `dist/` or `public/`.
+
+To configure the buildpack add the following line to your `Staticfile`:
+
+```yaml
+root: dist
+```
+
 ### Basic authentication
 
 Protect your website with a user/password configured via environment variables.
