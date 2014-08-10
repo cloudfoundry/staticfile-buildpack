@@ -24,6 +24,8 @@ if [ -d "$env_dir" ]; then
   export_env_dir $env_dir
 fi
 
+env | indent
+
 echo "This is an important message" | indent
 status "This is a status"
 
