@@ -26,6 +26,7 @@ cd $build_dir
 # root: dist/
 root_dir=$(grep root: Staticfile | sed -e 's/^root: *//')
 root_dir=${root_dir:-.}
+status "Root folder $root_dir"
 
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
