@@ -33,7 +33,7 @@ mv * $cache_dir/public
 mv $cache_dir/public .
 # [[ -f public/Procfile ]] && mv public/Procfile .
 
-tar xzf $compiled_nginx_tgz
+tar xzf $compile_nginx_tgz
 
 cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
 cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
