@@ -16,12 +16,8 @@ nginx="1.7.4"
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
 
-# CF Common
-BUILDPACK_PATH=$bp_dir
-export BUILDPACK_PATH
-
 # Load some convenience functions like status(), echo(), and indent()
-source $bp_dir/bin/common.sh
+source $compile_buildpack_dir/bin/common.sh
 
 if [ -d "$env_dir" ]; then
   status "Exporting config vars to environment"
