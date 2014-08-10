@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir> <env-dir>
+# bin/compile <build-dir> <cache-dir>
 
 set -e            # fail fast
 set -o pipefail   # don't ignore exit codes when piping output
@@ -8,15 +8,6 @@ set -o pipefail   # don't ignore exit codes when piping output
 # Configure directories
 build_dir=$1
 cache_dir=$2
-env_dir=$3
-
-echo $env_dir
-ls -al $env_dir
-for e in $(ls $env_dir); do
-  echo $e
-  cat $env_dir/$e
-  echo $(cat $env_dir/$e)
-done
 
 # Version
 nginx_version="1.5.10"
@@ -27,11 +18,6 @@ compile_buildpack_bin=$compile_buildpack_dir/bin
 
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
-
-if [ -d "$env_dir" ]; then
-  status "Exporting config vars to environment"
-  export_env_dir $env_dir
-fi
 
 compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
 cd $build_dir
