@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+set -e            # fail fast
+set -o pipefail   # don't ignore exit codes when piping output
+# set -x          # enable debugging
+
+# Configure directories
+build_dir=$1
+cache_dir=$2
+env_dir=$3
+
+bp_dir=$(cd $(dirname $0); cd ..; pwd)
+
+# CF Common
+BUILDPACK_PATH=$bp_dir
+export BUILDPACK_PATH
+
+# Load some convenience functions like status(), echo(), and indent()
+source $bp_dir/bin/common.sh
+
+if [ -d "$env_dir" ]; then
+  status "Exporting config vars to environment"
+  export_env_dir $env_dir
+fi
+
+echo "This is an important message" | indent
+status "This is a status"
+
+echo "This is another important message" | indent
+
+protip "Add basic authentication in Staticfile"
+
+error "Buildpack not implemented"

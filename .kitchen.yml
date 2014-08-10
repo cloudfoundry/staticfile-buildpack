@@ -1,0 +1,23 @@
+---
+driver:
+  name: vagrant
+  ruby_bindir: /opt/ruby/bin
+
+ruby_bindir: /opt/ruby/bin
+
+
+provisioner:
+  name: shell
+  ruby_bindir: /opt/ruby/bin
+
+platforms:
+  - name: ubuntu-10.04
+    driver_config:
+      box: puppet-lucid
+      box_url: http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-10044-x64-vbox4210.box
+      ruby_bindir: /opt/ruby/bin
+    ruby_bindir: /opt/ruby/bin
+
+suites:
+  - name: default
+    ruby_bindir: /opt/ruby/bin
