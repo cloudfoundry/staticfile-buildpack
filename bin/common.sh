@@ -8,8 +8,14 @@ status() {
 }
 
 protip() {
+  tip=$1
+  help_url=$2
   echo
-  echo "PRO TIP: $*" | indent
+  echo "PRO TIP: $tip" | indent
+  if [[ "${2}X" != "X" ]]; then
+    echo "Visit $2"
+  fi
+  echo
   echo
 }
 
