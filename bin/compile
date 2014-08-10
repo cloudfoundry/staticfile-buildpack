@@ -22,9 +22,14 @@ source $compile_buildpack_dir/bin/common.sh
 compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
 cd $build_dir
 
+# Alternate root location (default is root of project) for html/js/css
+# root: dist/
+root_dir=$(grep root: Staticfile | sed -e 's/^root: *//')
+root_dir=${root_dir:-.}
+
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
-mv * $cache_dir/public
+mv $root_dir/* $cache_dir/public
 mv $cache_dir/public .
 # [[ -f public/Procfile ]] && mv public/Procfile .
 
@@ -33,8 +38,8 @@ tar xzf $compile_nginx_tgz
 cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
 cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 
-[[ -f public/nginx.conf ]] && mv public/nginx.conf nginx/conf/nginx.conf
-[[ -f public/mime.types ]] && mv public/mime.types nginx/conf/mime.types
+[[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf nginx/conf/nginx.conf
+[[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types nginx/conf/mime.types
 
 if [[ -f public/Staticfile.auth ]]; then
   status "Enabling basic authentication"
