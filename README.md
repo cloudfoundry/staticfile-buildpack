@@ -61,8 +61,7 @@ bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0
 
 Push your application to apply changes to basic auth. Remove the file and push to disable basic auth.
 
-Directory Index
-===============
+### Directory Index
 
 If your site doesn't have a nice `index.html`, you can configure `Staticfile` to display a Directory Index of other files; rather than show a relatively unhelpful 404 error.
 
@@ -161,6 +160,7 @@ These instructions use the [github-release](https://github.com/aktau/github-rele
 
 ```
 tag=vX.Y.Z
+description="USEFUL DESCRIPTION"
 git tag $tag
 git push --tags
 github-release release \
@@ -168,7 +168,7 @@ github-release release \
     --repo staticfile-buildpack \
     --tag $tag \
     --name "Staticfile Buildpack $tag" \
-    --description "USEFUL DESCRIPTION"
+    --description "$description"
 
 zip -r ../staticfile-buildpack-$tag.zip *
 
