@@ -61,6 +61,17 @@ bob:$apr1$DuUQEQp8$ZccZCHQElNSjrg.erwSFC0
 
 Push your application to apply changes to basic auth. Remove the file and push to disable basic auth.
 
+Directory Index
+===============
+
+If your site doesn't have a nice `index.html`, you can configure `Staticfile` to display a Directory Index of other files; rather than show a relatively unhelpful 404 error.
+
+Add a line to your `Staticfile` that begins with `directory:`
+
+```
+directory: visible
+```
+
 Administrator Upload
 ====================
 
