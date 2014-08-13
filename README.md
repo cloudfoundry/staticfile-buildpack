@@ -15,7 +15,7 @@ Getting buildpacks...
 
 buildpack          position   enabled   locked   filename
 staticfiles        1          true      false    staticfile-buildpack-v0.3.0.zip
-java_buildpack     3          true      false    java-buildpack-offline-v2.4.zip
+java_buildpack     2          true      false    java-buildpack-offline-v2.4.zip
 ...
 ```
 
@@ -64,6 +64,8 @@ Push your application to apply changes to basic auth. Remove the file and push t
 ### Directory Index
 
 If your site doesn't have a nice `index.html`, you can configure `Staticfile` to display a Directory Index of other files; rather than show a relatively unhelpful 404 error.
+
+![index](http://cl.ly/image/0Q0W2M3C3f3H/directory-index.png)
 
 Add a line to your `Staticfile` that begins with `directory:`
 
