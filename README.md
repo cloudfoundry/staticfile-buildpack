@@ -65,7 +65,7 @@ Push your application to apply changes to basic auth. Remove the file and push t
 
 If your site doesn't have a nice `index.html`, you can configure `Staticfile` to display a Directory Index of other files; rather than show a relatively unhelpful 404 error.
 
-![index](http://cl.ly/image/0Q0W2M3C3f3H/directory-index.png)
+![index](http://cl.ly/image/2U2y121g000g/directory-index.png)
 
 Add a line to your `Staticfile` that begins with `directory:`
 
