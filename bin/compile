@@ -32,13 +32,6 @@ else
 fi
 root_dir=${root_dir:-.}
 
-# Enable directory index
-if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
-  status "Enabling directory index for folders without index.html files"
-  touch nginx/config/.enable_directory_index
-fi
-
-
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
 mv $root_dir/* $cache_dir/public
@@ -59,6 +52,12 @@ if [[ -f public/Staticfile.auth ]]; then
   cat nginx/conf/.htpasswd | indent
   echo
   protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
+fi
+
+# Enable directory index
+if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
+  status "Enabling directory index for folders without index.html files"
+  touch nginx/conf/.enable_directory_index
 fi
 
 # echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
