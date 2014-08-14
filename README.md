@@ -125,8 +125,13 @@ cf push non_staticfile_app -p test/fixtures/non_staticfile_app
 Local development
 =================
 
+There are four example apps that should all compile successfully:
+
 ```
 cf push staticfile -p test/fixtures/staticfile_app -b https://github.com/drnic/staticfile-buildpack.git
+cf push staticfile -p test/fixtures/alternate_root -b https://github.com/drnic/staticfile-buildpack.git
+cf push staticfile -p test/fixtures/directory_index -b https://github.com/drnic/staticfile-buildpack.git
+cf push staticfile -p test/fixtures/basic_auth -b https://github.com/drnic/staticfile-buildpack.git
 ```
 
 Building Nginx
