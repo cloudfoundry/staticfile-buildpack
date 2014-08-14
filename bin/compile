@@ -32,19 +32,16 @@ else
 fi
 root_dir=${root_dir:-.}
 
-echo pwd $(pwd) | indent
-echo root_dir $root_dir | indent
-echo build_dir $build_dir | indent
-echo cache_dir $cache_dir | indent
-
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
 mv $root_dir/* $cache_dir/public
 mv $cache_dir/public .
 
-ls -al * | indent
-
-mv public/Staticfile* .
+# if using root dir, then Staticfile* files would be accessible by nginx
+if [[ -f public/Staticfile ]]; then
+  echo "Moving Staticfile away from public access" | indent
+  mv public/Staticfile* .
+fi
 
 status "Setting up nginx"
 tar xzf $compile_nginx_tgz
