@@ -122,6 +122,13 @@ Test that it correctly ignores the buildpack if `Staticfile` file is missing:
 cf push non_staticfile_app -p test/fixtures/non_staticfile_app
 ```
 
+Acceptance Tests
+----------------
+
+After installing the buildpack, you can run a set of Acceptance Tests.
+
+https://github.com/cloudfoundry-community/staticfile-buildpack-acceptance-tests
+
 Local development
 =================
 
