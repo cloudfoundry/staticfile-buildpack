@@ -14,7 +14,7 @@ $ cf buildpacks
 Getting buildpacks...
 
 buildpack          position   enabled   locked   filename
-staticfiles        1          true      false    staticfile-buildpack-v0.3.0.zip
+staticfiles        1          true      false    staticfile-buildpack-v0.4.1.zip
 java_buildpack     2          true      false    java-buildpack-offline-v2.4.zip
 ...
 ```
@@ -80,18 +80,18 @@ Everyone can automatically use this buildpack if your Cloud Foundry Administrato
 
 [Releases](https://github.com/cloudfoundry-community/staticfile-buildpack/releases) are publicly downloadable.
 
-To initially install, say v0.2.0:
+To initially install, say v0.4.1:
 
 ```
-wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.2.0/staticfile-buildpack-v0.2.0.zip
-cf create-buildpack staticfiles_buildpack ../staticfile-buildpack-v0.2.0.zip 1
+wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.4.1/staticfile-buildpack-v0.4.1.zip
+cf create-buildpack staticfiles_buildpack staticfile-buildpack-v0.4.1.zip 1
 ```
 
-Subsequently update the buildpack, say v0.3.0:
+Subsequently update the buildpack, say v0.5.0:
 
 ```
-wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.3.0/staticfile-buildpack-v0.3.0.zip
-cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack-v0.3.0.zip
+wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.5.0/staticfile-buildpack-v0.5.0.zip
+cf update-buildpack staticfiles_buildpack -p staticfile-buildpack-v0.5.0.zip
 ```
 
 ### To create/upload from source repository
