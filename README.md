@@ -4,7 +4,7 @@ Deploy static HTML/JS/CSS apps to Cloud Foundry
 Working on a pure front-end only web app or demo? It is easy to share it via your Cloud Foundry:
 
 ```
-cf push my-site -m 64M -b https://github.com/drnic/staticfile-buildpack.git
+cf push my-site -m 64M -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
 ```
 
 Your Cloud Foundry might already have this buildpack installed (see [Upload](#administrator-upload) section for administration):
