@@ -29,7 +29,7 @@ wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
-./configure --prefix=$build
+./configure --prefix=$build --with-http_ssl_module
 make
 sudo make install
 
