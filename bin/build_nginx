@@ -9,9 +9,10 @@ sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 
 src=~/src
-build=/usr/local
+build=/app/nginx
 target=/vagrant/vendor
 
+rm -rf $build && mkdir -p $build
 mkdir -p $src
 cd $src
 
@@ -34,5 +35,5 @@ make
 sudo make install
 
 mkdir -p $target
-cd $build
-tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
+cd /app 
+tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/  
