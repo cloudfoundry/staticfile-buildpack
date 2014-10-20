@@ -34,6 +34,14 @@ cd nginx-$nginx_version
 make
 sudo make install
 
+# Remove extras (help, utilities etc)
+
+sudo rm -rf /app/nginx/bin
+sudo rm -rf /app/nginx/sbin/nginx.old
+sudo rm -rf /app/nginx/include
+sudo rm -rf /app/nginx/share
+
+# Archive it all up
 mkdir -p $target
 cd /app 
 tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/  
