@@ -9,9 +9,10 @@ sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 
 src=~/src
-build=/usr/local
+build=/app/nginx
 target=/vagrant/vendor
 
+rm -rf $build && mkdir -p $build
 mkdir -p $src
 cd $src
 
@@ -29,10 +30,18 @@ wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
-./configure --prefix=$build
+./configure --prefix=$build --with-http_ssl_module
 make
 sudo make install
 
+# Remove extras (help, utilities etc)
+
+sudo rm -rf /app/nginx/bin
+sudo rm -rf /app/nginx/sbin/nginx.old
+sudo rm -rf /app/nginx/include
+sudo rm -rf /app/nginx/share
+
+# Archive it all up
 mkdir -p $target
-cd $build
-tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
+cd /app 
+tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/  
