@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 # http://jamie.curle.io/blog/compiling-nginx-ubuntu/
 # https://github.com/cloudfoundry-community/nginx-buildpack#building-the-nginx-package
+
+set -e #halt on any error
 
 pcre_version=8.35
 nginx_version=1.7.4
@@ -12,7 +14,7 @@ src=~/src
 build=/app/nginx
 target=/vagrant/vendor
 
-rm -rf $build && mkdir -p $build
+sudo rm -rf $build && sudo mkdir -p $build && sudo chown -R vagrant:vagrant $build
 mkdir -p $src
 cd $src
 
@@ -30,7 +32,7 @@ wget http://nginx.org/download/nginx-$nginx_version.tar.gz
 tar -xvzf nginx-$nginx_version.tar.gz
 cd nginx-$nginx_version
 
-./configure --prefix=$build --with-http_ssl_module
+./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module
 make
 sudo make install
 
@@ -39,7 +41,14 @@ sudo make install
 sudo rm -rf /app/nginx/bin
 sudo rm -rf /app/nginx/sbin/nginx.old
 sudo rm -rf /app/nginx/include
-sudo rm -rf /app/nginx/share
+sudo rm -rf /app/nginx/share/man
+
+# Ensure we include the licenses in the tarball
+
+# PCRE license is in /app/nginx/share/doc/pcre/LICENCE
+# Put Nginx license is in /app/nginx/share/doc/nginx
+sudo mkdir -p /app/nginx/share/doc/nginx
+sudo cp $src/nginx-$nginx_version/{LICENSE,CHANGES,README} /app/nginx/share/doc/nginx
 
 # Archive it all up
 mkdir -p $target
