@@ -34,14 +34,13 @@ root_dir=${root_dir:-.}
 
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
-mv $root_dir/* $cache_dir/public
+rsync -a \
+      --exclude='/Staticfile' \
+      --exclude='/Staticfile.auth' \
+      --exclude='/manifest.yml' \
+      --exclude='/stackato.yml' \
+      $root_dir/ $cache_dir/public
 mv $cache_dir/public .
-
-# if using root dir, then Staticfile* files would be accessible by nginx
-if [[ -f public/Staticfile ]]; then
-  echo "Moving Staticfile away from public access" | indent
-  mv public/Staticfile* .
-fi
 
 status "Setting up nginx"
 tar xzf $compile_nginx_tgz
@@ -64,9 +63,5 @@ if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
   status "Enabling directory index for folders without index.html files"
   touch nginx/conf/.enable_directory_index
 fi
-
-# [[ -f public/Procfile ]] && mv public/Procfile .
-# echo "-----> Ensuring manifest.yml & stackato.yml aren't available in public/"
-# rm -f public/{manifest,stackato}.yml
 
 cp $compile_buildpack_bin/boot.sh .
