@@ -25,7 +25,7 @@ cd $build_dir
 # Alternate root location (default is root of project) for html/js/css
 # root: dist/
 if [[ "$(grep root: Staticfile)X" != "X" ]]; then
-  root_dir=$(grep root: Staticfile | sed -e 's/^root: *//')
+  root_dir=$(grep root: Staticfile | sed -e 's/^root: *//;s/\s*$//')
   status "Root folder $root_dir"
 else
   status "Using root folder"
