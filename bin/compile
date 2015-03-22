@@ -11,7 +11,7 @@ cache_dir=$2
 
 # Version
 #nginx_version="1.5.10"
-nginx_version="1.7.4"
+nginx_version="1.7.9"
 
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
