@@ -5,12 +5,14 @@ set -e            # fail fast
 set -o pipefail   # don't ignore exit codes when piping output
 # set -x          # enable debugging
 
+# Ubuntu version
+release=`lsb_release -cs`
+
 # Configure directories
 build_dir=$1
 cache_dir=$2
 
 # Version
-#nginx_version="1.5.10"
 nginx_version="1.7.4"
 
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
@@ -19,7 +21,7 @@ compile_buildpack_bin=$compile_buildpack_dir/bin
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
-compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version.tar.gz"
+compile_nginx_tgz="$compile_buildpack_dir/vendor/nginx-$nginx_version-$release.tar.gz"
 cd $build_dir
 
 # Alternate root location (default is root of project) for html/js/css
