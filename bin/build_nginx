@@ -52,5 +52,5 @@ sudo cp $src/nginx-$nginx_version/{LICENSE,CHANGES,README} /app/nginx/share/doc/
 
 # Archive it all up
 mkdir -p $target
-cd /app 
-tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/  
+cd /app
+tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/
