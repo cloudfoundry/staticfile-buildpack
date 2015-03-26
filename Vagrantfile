@@ -9,9 +9,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "lucid" do |lucid|
     lucid.vm.box = "puppet-lucid"
     lucid.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-10044-x64-vbox4210.box"
+    lucid.vm.provision "shell", inline: "/vagrant/bin/build_nginx"
   end
 
   config.vm.define "trusty" do |trusty|
-    config.vm.box = "ubuntu/trusty64"
+    trusty.vm.box = "ubuntu/trusty64"
+    trusty.vm.provision "shell", inline: "/vagrant/bin/build_nginx"
   end
 end
