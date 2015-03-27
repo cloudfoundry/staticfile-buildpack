@@ -26,7 +26,7 @@ touch Staticfile
 cf push my-site -m 64M
 ```
 
-Why `-m 64M`? Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M [[reference](http://wiki.nginx.org/WhyUseIt)]. The `-m 64M` reduces the RAM allocation from the default 1G allocated to Cloud Foundry containers. In the future there may be a way for a buildpack to indicate its default RAM requirements; but not as of writing.
+Why `-m 64M`? Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M \[[reference](http://wiki.nginx.org/WhyUseIt)]. The `-m 64M` reduces the RAM allocation from the default 1G allocated to Cloud Foundry containers. In the future there may be a way for a buildpack to indicate its default RAM requirements; but not as of writing.
 
 Configuration
 =============
@@ -141,11 +141,24 @@ Local development
 There are five example apps that should all compile successfully:
 
 ```
-cf push staticfile -p test/fixtures/staticfile_app -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
-cf push staticfile -p test/fixtures/alternate_root -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
-cf push staticfile -p test/fixtures/directory_index -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
-cf push staticfile -p test/fixtures/basic_auth -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
-cf push staticfile -p test/fixtures/reverse_proxy -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
+cf create-space staticfile-tests
+STACK=lucid64
+cf push staticfile -p test/fixtures/staticfile_app -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf open staticfile
+
+cf push staticfile -p test/fixtures/alternate_root -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf open staticfile
+
+cf push staticfile -p test/fixtures/directory_index -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf open staticfile
+
+cf push staticfile -p test/fixtures/basic_auth -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf open staticfile
+
+cf push staticfile -p test/fixtures/reverse_proxy -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf open staticfile
+
+cf delete-space staticfile-tests
 ```
 
 Building Nginx
