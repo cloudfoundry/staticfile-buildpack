@@ -86,18 +86,18 @@ Everyone can automatically use this buildpack if your Cloud Foundry Administrato
 
 [Releases](https://github.com/cloudfoundry-community/staticfile-buildpack/releases) are publicly downloadable.
 
-To initially install, say v0.4.1:
-
-```
-wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.4.2/staticfile-buildpack-v0.4.2.zip
-cf create-buildpack staticfiles_buildpack staticfile-buildpack-v0.4.2.zip 1
-```
-
-Subsequently update the buildpack, say v0.5.0:
+To initially install, say v0.5.0:
 
 ```
 wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.5.0/staticfile-buildpack-v0.5.0.zip
-cf update-buildpack staticfiles_buildpack -p staticfile-buildpack-v0.5.0.zip
+cf create-buildpack staticfiles_buildpack staticfile-buildpack-v0.5.0.zip 1
+```
+
+Subsequently update the buildpack, say v0.5.1:
+
+```
+wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.5.1/staticfile-buildpack-v0.5.1.zip
+cf update-buildpack staticfiles_buildpack -p staticfile-buildpack-v0.5.1.zip
 ```
 
 ### To create/upload from source repository
