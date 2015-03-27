@@ -138,40 +138,16 @@ https://github.com/cloudfoundry-community/staticfile-buildpack-acceptance-tests
 Local development
 =================
 
-There are five example apps that should all compile successfully:
+There are five example apps that should all compile successfully. To test them against the current master branch on Github:
 
 ```
-cf create-space staticfile-tests
-STACK="lucid64"
-BUILDPACK="https://github.com/cloudfoundry-incubator/staticfile-buildpack"
-cf push staticfile -p test/fixtures/staticfile_app -b $BUILDPACK -s $STACK --random-route
-cf open staticfile
-
-cf push staticfile -p test/fixtures/alternate_root -b $BUILDPACK -s $STACK --random-route
-cf open staticfile
-
-cf push staticfile -p test/fixtures/directory_index -b $BUILDPACK -s $STACK --random-route
-cf open staticfile
-
-cf push staticfile -p test/fixtures/basic_auth -b $BUILDPACK -s $STACK --random-route
-cf open staticfile
-
-cf push staticfile -p test/fixtures/reverse_proxy -b $BUILDPACK -s $STACK --random-route
-cf open staticfile
-
-cf delete-space staticfile-tests
+./tests/test.sh
 ```
 
-You can test for other stacks using:
+You can test someone's pull request branch, say https://github.com/cloudfoundry-incubator/staticfile-buildpack/pull/27 which matches to the branch https://github.com/simonjohansson/staticfile-buildpack#cflinuxfs2, using:
 
 ```
-STACK=cflinuxfs2
-```
-
-You can test someone's pull request branch, say https://github.com/cloudfoundry-incubator/staticfile-buildpack/pull/27, using:
-
-```
-BUILDPACK="https://github.com/simonjohansson/staticfile-buildpack#cflinuxfs2"
+ORG="simonjohansson" BRANCH="cflinuxfs2" ./tests/test.sh
 ```
 
 Note: the `#cflinuxfs2` is the name of the branch on github for the pull request.
@@ -183,8 +159,7 @@ Building Nginx
 vagrant up
 ```
 
-Vagrant will spin up two machines, one lucid and one trusty and call
-the buildscript located in bin/build_nginx
+Vagrant will spin up two machines, one lucid and one trusty and call the buildscript located in bin/build_nginx
 
 Nginx will be stuffed into a tarball in the `vendor/` folder.
 
@@ -202,10 +177,9 @@ Each tagged release should include an uploaded `staticfile-buildpack-vX.Y.Z.zip`
 These instructions use the [github-release](https://github.com/aktau/github-release) tool.
 
 ```
+git push
 tag=vX.Y.Z
 description="USEFUL DESCRIPTION"
-git tag $tag
-git push --tags
 github-release release \
     --user cloudfoundry-community \
     --repo staticfile-buildpack \
