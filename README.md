@@ -142,24 +142,39 @@ There are five example apps that should all compile successfully:
 
 ```
 cf create-space staticfile-tests
-STACK=lucid64
-cf push staticfile -p test/fixtures/staticfile_app -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+STACK="lucid64"
+BUILDPACK="https://github.com/cloudfoundry-incubator/staticfile-buildpack"
+cf push staticfile -p test/fixtures/staticfile_app -b $BUILDPACK -s $STACK --random-route
 cf open staticfile
 
-cf push staticfile -p test/fixtures/alternate_root -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf push staticfile -p test/fixtures/alternate_root -b $BUILDPACK -s $STACK --random-route
 cf open staticfile
 
-cf push staticfile -p test/fixtures/directory_index -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf push staticfile -p test/fixtures/directory_index -b $BUILDPACK -s $STACK --random-route
 cf open staticfile
 
-cf push staticfile -p test/fixtures/basic_auth -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf push staticfile -p test/fixtures/basic_auth -b $BUILDPACK -s $STACK --random-route
 cf open staticfile
 
-cf push staticfile -p test/fixtures/reverse_proxy -b https://github.com/cloudfoundry-community/staticfile-buildpack.git -s $STACK --random-route
+cf push staticfile -p test/fixtures/reverse_proxy -b $BUILDPACK -s $STACK --random-route
 cf open staticfile
 
 cf delete-space staticfile-tests
 ```
+
+You can test for other stacks using:
+
+```
+STACK=cflinuxfs2
+```
+
+You can test someone's pull request branch, say https://github.com/cloudfoundry-incubator/staticfile-buildpack/pull/27, using:
+
+```
+BUILDPACK="https://github.com/simonjohansson/staticfile-buildpack#cflinuxfs2"
+```
+
+Note: the `#cflinuxfs2` is the name of the branch on github for the pull request.
 
 Building Nginx
 ==============
