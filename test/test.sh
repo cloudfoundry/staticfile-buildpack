@@ -10,7 +10,7 @@ REPO=${REPO:="staticfile-buildpack"}
 BRANCH=${BRANCH:="master"}
 buildpack="https://github.com/$ORG/$REPO#$BRANCH"
 
-stacks=( cflinuxfs2 )
+stacks=( lucid64 )
 for stack in $stacks; do
   for test_app in test/fixtures/*; do
     name=$(basename $test_app)
