@@ -181,7 +181,7 @@ git push
 tag=vX.Y.Z
 description="USEFUL DESCRIPTION"
 github-release release \
-    --user cloudfoundry-community \
+    --user cloudfoundry-incubator \
     --repo staticfile-buildpack \
     --tag $tag \
     --name "Staticfile Buildpack $tag" \
@@ -190,7 +190,7 @@ github-release release \
 zip -r ../staticfile-buildpack-$tag.zip *
 
 github-release upload \
-    --user cloudfoundry-community \
+    --user cloudfoundry-incubator \
     --repo staticfile-buildpack \
     --tag $tag \
     --name staticfile-buildpack-$tag.zip \
