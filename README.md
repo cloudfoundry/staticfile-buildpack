@@ -181,16 +181,10 @@ Building Nginx
 
 ```
 vagrant up
-vagrant ssh
 ```
 
-Inside vagrant:
-
-```
-cd /vagrant
-./bin/build_nginx
-exit
-```
+Vagrant will spin up two machines, one lucid and one trusty and call
+the buildscript located in bin/build_nginx
 
 Nginx will be stuffed into a tarball in the `vendor/` folder.
 

@@ -6,9 +6,15 @@ set -e #halt on any error
 
 pcre_version=8.35
 nginx_version=1.7.4
-
+release=`lsb_release -cs`
 sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
+
+if [ $release = "trusty" ]; then
+    # We need libssl-dev to compile nginx on trusty
+    sudo apt-get install -fy libssl-dev
+fi
+
 
 src=~/src
 build=/app/nginx
@@ -52,5 +58,5 @@ sudo cp $src/nginx-$nginx_version/{LICENSE,CHANGES,README} /app/nginx/share/doc/
 
 # Archive it all up
 mkdir -p $target
-cd /app 
-tar -zcvpf $target/nginx-$nginx_version.tar.gz nginx/  
+cd /app
+tar -zcvpf $target/nginx-$nginx_version-$release.tar.gz nginx/
