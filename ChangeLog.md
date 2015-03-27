@@ -7,6 +7,7 @@ v0.5.0 - coming
 -	Support for `cflinuxfs2` trusty stack (and continued support for `lucid64` stack) [thanks @simonjohansson]
 -	Remove trailing whitespace from Staticfile 'root:' value [thanks @edmorley]
 -	Use rsync rather than mv to ensure correct files present in public/ [thanks @edmorley]
+-	add text/cache-manifest mime type for .manifest files [thanks @hairmare]
 
 ### Testing buildpacks
 
