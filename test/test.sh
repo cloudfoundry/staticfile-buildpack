@@ -13,9 +13,9 @@ buildpack="https://github.com/$ORG/$REPO#$BRANCH"
 stacks=( cflinuxfs2 )
 for stack in $stacks; do
   for test_app in test/fixtures/*; do
-    echo $stack $test_app
-    cf push staticfile-$test_app -p $test_app -b $buildpack -s $stack --random-route
-    cf open staticfile-$test_app
+    name=$(basename $test_app)
+    cf push $name -p $test_app -b $buildpack -s $stack --random-route
+    cf open $name
   done
 done
 
