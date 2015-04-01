@@ -4,6 +4,7 @@ set -x # show commands being run
 set -e # stop on error
 
 cf create-space staticfile-tests
+cf target -s staticfile-tests
 
 ORG=${ORG:-"cloudfoundry-community"}
 REPO=${REPO:="staticfile-buildpack"}
