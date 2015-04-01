@@ -41,8 +41,7 @@ rsync -a \
       --exclude='/Staticfile.auth' \
       --exclude='/manifest.yml' \
       --exclude='/stackato.yml' \
-      $root_dir/ $cache_dir/public
-mv $cache_dir/public .
+      $root_dir/ $build_dir/public
 
 status "Setting up nginx"
 tar xzf $compile_nginx_tgz
