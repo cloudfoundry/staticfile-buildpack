@@ -8,7 +8,9 @@ v0.5.0
 -	Remove trailing whitespace from Staticfile 'root:' value [thanks @edmorley]
 -	Use rsync rather than mv to ensure correct files present in public/ [thanks @edmorley]
 -	add text/cache-manifest mime type for .manifest files [thanks @hairmare]
--	Ensure that trailing slash redirects don't include `ENV[PORT]` (thanks @mrdavidlaing)
+-	Ensure that trailing slash redirects don't include `ENV[PORT]` [thanks @mrdavidlaing]
+-	Include gzip static module in nginx [thanks @ljfranklin] [v0.5.1]
+-	Allow alternate root to be `public` folder [v0.5.1]
 
 ### Testing buildpacks
 
