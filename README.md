@@ -150,6 +150,18 @@ You can test someone's pull request branch, say https://github.com/cloudfoundry-
 ORG="simonjohansson" BRANCH="cflinuxfs2" ./tests/test.sh
 ```
 
+To only test against a specific stack:
+
+```
+STACK=lucid64 ./tests/test.sh
+```
+
+To only test against a specific test app:
+
+```
+TEST_APP=test/fixtures/alternate_root ./tests/test.sh
+```
+
 Note: the `#cflinuxfs2` is the name of the branch on github for the pull request.
 
 Building Nginx

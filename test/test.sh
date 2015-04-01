@@ -10,9 +10,11 @@ REPO=${REPO:="staticfile-buildpack"}
 BRANCH=${BRANCH:="master"}
 buildpack="https://github.com/$ORG/$REPO#$BRANCH"
 
-stacks=(lucid64 cflinuxfs2)
-for stack in ${stacks[*]}; do
-  for test_app in test/fixtures/*; do
+default_stacks=(lucid64 cflinuxfs2)
+STACKS=${STACKS:=${default_stacks[*]}}
+TEST_APPS=${TEST_APPS:-test/fixtures/*}
+for stack in ${STACKS[*]}; do
+  for test_app in $TEST_APPS; do
     name=$(basename $test_app)
     cf push $name -p $test_app -b $buildpack -s $stack --random-route
     cf open $name
