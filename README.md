@@ -153,7 +153,7 @@ ORG="simonjohansson" BRANCH="cflinuxfs2" ./tests/test.sh
 To only test against a specific stack:
 
 ```
-STACK=lucid64 ./tests/test.sh
+STACKS=lucid64 ./tests/test.sh
 ```
 
 To only test against a specific test app:
