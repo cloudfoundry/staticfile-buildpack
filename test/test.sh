@@ -19,6 +19,7 @@ for stack in ${STACKS[*]}; do
     name=$(basename $test_app)
     cf push $name -p $test_app -b $buildpack -s $stack --random-route
     cf open $name
+    sleep 1 # give a moment for the browser to load before deleting the app
     cf d $name -f
   done
 done
