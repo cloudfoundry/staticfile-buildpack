@@ -135,6 +135,15 @@ After installing the buildpack, you can run a set of Acceptance Tests.
 
 https://github.com/cloudfoundry-community/staticfile-buildpack-acceptance-tests
 
+
+Note that you'll need to install the `cf-plugin-open` plugin to run the test script:
+
+```
+$ go get github.com/cloudfoundry-community/cf-plugin-open
+$ cf install-plugin $GOPATH/bin/cf-plugin-open
+```
+
+
 Local development
 =================
 
