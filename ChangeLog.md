@@ -1,8 +1,13 @@
-Change Log
-==========
+# Change Log
 
-v0.5.0
-======
+## unreleased
+
+### Features
+
+- Respond with `Content-Type: application/json` for `.json` files. #30 (Thanks, @danielsiwiec!)
+
+
+## v0.5.0
 
 -	Support for `cflinuxfs2` trusty stack (and continued support for `lucid64` stack) [thanks @simonjohansson]
 -	Remove trailing whitespace from Staticfile 'root:' value [thanks @edmorley]
