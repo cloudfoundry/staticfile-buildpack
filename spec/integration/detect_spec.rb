@@ -1,0 +1,20 @@
+require 'spec_helper'
+
+describe 'detect script' do
+	context 'there is a Staticfile' do
+		specify do
+			stdout, stderr, status = Open3.capture3('bin/detect test/fixtures/staticfile_app')
+			expect(status.exitstatus).to eq(0)
+			expect(stdout.chomp).to eq('Static file')
+		end
+	end
+
+	context 'there is no Staticfile' do
+		specify do
+			stdout, stderr, status = Open3.capture3('bin/detect test/fixtures/non_staticfile_app')
+			expect(status.exitstatus).to eq(1)
+			expect(stdout.chomp).to eq('no')
+		end
+	end
+end
+
