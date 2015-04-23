@@ -1,6 +1,38 @@
+GIT
+  remote: https://github.com/cf-buildpacks/machete
+  revision: 1e587171dcd88c20f0ed670e341f1b1609db6673
+  tag: v0.0.9
+  specs:
+    machete (0.0.9)
+      httparty
+
+GIT
+  remote: https://github.com/cloudfoundry-incubator/buildpack-packager
+  revision: 501f8de837ce3ee1b5f005cc24d6469cde05eedf
+  tag: v2.1.2
+  specs:
+    buildpack-packager (0.0.1)
+      activesupport (~> 4.1.8)
+      kwalify
+      rspec
+
 GEM
   specs:
+    activesupport (4.1.10)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
     diff-lcs (1.2.5)
+    httparty (0.13.3)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    i18n (0.7.0)
+    json (1.8.2)
+    kwalify (0.7.2)
+    minitest (5.6.0)
+    multi_xml (0.5.5)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
@@ -10,13 +42,21 @@ GEM
     rspec-expectations (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
+    rspec-instafail (0.2.6)
+      rspec
     rspec-mocks (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
     rspec-support (3.2.2)
+    thread_safe (0.3.5)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  buildpack-packager!
+  machete!
   rspec
+  rspec-instafail
