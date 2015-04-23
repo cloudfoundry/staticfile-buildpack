@@ -4,7 +4,7 @@ Deploy static HTML/JS/CSS apps to Cloud Foundry
 Working on a pure front-end only web app or demo? It is easy to share it via your Cloud Foundry:
 
 ```
-cf push my-site -m 64M -b https://github.com/cloudfoundry-community/staticfile-buildpack.git
+cf push my-site -m 64M -b https://github.com/cloudfoundry/staticfile-buildpack.git
 ```
 
 Your Cloud Foundry might already have this buildpack installed (see [Upload](#administrator-upload) section for administration):
@@ -84,94 +84,45 @@ Administrator Upload
 
 Everyone can automatically use this buildpack if your Cloud Foundry Administrator uploads it.
 
-[Releases](https://github.com/cloudfoundry-community/staticfile-buildpack/releases) are publicly downloadable.
+[Releases](https://github.com/cloudfoundry/staticfile-buildpack/releases) are publicly downloadable.
 
 To initially install, say v0.5.1:
 
 ```
-wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.5.1/staticfile-buildpack-v0.5.1.zip
+wget https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v0.5.1/staticfile-buildpack-v0.5.2.zip
 cf create-buildpack staticfiles_buildpack staticfile-buildpack-v0.5.1.zip 1
 ```
 
 Subsequently update the buildpack, say v0.9.9:
 
 ```
-wget https://github.com/cloudfoundry-community/staticfile-buildpack/releases/download/v0.9.9/staticfile-buildpackv0.9.9.zip
+wget https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v0.9.9/staticfile-buildpackv0.9.9.zip
 cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
 ```
 
 ### To create/upload from source repository
 
-```
-zip -r ../staticfile-buildpack.zip *
-cf create-buildpack staticfiles_buildpack ../staticfile-buildpack.zip 1
-```
+1. Get latest buildpack dependencies
 
-Subsequently, update the buildpack with:
+  ```shell
+  BUNDLE_GEMFILE=cf.Gemfile bundle
+  ```
 
-```
-zip -r ../staticfile-buildpack.zip *
-cf update-buildpack staticfiles_buildpack -p ../staticfile-buildpack.zip
-```
+1. Build the buildpack
 
-Test that it correctly detects the buildpack:
+  ```shell
+  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ cached | uncached ]
+  ```
 
-```
-cf push staticfile -p test/fixtures/staticfile_app
-...
-Staging failed: An application could not be detected by any available buildpack
-```
+1. Use in Cloud Foundry
 
-Test that it correctly ignores the buildpack if `Staticfile` file is missing:
+  Upload the buildpack to your Cloud Foundry and optionally specify it by name
+  
+  ```bash
+  cf create-buildpack custom_node_buildpack node_buildpack-offline-custom.zip 1
+  cf push my_app -b custom_node_buildpack
+  ```
 
-```
-cf push non_staticfile_app -p test/fixtures/non_staticfile_app
-```
-
-Acceptance Tests
-----------------
-
-After installing the buildpack, you can run a set of Acceptance Tests.
-
-https://github.com/cloudfoundry-community/staticfile-buildpack-acceptance-tests
-
-
-Note that you'll need to install the `cf-plugin-open` plugin to run the test script:
-
-```
-$ go get github.com/cloudfoundry-community/cf-plugin-open
-$ cf install-plugin $GOPATH/bin/cf-plugin-open
-```
-
-
-Local development
-=================
-
-There are five example apps that should all compile successfully. To test them against the current master branch on Github:
-
-```
-./tests/test.sh
-```
-
-You can test someone's pull request branch, say https://github.com/cloudfoundry-incubator/staticfile-buildpack/pull/27 which matches to the branch https://github.com/simonjohansson/staticfile-buildpack#cflinuxfs2, using:
-
-```
-ORG="simonjohansson" BRANCH="cflinuxfs2" ./tests/test.sh
-```
-
-To only test against a specific stack:
-
-```
-STACKS=lucid64 ./tests/test.sh
-```
-
-To only test against a specific test app:
-
-```
-TEST_APP=test/fixtures/alternate_root ./tests/test.sh
-```
-
-Note: the `#cflinuxfs2` is the name of the branch on github for the pull request.
 
 Building Nginx
 ==============
@@ -190,33 +141,16 @@ Finally, destroy the vagrant VM:
 vagrant destroy
 ```
 
-Buildpack release process
-=========================
 
-Each tagged release should include an uploaded `staticfile-buildpack-vX.Y.Z.zip` to Github to make it easy to download by administrators.
+Reporting Issues
+================
 
-These instructions use the [github-release](https://github.com/aktau/github-release) tool.
+Open an issue on this project.
 
-```
-git push
-tag=vX.Y.Z
-description="USEFUL DESCRIPTION"
-github-release release \
-    --user cloudfoundry-incubator \
-    --repo staticfile-buildpack \
-    --tag $tag \
-    --name "Staticfile Buildpack $tag" \
-    --description "$description"
+Active Development
+==================
 
-zip -r ../staticfile-buildpack-$tag.zip *
-
-github-release upload \
-    --user cloudfoundry-incubator \
-    --repo staticfile-buildpack \
-    --tag $tag \
-    --name staticfile-buildpack-$tag.zip \
-    --file ../staticfile-buildpack-$tag.zip
-```
+The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066).
 
 Acknowledgements
 ================
