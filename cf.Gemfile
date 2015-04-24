@@ -1,3 +1,5 @@
+source "https://rubygems.org"
+
 gem 'rspec'
 gem 'rspec-instafail'
 gem 'machete', git: 'https://github.com/cf-buildpacks/machete', tag: 'v0.0.9'
