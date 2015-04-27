@@ -11,11 +11,13 @@ describe 'deploy a basic auth app' do
   specify do
     expect(app).to be_running
 
-    contents, error, status = Open3.capture3("curl http://bob:bob@basic-auth.10.244.0.34.xip.io/")
-    expect(contents).to include('This site is protected by basic auth. User: <code>bob</code>; Password: <code>bob</code>.')
-    contents, error, status = Open3.capture3("curl http://basic-auth.10.244.0.34.xip.io/")
-    expect(contents).to include('401 Authorization Required')
-    contents, error, status = Open3.capture3("curl http://bob:bob1@basic-auth.10.244.0.34.xip.io/")
-    expect(contents).to include('401 Authorization Required')
+    browser.visit_path('/', username: 'bob', password: 'bob')
+    expect(browser).to have_body('This site is protected by basic auth. User: <code>bob</code>; Password: <code>bob</code>.')
+
+    browser.visit_path('/')
+    expect(browser).to have_body('401 Authorization Required')
+
+    browser.visit_path('/', username: 'bob', password: 'bob1')
+    expect(browser).to have_body('401 Authorization Required')
   end
 end

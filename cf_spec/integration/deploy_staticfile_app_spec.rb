@@ -13,8 +13,8 @@ describe 'deploy a staticfile app' do
 
     browser.visit_path('/')
     expect(browser).to have_body('This is an example app for Cloud Foundry that is only static HTML/JS/CSS assets.')
-    
-    contents, _, _ = Open3.capture3('curl staticfile-app.10.244.0.34.xip.io/fixture.json -I')
-    expect(contents).to include('Content-Type: application/json')
+
+    browser.visit_path('/fixture.json')
+    expect(browser.content_type).to eq('application/json')
   end
 end
