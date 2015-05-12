@@ -4,13 +4,13 @@
 
 set -e #halt on any error
 
-pcre_version=8.35
+pcre_version=8.37
 nginx_version=1.7.4
 release=`lsb_release -cs`
 sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 
-if [ $release = "trusty" ]; then
+if [ $release = "trusty" ] || [ $release = "precise" ]; then
     # We need libssl-dev to compile nginx on trusty
     sudo apt-get install -fy libssl-dev
 fi
