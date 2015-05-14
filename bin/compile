@@ -3,17 +3,17 @@
 
 set -e            # fail fast
 set -o pipefail   # don't ignore exit codes when piping output
-# set -x          # enable debugging
 
 # Ubuntu version
 release=`lsb_release -cs`
+# set -x          # enable debugging
 
 # Configure directories
 build_dir=$1
 cache_dir=$2
 
 # Version
-nginx_version="1.7.4"
+nginx_version="1.7.10.1"
 
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
@@ -41,28 +41,22 @@ rsync -a \
       --exclude='/Staticfile.auth' \
       --exclude='/manifest.yml' \
       --exclude='/stackato.yml' \
+      --exclude='/*.lua' \
       $root_dir/ $build_dir/public
 
 status "Setting up nginx"
 tar xzf $compile_nginx_tgz
-cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
-cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 
-[[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf nginx/conf/nginx.conf
-[[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types nginx/conf/mime.types
+cp -f $compile_buildpack_dir/conf/nginx.conf openresty/nginx/conf/nginx.conf
+cp -f $compile_buildpack_dir/conf/mime.types openresty/nginx/conf/mime.types
 
-if [[ -f Staticfile.auth ]]; then
-  status "Enabling basic authentication"
-  mv Staticfile.auth nginx/conf/.htpasswd
-  cat nginx/conf/.htpasswd | indent
-  echo
-  protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
-fi
+[[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf openresty/nginx/conf/nginx.conf
+[[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types openresty/nginx/conf/mime.types
 
 # Enable directory index
 if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
   status "Enabling directory index for folders without index.html files"
-  touch nginx/conf/.enable_directory_index
+  touch openresty/nginx/conf/.enable_directory_index
 fi
 
 cp $compile_buildpack_bin/boot.sh .
