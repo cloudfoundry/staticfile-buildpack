@@ -50,6 +50,13 @@ tar xzf $compile_nginx_tgz
 cp -f $compile_buildpack_dir/conf/nginx.conf openresty/nginx/conf/nginx.conf
 cp -f $compile_buildpack_dir/conf/mime.types openresty/nginx/conf/mime.types
 
+if [[ -f Staticfile.auth ]]; then
+  status "Enabling basic authentication"
+  mv Staticfile.auth nginx/conf/.htpasswd
+  cat nginx/conf/.htpasswd | indent
+  echo
+  protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
+fi
 [[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf openresty/nginx/conf/nginx.conf
 [[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types openresty/nginx/conf/mime.types
 
