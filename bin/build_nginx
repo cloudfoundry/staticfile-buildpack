@@ -5,12 +5,20 @@
 set -e #halt on any error
 
 pcre_version=8.35
+pcre_url="http://linux.stanford.edu/pub/exim/pcre/pcre-${pcre_version}.tar.gz"
+pcre_filename=$(basename "${pcre_url}")
+pcre_dirname="${pcre_filename%.tar.gz}"
+
 nginx_version=1.7.4
-release=`lsb_release -cs`
+nginx_url="http://nginx.org/download/nginx-${nginx_version}.tar.gz"
+nginx_filename=$(basename "${nginx_url}")
+nginx_dirname="${nginx_filename%.tar.gz}"
+
+release=$(lsb_release -cs)
 sudo apt-get update
 sudo apt-get install -fy build-essential zlib1g-dev
 
-if [ $release = "trusty" ]; then
+if [ "${release}" = "trusty" ]; then
     # We need libssl-dev to compile nginx on trusty
     sudo apt-get install -fy libssl-dev
 fi
@@ -20,43 +28,45 @@ src=~/src
 build=/app/nginx
 target=/vagrant/vendor
 
-sudo rm -rf $build && sudo mkdir -p $build && sudo chown -R vagrant:vagrant $build
-mkdir -p $src
-cd $src
+sudo rm -rf "${build}" && sudo mkdir -p "${build}" && sudo chown -R vagrant:vagrant "${build}"
+mkdir -p "${src}"
+pushd "${src}"
 
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$pcre_version.tar.gz
-tar -xzvf pcre-$pcre_version.tar.gz
-cd pcre-$pcre_version/
+  wget "${pcre_url}"
+  tar -xzvf "${pcre_filename}"
+  pushd "${pcre_dirname}"
+    ./configure --prefix="${build}"
+    make
+    sudo make install
+    sudo ldconfig # this is important otherwise nginx will compile but fail to load
+  popd
 
-./configure --prefix=$build
-make
-sudo make install
-sudo ldconfig # this is important otherwise nginx will compile but fail to load
+  wget "${nginx_url}"
+  tar -xvzf "${nginx_filename}"
+  pushd "${nginx_dirname}"
+    ./configure --prefix="${build}" --with-pcre="${src}/${pcre_dirname}" --with-http_ssl_module --with-http_gzip_static_module
+    make
+    sudo make install
 
-cd $src
-wget http://nginx.org/download/nginx-$nginx_version.tar.gz
-tar -xvzf nginx-$nginx_version.tar.gz
-cd nginx-$nginx_version
+    # Remove extras (help, utilities etc)
 
-./configure --prefix=$build --with-pcre=$src/pcre-$pcre_version --with-http_ssl_module --with-http_gzip_static_module
-make
-sudo make install
+    sudo rm -rf /app/nginx/bin
+    sudo rm -rf /app/nginx/sbin/nginx.old
+    sudo rm -rf /app/nginx/include
+    sudo rm -rf /app/nginx/share/man
 
-# Remove extras (help, utilities etc)
+    # Ensure we include the licenses in the tarball
 
-sudo rm -rf /app/nginx/bin
-sudo rm -rf /app/nginx/sbin/nginx.old
-sudo rm -rf /app/nginx/include
-sudo rm -rf /app/nginx/share/man
+    # PCRE license is in /app/nginx/share/doc/pcre/LICENCE
+    # Put Nginx license is in /app/nginx/share/doc/nginx
+    sudo mkdir -p /app/nginx/share/doc/nginx
+    sudo cp "${src}/${nginx_dirname}"/{LICENSE,CHANGES,README} /app/nginx/share/doc/nginx
 
-# Ensure we include the licenses in the tarball
+    # Archive it all up
+    mkdir -p "${target}"
+  popd
+popd
 
-# PCRE license is in /app/nginx/share/doc/pcre/LICENCE
-# Put Nginx license is in /app/nginx/share/doc/nginx
-sudo mkdir -p /app/nginx/share/doc/nginx
-sudo cp $src/nginx-$nginx_version/{LICENSE,CHANGES,README} /app/nginx/share/doc/nginx
-
-# Archive it all up
-mkdir -p $target
-cd /app
-tar -zcvpf $target/nginx-$nginx_version-$release.tar.gz nginx/
+pushd /app
+  tar -zcvpf "${target}/nginx-${nginx_version}-${release}.tar.gz" nginx/
+popd
