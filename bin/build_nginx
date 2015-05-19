@@ -4,8 +4,8 @@
 
 set -e #halt on any error
 
-pcre_version=8.35
-pcre_url="http://linux.stanford.edu/pub/exim/pcre/pcre-${pcre_version}.tar.gz"
+pcre_version=8.37
+pcre_url="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${pcre_version}.tar.gz"
 pcre_filename=$(basename "${pcre_url}")
 pcre_dirname="${pcre_filename%.tar.gz}"
 
