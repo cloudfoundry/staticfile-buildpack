@@ -32,7 +32,7 @@ sudo rm -rf "${build}" && sudo mkdir -p "${build}" && sudo chown -R vagrant:vagr
 mkdir -p "${src}"
 pushd "${src}"
 
-  wget "${pcre_url}"
+  wget --no-verbose "${pcre_url}"
   tar -xzvf "${pcre_filename}"
   pushd "${pcre_dirname}"
     ./configure --prefix="${build}"
@@ -41,7 +41,7 @@ pushd "${src}"
     sudo ldconfig # this is important otherwise nginx will compile but fail to load
   popd
 
-  wget "${nginx_url}"
+  wget --no-verbose "${nginx_url}"
   tar -xvzf "${nginx_filename}"
   pushd "${nginx_dirname}"
     ./configure --prefix="${build}" --with-pcre="${src}/${pcre_dirname}" --with-http_ssl_module --with-http_gzip_static_module
