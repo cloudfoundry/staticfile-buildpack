@@ -61,3 +61,6 @@ DEPENDENCIES
   machete!
   rspec
   rspec-instafail
+
+BUNDLED WITH
+   1.10.2

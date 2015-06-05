@@ -1,0 +1,3 @@
+[submodule "compile-extensions"]
+	path = compile-extensions
+	url = git@github.com:cloudfoundry-incubator/compile-extensions.git

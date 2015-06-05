@@ -124,24 +124,6 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
   ```
 
 
-Building Nginx
-==============
-
-```
-vagrant up
-```
-
-Vagrant will spin up two machines, one lucid and one trusty and call the buildscript located in bin/build_nginx
-
-Nginx will be stuffed into a tarball in the `vendor/` folder.
-
-Finally, destroy the vagrant VM:
-
-```
-vagrant destroy
-```
-
-
 Reporting Issues
 ================
 

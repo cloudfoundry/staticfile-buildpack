@@ -12,7 +12,22 @@ exclude_files:
   - buildpack-packager/
   - staticfile_buildpack-*v*.zip
 
-url_to_dependency_map: []
+url_to_dependency_map:
+  - match: nginx-(\d+\.\d+\.\d+)
+    name: nginx
+    version: $1
 
-dependencies: []
+dependencies:
+  - name: nginx
+    version: 1.7.10
+    uri: https://pivotal-buildpacks.s3.amazonaws.com/php/binaries/lucid/nginx/1.7.10/nginx-1.7.10.tar.gz
+    cf_stacks:
+      - lucid64
+    md5: e2fb08f48c36c682e8ddf938378220a7
 
+  - name: nginx
+    version: 1.7.10
+    uri: https://pivotal-buildpacks.s3.amazonaws.com/php/binaries/trusty/nginx/1.7.10/nginx-1.7.10.tar.gz
+    cf_stacks:
+      - cflinuxfs2
+    md5: 8f738417842563b5a32a4278cb57f654
