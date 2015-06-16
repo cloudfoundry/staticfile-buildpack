@@ -2,7 +2,7 @@
 # bin/compile <build-dir> <cache-dir>
 
 set -e            # fail fast
-set -o pipefail   # don't ignore exit codes when piping output
+set -o pipefail   # do not ignore exit codes when piping output
 # set -x          # enable debugging
 
 # Configure directories
