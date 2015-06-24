@@ -1,3 +1,15 @@
+v1.2.0 Jun 24, 2015
+====================
+
+* Remove nginx version display
+  (https://www.pivotaltracker.com/story/show/94542440)
+
+* Remove lucid-specific binaries from manifest.yml
+  (https://www.pivotaltracker.com/story/show/96135874)
+
+* Give helpful message on unsupported stacks
+  (https://www.pivotaltracker.com/story/show/96590146)
+
 v1.1.1 Jun 15, 2015
 ====================
 
