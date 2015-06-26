@@ -19,8 +19,8 @@ url_to_dependency_map:
 
 dependencies:
   - name: nginx
-    version: 1.7.10
-    uri: https://pivotal-buildpacks.s3.amazonaws.com/php/binaries/trusty/nginx/1.7.10/nginx-1.7.10.tar.gz
+    version: 1.8.0
+    uri: https://s3.amazonaws.com/pivotal-buildpacks/nginx/cflinuxfs2/nginx-1.8.0-linux-x64.tgz
     cf_stacks:
       - cflinuxfs2
-    md5: 8f738417842563b5a32a4278cb57f654
+    md5: e12cddcba72d5008f94b298a02a8e6d4
