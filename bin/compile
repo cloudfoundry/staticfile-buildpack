@@ -9,9 +9,6 @@ set -o pipefail   # do not ignore exit codes when piping output
 build_dir=$1
 cache_dir=$2
 
-# Version
-nginx_version="1.8.0"
-
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
 $compile_buildpack_dir/compile-extensions/bin/check_stack_support
@@ -19,8 +16,8 @@ $compile_buildpack_dir/compile-extensions/bin/check_stack_support
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
-$compile_buildpack_dir/compile-extensions/bin/download_dependency nginx-$nginx_version.tar.gz /tmp
-compile_nginx_tgz="/tmp/nginx-$nginx_version.tar.gz"
+$compile_buildpack_dir/compile-extensions/bin/download_dependency nginx.tgz /tmp
+compile_nginx_tgz="/tmp/nginx.tgz"
 cd $build_dir
 
 # Alternate root location (default is root of project) for html/js/css
