@@ -9,6 +9,7 @@ describe 'deploy a staticfile app' do
   end
 
   specify do
+    expect(app).to have_logged(/Buildpack version [\d\.]{5,}/)
     expect(app).to be_running
 
     browser.visit_path('/')

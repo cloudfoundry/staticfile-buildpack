@@ -16,6 +16,8 @@ $compile_buildpack_dir/compile-extensions/bin/check_stack_support
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
+BUILDPACK_PATH=$compile_buildpack_dir source $compile_buildpack_dir/compile-extensions/lib/common
+
 $compile_buildpack_dir/compile-extensions/bin/download_dependency nginx.tgz /tmp
 compile_nginx_tgz="/tmp/nginx.tgz"
 cd $build_dir
