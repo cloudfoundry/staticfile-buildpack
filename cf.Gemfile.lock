@@ -26,6 +26,7 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     diff-lcs (1.2.5)
+    excon (0.45.3)
     httparty (0.13.5)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -58,9 +59,10 @@ PLATFORMS
 
 DEPENDENCIES
   buildpack-packager!
+  excon
   machete!
   rspec
   rspec-instafail
 
 BUNDLED WITH
-   1.10.3
+   1.10.5
