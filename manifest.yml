@@ -15,11 +15,11 @@ exclude_files:
 url_to_dependency_map:
   - match: nginx.tgz
     name: nginx
-    version: latest
+    version: 1.8.0
 
 dependencies:
   - name: nginx
-    version: latest
+    version: 1.8.0
     uri: https://s3.amazonaws.com/pivotal-buildpacks/nginx/cflinuxfs2/nginx-1.8.0-linux-x64.tgz
     cf_stacks:
       - cflinuxfs2
