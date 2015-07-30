@@ -102,6 +102,11 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
 
 ### To create/upload from source repository
 
+1. Update git submodules
+  ```shell
+  git submodule update --init --recursive
+  ```
+
 1. Get latest buildpack dependencies
 
   ```shell
@@ -117,7 +122,7 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
 1. Use in Cloud Foundry
 
   Upload the buildpack to your Cloud Foundry and optionally specify it by name
-  
+
   ```bash
   cf create-buildpack custom_node_buildpack node_buildpack-offline-custom.zip 1
   cf push my_app -b custom_node_buildpack
