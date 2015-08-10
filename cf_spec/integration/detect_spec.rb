@@ -5,7 +5,7 @@ describe 'detect script' do
     specify do
       stdout, stderr, status = Open3.capture3('bin/detect cf_spec/fixtures/staticfile_app')
       expect(status.exitstatus).to eq(0)
-      expect(stdout.chomp).to eq('Static file')
+      expect(stdout.chomp).to include('staticfile')
     end
   end
 
