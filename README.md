@@ -89,7 +89,7 @@ Everyone can automatically use this buildpack if your Cloud Foundry Administrato
 To initially install, say v0.5.1:
 
 ```
-wget https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v0.5.1/staticfile-buildpack-v0.5.2.zip
+wget https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v0.5.1/staticfile-buildpack-v0.5.1.zip
 cf create-buildpack staticfiles_buildpack staticfile-buildpack-v0.5.1.zip 1
 ```
 
