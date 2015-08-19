@@ -4,12 +4,15 @@
 set -e            # fail fast
 set -o pipefail   # do not ignore exit codes when piping output
 # set -x          # enable debugging
-
+echo "pwd:" pwd
 # Configure directories
 build_dir=$1
 cache_dir=$2
+echo "build_dir:"$build_dir
+echo "cache_dir:"$build_dir
 
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
+echo "compile_buildpack_dir:"$compile_buildpack_dir
 compile_buildpack_bin=$compile_buildpack_dir/bin
 $compile_buildpack_dir/compile-extensions/bin/check_stack_support
 
@@ -20,8 +23,10 @@ BUILDPACK_PATH=$compile_buildpack_dir source $compile_buildpack_dir/compile-exte
 
 $compile_buildpack_dir/compile-extensions/bin/download_dependency nginx.tgz /tmp
 compile_nginx_tgz="/tmp/nginx.tgz"
+echo "cd build_dir"
 cd $build_dir
 
+echo "pwd:" pwd
 # Alternate root location (default is root of project) for html/js/css
 # root: dist/
 if [[ "$(grep root: Staticfile)X" != "X" ]]; then
@@ -31,7 +36,7 @@ else
   status "Using root folder"
 fi
 root_dir=${root_dir:-.}
-
+echo "root_dir" $root_dir
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
 rsync -a \
@@ -42,6 +47,8 @@ rsync -a \
       $root_dir/ $build_dir/public
 
 status "Setting up nginx"
+
+echo "pwd:" pwd
 tar xzf $compile_nginx_tgz
 cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
 cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
@@ -64,3 +71,5 @@ if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
 fi
 
 cp $compile_buildpack_bin/boot.sh .
+
+echo "pwd:" pwd
