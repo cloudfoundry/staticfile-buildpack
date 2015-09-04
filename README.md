@@ -116,7 +116,7 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
 1. Build the buildpack
 
   ```shell
-  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ cached | uncached ]
+  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ --cached | --uncached ]
   ```
 
 1. Use in Cloud Foundry
