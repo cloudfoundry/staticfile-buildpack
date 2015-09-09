@@ -77,7 +77,7 @@ directory: visible
 
 You can customise the Nginx configuration further, by adding `nginx.conf` and/or `mime.types` to your root folder.
 
-If the buildpack detects either of these files, they will be used in place of the built-in versions. See the default [nginx.conf](https://github.com/cloudfoundry-incubator/staticfile-buildpack/blob/master/conf/nginx.conf) and [mime.types](https://github.com/cloudfoundry-incubator/staticfile-buildpack/blob/master/conf/nginx.conf) files for inspiration.
+If the buildpack detects either of these files, they will be used in place of the built-in versions. See the default [nginx.conf](https://github.com/cloudfoundry/staticfile-buildpack/blob/master/conf/nginx.conf) and [mime.types](https://github.com/cloudfoundry/staticfile-buildpack/blob/master/conf/mime.types) files for inspiration.
 
 Administrator Upload
 ====================
