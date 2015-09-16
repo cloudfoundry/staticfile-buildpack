@@ -24,4 +24,16 @@ describe 'deploy a staticfile app' do
     })
     expect(response.headers['Content-Encoding']).to eq('gzip')
   end
+
+  context 'with a cached buildpack', :cached do
+    it 'logs the files it downloads' do
+      expect(app).to have_logged(/Downloaded \[file:\/\/.*\]/)
+    end
+  end
+
+  context 'with a uncached buildpack', :uncached do
+    it 'logs the files it downloads' do
+      expect(app).to have_logged(/Downloaded \[https:\/\/.*\]/)
+    end
+  end
 end
