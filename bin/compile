@@ -32,6 +32,12 @@ else
   status "Using root folder"
 fi
 root_dir=${root_dir:-.}
+if [[ ! -e ${root_dir} ]] ; then
+  error "the application Staticfile specifies a root directory \`${root_dir}\` that does not exist"
+fi
+if [[ ! -d ${root_dir} ]] ; then
+  error "the application Staticfile specifies a root directory \`${root_dir}\` that is a plain file, but was expected to be a directory"
+fi
 
 status "Copying project files into public/"
 mkdir -p $cache_dir/public
