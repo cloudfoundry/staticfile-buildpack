@@ -40,5 +40,37 @@ describe "running ./bin/compile" do
       end
     end
   end
+
+  context "alternate root directory" do
+    context "does not exist" do
+      before(:all) do
+        @output = run_bin_compile :build_dir => "cf_spec/fixtures/alternate_root_does_not_exist"
+        @exitcode = $?
+      end
+
+      describe "output" do
+        it { expect(output).to include("the application Staticfile specifies a root directory `build` that does not exist") }
+      end
+
+      describe "exitcode" do
+        it { expect(exitcode).to_not be_success }
+      end
+    end
+
+    context "is a plain file" do
+      before(:all) do
+        @output = run_bin_compile :build_dir => "cf_spec/fixtures/alternate_root_is_a_file"
+        @exitcode = $?
+      end
+
+      describe "output" do
+        it { expect(output).to include("the application Staticfile specifies a root directory `build` that is a plain file, but was expected to be a directory") }
+      end
+
+      describe "exitcode" do
+        it { expect(exitcode).to_not be_success }
+      end
+    end
+  end
 end
 
