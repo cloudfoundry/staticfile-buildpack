@@ -1,12 +1,18 @@
 require "spec_helper"
 
 describe "running ./bin/compile" do
-  context "on a stack that is" do
-    attr :output, :exitcode
+  attr :output, :exitcode
 
+  def run_bin_compile(args={})
+    stack = args[:stack] || "cflinuxfs2"
+    build_dir = args[:build_dir] || Dir.mktmpdir
+    `env CF_STACK='#{stack}' ./bin/compile #{build_dir} #{Dir.mktmpdir} 2>&1`
+  end
+
+  context "on a stack that is" do
     context "unsupported" do
       before(:all) do
-        @output = `env CF_STACK='unsupported' ./bin/compile #{Dir.mktmpdir} #{Dir.mktmpdir} 2>&1`
+        @output = run_bin_compile :stack => "unsupported"
         @exitcode = $?
       end
 
@@ -21,7 +27,7 @@ describe "running ./bin/compile" do
 
     context "supported" do
       before(:all) do
-        @output = `env CF_STACK='cflinuxfs2' ./bin/compile #{Dir.mktmpdir} #{Dir.mktmpdir} 2>&1`
+        @output = run_bin_compile
         @exitcode = $?
       end
 
