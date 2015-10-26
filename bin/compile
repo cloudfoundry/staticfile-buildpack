@@ -61,7 +61,7 @@ if [[ -f Staticfile.auth ]]; then
   mv Staticfile.auth nginx/conf/.htpasswd
   cat nginx/conf/.htpasswd | indent
   echo
-  protip "Learn about basic authentication" "https://github.com/drnic/staticfile-buildpack#basic-authentication"
+  protip "Learn about basic authentication" "https://github.com/cloudfoundry/staticfile-buildpack#basic-authentication"
 fi
 
 # Enable directory index
