@@ -30,7 +30,7 @@ mkfifo $APP_ROOT/nginx/logs/access.log
 mkfifo $APP_ROOT/nginx/logs/error.log
 
 cat < $APP_ROOT/nginx/logs/access.log &
-cat < $APP_ROOT/nginx/logs/error.log &
+(>&2 cat) < $APP_ROOT/nginx/logs/error.log &
 
 exec $APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
 

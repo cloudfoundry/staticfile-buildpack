@@ -33,7 +33,7 @@ GEM
     i18n (0.7.0)
     json (1.8.3)
     kwalify (0.7.2)
-    minitest (5.8.0)
+    minitest (5.8.2)
     multi_xml (0.5.5)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
@@ -41,6 +41,7 @@ GEM
       rspec-mocks (~> 3.2.0)
     rspec-core (3.2.3)
       rspec-support (~> 3.2.0)
+    rspec-eventually (0.0.2)
     rspec-expectations (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
@@ -63,6 +64,7 @@ DEPENDENCIES
   excon
   machete!
   rspec
+  rspec-eventually
   rspec-instafail
 
 BUNDLED WITH
