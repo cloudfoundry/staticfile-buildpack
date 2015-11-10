@@ -128,6 +128,18 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
   cf push my_app -b custom_node_buildpack
   ```
 
+### Testing
+Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests.
+
+To test a buildpack, run the following command from the buildpack's directory:
+
+```
+BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-build
+```
+
+More options can be found on Machete's [Github page.](https://github.com/cloudfoundry/machete)
+
+
 
 Reporting Issues
 ================
