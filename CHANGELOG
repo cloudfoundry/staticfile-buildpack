@@ -1,3 +1,11 @@
+v1.2.3 Nov 16, 2015
+====================
+
+* Nginx log files no longer are no longer written to disk, but
+  instead are piped to stdout/stderr.
+  (https://www.pivotaltracker.com/story/show/107057846)
+
+
 v1.2.2 2015-10-24
 ====================
 
