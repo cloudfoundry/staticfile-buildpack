@@ -1,0 +1,3 @@
+---
+env:
+  FORCE_HTTPS: true
