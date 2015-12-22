@@ -140,7 +140,7 @@ More options can be found on Machete's [Github page.](https://github.com/cloudfo
 
 ## Help and Support
 
-Join the #buidpacks channel in our [Slack community] (http://slack.cloudfoundry.org/) 
+Join the #buildpacks channel in our [Slack community] (http://slack.cloudfoundry.org/) 
 
 ## Reporting Issues
 
