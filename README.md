@@ -28,8 +28,7 @@ cf push my-site -m 64M
 
 Why `-m 64M`? Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M \[[reference](http://wiki.nginx.org/WhyUseIt)]. The `-m 64M` reduces the RAM allocation from the default 1G allocated to Cloud Foundry containers. In the future there may be a way for a buildpack to indicate its default RAM requirements; but not as of writing.
 
-Configuration
-=============
+## Configuration
 
 ### Alternate root folder
 
@@ -79,8 +78,7 @@ You can customise the Nginx configuration further, by adding `nginx.conf` and/or
 
 If the buildpack detects either of these files, they will be used in place of the built-in versions. See the default [nginx.conf](https://github.com/cloudfoundry/staticfile-buildpack/blob/master/conf/nginx.conf) and [mime.types](https://github.com/cloudfoundry/staticfile-buildpack/blob/master/conf/mime.types) files for inspiration.
 
-Administrator Upload
-====================
+## Administrator Upload
 
 Everyone can automatically use this buildpack if your Cloud Foundry Administrator uploads it.
 
@@ -128,7 +126,7 @@ cf update-buildpack staticfiles_buildpack -p staticfile-buildpackv0.9.9.zip
   cf push my_app -b custom_node_buildpack
   ```
 
-### Testing
+## Testing
 Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests.
 
 To test a buildpack, run the following command from the buildpack's directory:
@@ -140,18 +138,18 @@ BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-build
 More options can be found on Machete's [Github page.](https://github.com/cloudfoundry/machete)
 
 
+## Help and Support
 
-Reporting Issues
-================
+Join the #buidpacks channel in our [Slack community] (http://slack.cloudfoundry.org/) 
+
+## Reporting Issues
 
 Open an issue on this project.
 
-Active Development
-==================
+## Active Development
 
 The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066).
 
-Acknowledgements
-================
+## Acknowledgements
 
 This buildpack is based heavily upon Jordon Bedwell's Heroku buildpack and the modifications by David Laing for Cloud Foundry [nginx-buildpack](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
