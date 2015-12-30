@@ -1,3 +1,11 @@
+v1.3.0 Dec 30, 2015
+====================
+
+* added nginx 1.9.9, drop 1.8.0
+  (https://www.pivotaltracker.com/story/show/110627622)
+
+* correctly redirect http to https
+
 v1.2.3 Nov 16, 2015
 ====================
 
