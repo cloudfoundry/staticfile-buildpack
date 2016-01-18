@@ -29,6 +29,10 @@ describe 'deploy a staticfile app' do
     it 'logs the files it downloads' do
       expect(app).to have_logged(/Downloaded \[file:\/\/.*\]/)
     end
+
+    it 'does not call out over the internet' do
+      expect(app).to_not have_internet_traffic
+    end
   end
 
   context 'with a uncached buildpack', :uncached do
