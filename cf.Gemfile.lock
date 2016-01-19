@@ -1,17 +1,17 @@
 GIT
   remote: https://github.com/cf-buildpacks/machete
-  revision: 298be3d927dea8b0b9454edde37dbd9ec91dd466
-  tag: v0.0.26
+  revision: 184d77fdfb57948df9381c96a9fbca01a7f0db78
+  tag: v0.0.29
   specs:
-    machete (0.0.26)
+    machete (0.0.29)
       httparty
 
 GIT
   remote: https://github.com/cloudfoundry/buildpack-packager
-  revision: ae3ac1feefe81cfe2881b39423be201ba38b1615
-  tag: v2.2.5
+  revision: c020bd67a31d7664337646d0efa4869c7b8c3717
+  tag: v2.2.6
   specs:
-    buildpack-packager (2.2.5)
+    buildpack-packager (2.2.6)
       activesupport (~> 4.1.8)
       kwalify
       terminal-table (~> 1.4.5)
@@ -19,38 +19,38 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.1.13)
+    activesupport (4.1.14)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     diff-lcs (1.2.5)
-    excon (0.45.3)
+    excon (0.45.4)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
     json (1.8.3)
     kwalify (0.7.2)
-    minitest (5.8.2)
+    minitest (5.8.3)
     multi_xml (0.5.5)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-eventually (0.0.2)
-    rspec-expectations (3.2.1)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.1)
+      rspec-support (~> 3.4.0)
+    rspec-eventually (0.1.0)
+    rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-instafail (0.2.6)
+      rspec-support (~> 3.4.0)
+    rspec-instafail (0.4.0)
       rspec
-    rspec-mocks (3.2.1)
+    rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     terminal-table (1.4.5)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
