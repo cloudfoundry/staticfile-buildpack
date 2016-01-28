@@ -1,3 +1,14 @@
+v1.3.1 Jan 28, 2016
+====================
+
+* Update nginx from 1.9.9 to 1.9.10
+  (https://www.pivotaltracker.com/story/show/112526103)
+
+  Note that nginx 1.9.10 is a security update for the [following CVEs](http://mailman.nginx.org/pipermail/nginx-announce/2016/000169.html?_ga=1.134019406.1734013177.1444677334):
+  * CVE-2016-0742
+  * CVE-2016-0746
+  * CVE-2016-0747
+
 v1.3.0 Dec 30, 2015
 ====================
 
