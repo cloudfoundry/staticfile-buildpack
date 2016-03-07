@@ -1,3 +1,11 @@
+v1.3.2 Mar 07, 2016
+====================
+
+* Update nginx from 1.9.9 to 1.9.10
+  (https://www.pivotaltracker.com/story/show/114349749)
+
+  Note that nginx 1.9.10 is mainly a feature / bugfix release
+
 v1.3.1 Jan 28, 2016
 ====================
 
