@@ -15,9 +15,9 @@ describe 'pushing a static app with dummy file in root' do
     has_diego = `cf has-diego-enabled public_unspecified`.strip
     public_files = ''
     if has_diego == "true"
-      public_files = `cf ssh public_unspecified -c "ls app/public"`
+      public_files = `cf ssh public_unspecified -c "ls /app/public"`
     else
-      public_files = `cf files public_unspecified app/public`
+      public_files = `cf files public_unspecified /app/public`
     end
 
     expect(public_files).to match(/dummy_file/)
@@ -25,9 +25,9 @@ describe 'pushing a static app with dummy file in root' do
     root_files = ''
     has_diego = `cf has-diego-enabled public_unspecified`.strip
     if has_diego == "true"
-      root_files = `cf ssh public_unspecified -c "ls"`
+      root_files = `cf ssh public_unspecified -c "ls /app"`
     else
-      root_files = `cf files public_unspecified app`
+      root_files = `cf files public_unspecified /app`
     end
 
     expect(root_files).to_not match(/dummy_file/)
