@@ -12,11 +12,25 @@ describe 'pushing a static app with dummy file in root' do
   it 'should only have dummy file in public' do
     expect(app).to be_running
 
-    files = `cf files public_unspecified app/public`
-    expect(files).to match(/dummy_file/)
+    has_diego = `cf has-diego-enabled public_unspecified`.strip
+    public_files = ''
+    if has_diego == "true"
+      public_files = `cf ssh public_unspecified -c "ls app/public"`
+    else
+      public_files = `cf files public_unspecified app/public`
+    end
 
-    files = `cf files public_unspecified app`
-    expect(files).to_not match(/dummy_file/)
+    expect(public_files).to match(/dummy_file/)
+
+    root_files = ''
+    has_diego = `cf has-diego-enabled public_unspecified`.strip
+    if has_diego == "true"
+      root_files = `cf ssh public_unspecified -c "ls"`
+    else
+      root_files = `cf files public_unspecified app`
+    end
+
+    expect(root_files).to_not match(/dummy_file/)
   end
 
 end
