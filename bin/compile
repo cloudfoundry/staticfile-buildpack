@@ -40,13 +40,15 @@ if [[ ! -d ${root_dir} ]] ; then
 fi
 
 status "Copying project files into public/"
-mkdir -p $cache_dir/public
-rsync -a \
-      --exclude='/Staticfile' \
-      --exclude='/Staticfile.auth' \
-      --exclude='/manifest.yml' \
-      --exclude='/stackato.yml' \
-      $root_dir/ $build_dir/public
+mkdir -p "$build_dir/public"
+shopt -s extglob
+root_dir_absolute=`cd $root_dir 2>/dev/null && pwd -P`
+if [ ${build_dir}/public != ${root_dir_absolute} ]; then
+  mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml|public) $build_dir/public || true
+fi
+shopt -u extglob
+
+
 
 status "Setting up nginx"
 tar xzf $compile_nginx_tgz
