@@ -72,4 +72,10 @@ if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
   touch nginx/conf/.enable_directory_index
 fi
 
+# Enable ssi module
+if [[ "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
+  status "Enabling ssi"
+  touch nginx/conf/.enable_ssi
+fi
+
 cp $compile_buildpack_bin/boot.sh .
