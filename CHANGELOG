@@ -1,3 +1,11 @@
+v1.3.4 Mar 21, 2016
+====================
+
+* Toggle for ssi in Staticfile
+  (https://www.pivotaltracker.com/story/show/111667592)
+
+* Specify charset of HTML chars in nginx.conf
+
 v1.3.3 Mar 14, 2016
 ====================
 
