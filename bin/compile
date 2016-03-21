@@ -40,11 +40,13 @@ if [[ ! -d ${root_dir} ]] ; then
 fi
 
 status "Copying project files into public/"
-mkdir -p "$build_dir/public"
 shopt -s extglob
 root_dir_absolute=`cd $root_dir 2>/dev/null && pwd -P`
 if [ ${build_dir}/public != ${root_dir_absolute} ]; then
-  mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml|public) $build_dir/public || true
+  tmp_dir=`mktemp -d /tmp/XXXXX`
+  mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml) $tmp_dir || true
+  rm -rf $build_dir/public
+  mv $tmp_dir  $build_dir/public
 fi
 shopt -u extglob
 
