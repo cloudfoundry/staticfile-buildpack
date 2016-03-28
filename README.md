@@ -75,6 +75,14 @@ Add a line to your `Staticfile` that begins with `directory:`
 directory: visible
 ```
 
+### Server Side Includes (SSI)
+
+If you want to enable support for [SSI](https://en.wikipedia.org/wiki/Server_Side_Includes) add the following line to your `Staticfile`:
+
+```
+ssi: enabled
+```
+
 ### Advanced Nginx configuration
 
 You can customise the Nginx configuration further, by adding `nginx.conf` and/or `mime.types` to your root folder.
