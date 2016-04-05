@@ -15,12 +15,12 @@ exclude_files:
 url_to_dependency_map:
   - match: nginx.tgz
     name: nginx
-    version: 1.9.13
+    version: 1.9.14
 
 dependencies:
   - name: nginx
-    version: 1.9.13
-    uri: https://pivotal-buildpacks.s3.amazonaws.com/concourse-binaries/nginx/nginx-1.9.13-linux-x64.tgz
+    version: 1.9.14
+    uri: https://pivotal-buildpacks.s3.amazonaws.com/concourse-binaries/nginx/nginx-1.9.14-linux-x64.tgz
     cf_stacks:
       - cflinuxfs2
-    md5: 6717ec46d4c179a8dae87f7aaf359b94
+    md5: d11d026d9cb7e461839b1080a76d659e
