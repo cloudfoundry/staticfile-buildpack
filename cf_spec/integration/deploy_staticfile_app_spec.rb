@@ -39,5 +39,9 @@ describe 'deploy a staticfile app' do
     it 'logs the files it downloads' do
       expect(app).to have_logged(/Downloaded \[https:\/\/.*\]/)
     end
+
+    it "uses a proxy during staging if present" do
+      expect(app).to use_proxy_during_staging
+    end
   end
 end
