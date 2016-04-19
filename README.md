@@ -31,6 +31,12 @@ cf push my-site -m 64M
 
 Why `-m 64M`? Your static assets will be served by [Nginx](http://nginx.com/) and it only requires 20M \[[reference](http://wiki.nginx.org/WhyUseIt)]. The `-m 64M` reduces the RAM allocation from the default 1G allocated to Cloud Foundry containers. In the future there may be a way for a buildpack to indicate its default RAM requirements; but not as of writing.
 
+#### HTTP Proxy Support
+
+If you need to use a proxy to download dependencies during staging, you can set
+the `http_proxy` and/or `https_proxy` environment variables. For more information, see
+the [Proxy Usage Docs](http://docs.cloudfoundry.org/buildpacks/proxy-usage.html).
+
 ## Configuration
 
 ### Alternate root folder
