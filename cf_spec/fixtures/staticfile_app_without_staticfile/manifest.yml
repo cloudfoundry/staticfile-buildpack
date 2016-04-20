@@ -1,0 +1,4 @@
+---
+applications:
+  - name: no_staticfile
+    buildpack: staticfile-test-buildpack

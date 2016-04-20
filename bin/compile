@@ -25,8 +25,8 @@ cd $build_dir
 
 # Alternate root location (default is root of project) for html/js/css
 # root: dist/
-if [[ "$(grep root: Staticfile)X" != "X" ]]; then
-  root_dir=$(grep root: Staticfile | sed -e 's/^root: *//;s/\s*$//')
+if [[ -e "Staticfile" && "$(grep 'root:' Staticfile)X" != "X" ]]; then
+  root_dir=$(grep 'root:' Staticfile | sed -e 's/^root: *//;s/\s*$//')
   status "Root folder $root_dir"
 else
   status "Using root folder"
@@ -69,13 +69,13 @@ if [[ -f Staticfile.auth ]]; then
 fi
 
 # Enable directory index
-if [[ "$(grep directory: Staticfile)X" != "X" ]]; then
+if [[ -e "Staticfile" && "$(grep 'directory:' Staticfile)X" != "X" ]]; then
   status "Enabling directory index for folders without index.html files"
   touch nginx/conf/.enable_directory_index
 fi
 
 # Enable ssi module
-if [[ "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
+if [[ -e "Staticfile" && "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
   status "Enabling ssi"
   touch nginx/conf/.enable_ssi
 fi
