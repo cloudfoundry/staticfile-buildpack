@@ -1,3 +1,15 @@
+v1.3.7 Apr 22, 2016
+====================
+
+* Add nginx 1.9.15, remove nginx 1.9.14
+  (https://www.pivotaltracker.com/story/show/117934027)
+
+* Add nginx 1.9.14, remove nginx 1.9.12
+  (https://www.pivotaltracker.com/story/show/109491060)
+
+* Remove extraneous grep Staticfile error messages when pushing without Staticfile
+  (https://www.pivotaltracker.com/story/show/117950873)
+
 v1.3.6 Apr 06, 2016
 ====================
 
