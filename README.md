@@ -24,7 +24,8 @@ For information on deploying static sites visit [CloudFoundry.org](http://docs.c
 1. Build the buildpack
 
   ```shell
-  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ --uncached | --cached ]
+  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ --cached | --uncached ]
+  ```
 
 1. Use in Cloud Foundry
 
