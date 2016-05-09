@@ -1,3 +1,9 @@
+v1.3.8 May 09, 2016
+====================
+
+* Add a way to make nginx more HTML5 push state friendly
+  (https://www.pivotaltracker.com/story/show/118545199)
+
 v1.3.7 Apr 22, 2016
 ====================
 
