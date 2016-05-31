@@ -3,11 +3,11 @@
 
 A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for static stites (HTML/JS/CSS).
 
-## Using the Buildpack
+### Buildpack User Documentation
 
-For information on deploying static sites visit [CloudFoundry.org](http://docs.cloudfoundry.org/buildpacks/staticfile/index.html).
+Official buildpack documentation can be found at http://docs.cloudfoundry.org/buildpacks/staticfile/index.html.
 
-# Building the Buildpack
+### Building the Buildpack
 
 1. Make sure you have fetched submodules
 
@@ -36,7 +36,7 @@ For information on deploying static sites visit [CloudFoundry.org](http://docs.c
   cf push my_app -b custom_node_buildpack
   ```
 
-## Testing
+### Testing
 Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests.
 
 To test a buildpack, run the following command from the buildpack's directory:
@@ -47,22 +47,22 @@ BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-build
 
 More options can be found on Machete's [Github page.](https://github.com/cloudfoundry/machete)
 
-## Contributing
+### Contributing
 
 Find our guidelines [here](./CONTRIBUTING.md).
 
-## Help and Support
+### Help and Support
 
 Join the #buildpacks channel in our [Slack community] (http://slack.cloudfoundry.org/) if you need any further assistance.
 
-## Reporting Issues
+### Reporting Issues
 
 Open a GitHub issue on this project [here](https://github.com/cloudfoundry/staticfile/issues/new)
 
-## Active Development
+### Active Development
 
 The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066)
 
-## Acknowledgements
+### Acknowledgements
 
 This buildpack is based heavily upon Jordon Bedwell's Heroku buildpack and the modifications by David Laing for Cloud Foundry [nginx-buildpack](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
