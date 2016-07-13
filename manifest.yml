@@ -1,26 +1,23 @@
 ---
 language: staticfile
-
 exclude_files:
-  - .git/
-  - .gitignore
-  - .gitmodules
-  - .rspec
-  - cf_spec/
-  - log/
-  - test/
-  - buildpack-packager/
-  - staticfile_buildpack-*v*.zip
-
+- ".git/"
+- ".gitignore"
+- ".gitmodules"
+- ".rspec"
+- cf_spec/
+- log/
+- test/
+- buildpack-packager/
+- staticfile_buildpack-*v*.zip
 url_to_dependency_map:
-  - match: nginx.tgz
-    name: nginx
-    version: 1.11.1
-
+- match: nginx.tgz
+  name: nginx
+  version: 1.11.2
 dependencies:
-  - name: nginx
-    version: 1.11.1
-    uri: https://pivotal-buildpacks.s3.amazonaws.com/concourse-binaries/nginx/nginx-1.11.1-linux-x64.tgz
-    cf_stacks:
-      - cflinuxfs2
-    md5: 7d28497395b62221f3380e82f89cd197
+- name: nginx
+  version: 1.11.2
+  uri: https://pivotal-buildpacks.s3.amazonaws.com/concourse-binaries/nginx/nginx-1.11.2-linux-x64.tgz
+  md5: f7e40532aa82b56b778b063314f64872
+  cf_stacks:
+  - cflinuxfs2
