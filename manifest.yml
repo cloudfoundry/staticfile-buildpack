@@ -13,11 +13,11 @@ exclude_files:
 url_to_dependency_map:
 - match: nginx.tgz
   name: nginx
-  version: 1.11.2
+  version: 1.11.3
 dependencies:
 - name: nginx
-  version: 1.11.2
-  uri: https://buildpacks.cloudfoundry.org/concourse-binaries/nginx/nginx-1.11.2-linux-x64.tgz
-  md5: 0b029e58846028385a2fc19d484c29e7
+  version: 1.11.3
+  uri: https://buildpacks.cloudfoundry.org/concourse-binaries/nginx/nginx-1.11.3-linux-x64.tgz
+  md5: 4944b39c77b4fc245df45e60eae635b3
   cf_stacks:
   - cflinuxfs2
