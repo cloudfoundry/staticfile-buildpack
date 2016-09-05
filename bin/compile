@@ -41,6 +41,7 @@ fi
 
 status "Copying project files into public/"
 shopt -s extglob
+shopt -s dotglob 
 root_dir_absolute=`cd $root_dir 2>/dev/null && pwd -P`
 if [ ${build_dir}/public != ${root_dir_absolute} ]; then
   tmp_dir=`mktemp -d /tmp/XXXXX`
@@ -49,6 +50,7 @@ if [ ${build_dir}/public != ${root_dir_absolute} ]; then
   mv $tmp_dir  $build_dir/public
 fi
 shopt -u extglob
+shopt -u dotglob 
 
 
 
