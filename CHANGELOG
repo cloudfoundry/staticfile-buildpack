@@ -1,3 +1,15 @@
+v1.3.11 Sep 19, 2016
+=====================
+
+* Add nginx 1.11.4, remove nginx 1.11.3
+  (https://www.pivotaltracker.com/story/show/130296431)
+
+* Redact credentials from URLs in a cached buildpack's output
+  (https://www.pivotaltracker.com/story/show/127357631)
+
+* Redact credentials from URLs in an uncached buildpack's output
+  (https://www.pivotaltracker.com/story/show/126514693)
+
 v1.3.10 Jul 28, 2016
 =====================
 
