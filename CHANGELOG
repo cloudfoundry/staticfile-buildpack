@@ -1,3 +1,13 @@
+v1.3.12 Oct 19, 2016
+=====================
+
+* Add nginx 1.11.5, remove nginx 1.11.4
+  (https://www.pivotaltracker.com/story/show/132088805)
+
+* staticfile-buildpack BOSH release now available on bosh.io at
+  http://bosh.io/releases/github.com/cloudfoundry/staticfile-buildpack-release
+  (https://www.pivotaltracker.com/story/show/130040305)
+
 v1.3.11 Sep 19, 2016
 =====================
 
