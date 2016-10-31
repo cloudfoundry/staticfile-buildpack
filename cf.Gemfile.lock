@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/cloudfoundry/buildpack-packager
+  remote: https://github.com/cloudfoundry/buildpack-packager.git
   revision: 720b7ef03b7b677dc7a83d42a3838468433c4a2b
   tag: v2.3.4
   specs:
@@ -36,7 +36,7 @@ GEM
     i18n (0.7.0)
     json (1.8.3)
     kwalify (0.7.2)
-    minitest (5.9.0)
+    minitest (5.9.1)
     multi_xml (0.5.5)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
@@ -74,4 +74,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.5
+   1.13.6
