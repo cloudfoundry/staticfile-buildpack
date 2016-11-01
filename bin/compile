@@ -80,6 +80,12 @@ if [[ -e "Staticfile" && "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
   touch nginx/conf/.enable_ssi
 fi
 
+# Enable ssi VCAP_SERVICES expose module
+if [[ -e "Staticfile" && "$(grep 'ssi_expose: enabled' Staticfile)X" != "X" ]]; then
+  status "Enabling ssi VCAP_SERVICES expose"
+  touch nginx/conf/.enable_ssi_expose
+fi
+
 # Enable pushstate module
 if [[ -e "Staticfile" && "$(grep 'pushstate: enabled' Staticfile)X" != "X" ]]; then
   status "Enabling pushstate"
