@@ -84,4 +84,10 @@ if [[ -e "Staticfile" && "$(grep 'pushstate: enabled' Staticfile)X" != "X" ]]; t
   touch nginx/conf/.enable_pushstate
 fi
 
+# Enable HSTS
+if [[ -e "Staticfile" && "$(grep 'http_strict_transport_security: true' Staticfile)X" != "X" ]]; then
+  status "Enabling HSTS"
+  touch nginx/conf/.enable_hsts
+fi
+
 cp $compile_buildpack_bin/boot.sh .
