@@ -39,16 +39,30 @@ if [[ ! -d ${root_dir} ]] ; then
   error "the application Staticfile specifies a root directory \`${root_dir}\` that is a plain file, but was expected to be a directory"
 fi
 
+if [[ -e "Staticfile" && "$(grep 'host_dot_files: true' Staticfile)X" != "X" ]]; then
+  host_dotfiles=true
+else
+  host_dotfiles=false
+fi
+
 status "Copying project files into public/"
 shopt -s extglob
 root_dir_absolute=`cd $root_dir 2>/dev/null && pwd -P`
 if [ ${build_dir}/public != ${root_dir_absolute} ]; then
   tmp_dir=`mktemp -d /tmp/XXXXX`
-  mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml) $tmp_dir || true
+
+  if [[ "$host_dotfiles" = true ]]; then
+    shopt -s dotglob
+    mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml|.profile|.|..) $tmp_dir || true
+  else
+    mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml) $tmp_dir || true
+  fi
+
   rm -rf $build_dir/public
   mv $tmp_dir  $build_dir/public
 fi
 shopt -u extglob
+shopt -u dotglob
 
 
 
@@ -64,6 +78,11 @@ if [[ -f Staticfile.auth ]]; then
   status "Enabling basic authentication using Staticfile.auth"
   mv Staticfile.auth nginx/conf/.htpasswd
   protip "Learn about basic authentication" "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication"
+fi
+
+if [[ "$host_dotfiles" = true ]]; then
+  status "Enabling hosting of dotfiles"
+  touch nginx/conf/.enable_dotfiles
 fi
 
 # Enable directory index
