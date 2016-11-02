@@ -61,11 +61,9 @@ cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
 [[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types nginx/conf/mime.types
 
 if [[ -f Staticfile.auth ]]; then
-  status "Enabling basic authentication"
+  status "Enabling basic authentication using Staticfile.auth"
   mv Staticfile.auth nginx/conf/.htpasswd
-  cat nginx/conf/.htpasswd | indent
-  echo
-  protip "Learn about basic authentication" "https://github.com/cloudfoundry/staticfile-buildpack#basic-authentication"
+  protip "Learn about basic authentication" "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication"
 fi
 
 # Enable directory index
