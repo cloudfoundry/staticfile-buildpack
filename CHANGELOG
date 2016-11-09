@@ -1,3 +1,22 @@
+v1.3.13 Nov 09, 2016
+=====================
+
+* Option to enable hosting of hidden dot-files
+  - To enable hosting of hidden dot-files, add the line:
+      'host_dot_files: true'
+    to the Staticfile
+  - If this line is not present, no hiddne dot-files will be served
+  (https://www.pivotaltracker.com/story/show/130223889)
+
+* Enable HSTS support
+  - To enable HSTS support, add the line:
+      'http_strict_transport_security: true'
+    to the Staticfile
+  (https://www.pivotaltracker.com/story/show/128980925)
+
+* Don't write hashed credentials from Staticfile.auth to the logs
+  (https://www.pivotaltracker.com/story/show/130048269)
+
 v1.3.12 Oct 19, 2016
 =====================
 
