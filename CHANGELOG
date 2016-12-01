@@ -1,3 +1,21 @@
+v1.3.14 Dec 01, 2016
+=====================
+
+* Add default_versions support to buildpack
+  (https://www.pivotaltracker.com/story/show/126394939)
+
+* Enable 'Vary: Accept-Encoding' header
+  (https://www.pivotaltracker.com/story/show/129364025)
+
+* Add nginx 1.11.6, remove nginx 1.11.5
+  (https://www.pivotaltracker.com/story/show/134361411)
+
+* Rebuild and change path for nginx binary
+  - We identified a potential, but unlikely, attack vector in our continuous
+    integration system. Our own auditing strongly suggests that this attack
+    vector was not taken advantage of. However, out of an abundance of caution,
+    we are rebuilding all buildpack dependencies that we maintain.
+
 v1.3.13 Nov 09, 2016
 =====================
 
