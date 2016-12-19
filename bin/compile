@@ -13,6 +13,8 @@ compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
 $compile_buildpack_dir/compile-extensions/bin/check_stack_support
 
+$compile_buildpack_dir/compile-extensions/bin/check_buildpack_version $compile_buildpack_dir $cache_dir
+
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
@@ -114,3 +116,5 @@ if [[ -e "Staticfile" && "$(grep 'http_strict_transport_security: true' Staticfi
 fi
 
 cp $compile_buildpack_bin/boot.sh .
+
+$compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
