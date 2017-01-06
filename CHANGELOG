@@ -1,3 +1,27 @@
+v1.3.15 Jan 06, 2017
+=====================
+
+* Add new Slack icon to README
+  (https://www.pivotaltracker.com/story/show/136438447)
+
+* Update machete to 0.0.56
+
+* Add nginx 1.11.8, remove nginx 1.11.7
+  (https://www.pivotaltracker.com/story/show/136691285)
+
+* Correct copyright NOTICE
+  (https://www.pivotaltracker.com/story/show/136141035)
+
+* Add new version warning to staticfile buildpack
+  (https://www.pivotaltracker.com/story/show/135234395)
+
+* Add nginx 1.11.7, remove nginx 1.11.6
+  (https://www.pivotaltracker.com/story/show/136041771)
+
+* Use regexes for url_to_dependency mapping for nginx
+  - Remove hardcoded version string from url_to_dependency mapping
+  (https://www.pivotaltracker.com/story/show/126394939)
+
 v1.3.14 Dec 01, 2016
 =====================
 
