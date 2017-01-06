@@ -1,5 +1,5 @@
 #Cloud Foundry Static Buildpack
-[![CF Slack](https://s3.amazonaws.com/buildpacks-assets/buildpacks-slack.svg)](http://slack.cloudfoundry.org)
+[![CF Slack](https://www.google.com/s2/favicons?domain=www.slack.com) Join us on Slack](http://slack.cloudfoundry.org)
 
 A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for static stites (HTML/JS/CSS).
 
