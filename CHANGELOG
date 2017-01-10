@@ -1,3 +1,11 @@
+v1.3.16 Jan 10, 2017
+=====================
+
+* Catch excecptions from buildpack version warning scripts
+  - Under some non-standard CF deployment configurations, it was possible for these scripts to
+  error out. As they are purely informative, this should never happen.
+  (https://www.pivotaltracker.com/story/show/137351597)
+
 v1.3.15 Jan 06, 2017
 =====================
 
