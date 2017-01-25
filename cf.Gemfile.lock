@@ -1,12 +1,12 @@
 GIT
   remote: https://github.com/cloudfoundry/buildpack-packager
-  revision: 720b7ef03b7b677dc7a83d42a3838468433c4a2b
-  tag: v2.3.4
+  revision: 63c7297eec83cbea95f751c995292586d87342d6
+  tag: v2.3.5
   specs:
-    buildpack-packager (2.3.4)
-      activesupport (~> 4.1.8)
-      kwalify
-      terminal-table (~> 1.4.5)
+    buildpack-packager (2.3.5)
+      activesupport (~> 4.1)
+      kwalify (~> 0)
+      terminal-table (~> 1.4)
 
 GIT
   remote: https://github.com/cloudfoundry/machete
@@ -20,11 +20,11 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.1.16)
-      i18n (~> 0.6, >= 0.6.9)
+    activesupport (4.2.7.1)
+      i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.1)
+      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     childprocess (0.5.9)
       ffi (~> 1.0, >= 1.0.11)
@@ -34,9 +34,9 @@ GEM
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
-    json (1.8.3)
+    json (1.8.6)
     kwalify (0.7.2)
-    minitest (5.9.1)
+    minitest (5.10.1)
     multi_xml (0.6.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
@@ -54,10 +54,12 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    terminal-table (1.4.5)
+    terminal-table (1.7.3)
+      unicode-display_width (~> 1.1.1)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unicode-display_width (1.1.3)
 
 PLATFORMS
   ruby
