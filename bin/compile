@@ -90,8 +90,8 @@ status "==> Downloading OpenResty..." \
     # --http-proxy-temp-path=$NGINX_PREFIX/proxy_temp \
     # --http-log-path=$NGINX_PREFIX/access.log \
     # --error-log-path=$NGINX_PREFIX/error.log \
-    --pid-path=$NGINX_PREFIX/nginx.pid \
-    --lock-path=$NGINX_PREFIX/nginx.lock \
+    # --pid-path=$NGINX_PREFIX/nginx.pid \
+    # --lock-path=$NGINX_PREFIX/nginx.lock \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
