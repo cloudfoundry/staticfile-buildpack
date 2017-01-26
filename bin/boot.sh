@@ -17,14 +17,14 @@ export APP_ROOT=$HOME
 
 export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 
-conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
-if [ -f $APP_ROOT/public/nginx.conf ]
-then
-  conf_file=$APP_ROOT/public/nginx.conf
-fi
-
-mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
-erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
+# conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
+# if [ -f $APP_ROOT/public/nginx.conf ]
+# then
+#   conf_file=$APP_ROOT/public/nginx.conf
+# fi
+#
+# mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
+# erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
 
 # mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
