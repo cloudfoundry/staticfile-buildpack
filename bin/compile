@@ -119,8 +119,8 @@ cp $compile_buildpack_bin/boot.sh .
 
 echo "kdjfnkvdnfkj"
 
-echo OPENRESTY_PREFIX
-echo NGINX_PREFIX
+echo $OPENRESTY_PREFIX
+echo $NGINX_PREFIX
 
 pwd
 
