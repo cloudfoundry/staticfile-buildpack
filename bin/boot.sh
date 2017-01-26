@@ -26,9 +26,9 @@ fi
 mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
 erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
+mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
 cat > $APP_ROOT/nginx/nginx/error.log
 cat > $APP_ROOT/nginx/nginx/access.log
-mkdir $APP_ROOT/nginx/nginx/client_body_temp
 # ------------------------------------------------------------------------------------------------
 
 # mkfifo $APP_ROOT/openresty/nginx/logs/access.log
