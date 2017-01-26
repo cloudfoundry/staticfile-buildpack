@@ -87,19 +87,6 @@ status "==> Downloading OpenResty..." \
  && echo "using upto $NPROC threads" \
  && ./configure \
     --prefix=$build_dir \
-    # --http-client-body-temp-path=$NGINX_PREFIX/client_body_temp \
-    # --http-log-path=$NGINX_PREFIX/logs/access.log \
-    # --error-log-path=$NGINX_PREFIX/logs/error.log \
-    # --with-luajit \
-    # --with-pcre-jit \
-    # --with-ipv6 \
-    # --with-http_ssl_module \
-    # --without-http_ssi_module \
-    # --without-http_userid_module \
-    # --without-http_fastcgi_module \
-    # --without-http_uwsgi_module \
-    # --without-http_scgi_module \
-    # --without-http_memcached_module \
     -j${NPROC} \
  && echo "==> Building OpenResty..." \
  && make -j${NPROC} \
