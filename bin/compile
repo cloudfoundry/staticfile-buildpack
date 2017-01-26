@@ -93,7 +93,7 @@ status "==> Downloading OpenResty..." \
     # --pid-path=$NGINX_PREFIX/nginx.pid \
     # --lock-path=$NGINX_PREFIX/nginx.lock \
     # --with-luajit \
-    --with-pcre-jit \
+    # --with-pcre-jit \
     --with-ipv6 \
     --with-http_ssl_module \
     --without-http_ssi_module \
