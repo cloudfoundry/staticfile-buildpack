@@ -119,9 +119,9 @@ echo $OPENRESTY_PREFIX
 
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
 
-mkdir -p $APP_ROOT/openresty/nginx/logs
+mkdir -p $build_dir/openresty/nginx/logs
 
-touch $APP_ROOT/openresty/nginx/logs/error.log
-touch $APP_ROOT/openresty/nginx/logs/access.log
+touch $build_dir/openresty/nginx/logs/error.log
+touch $build_dir/openresty/nginx/logs/access.log
 
 echo "---->"
