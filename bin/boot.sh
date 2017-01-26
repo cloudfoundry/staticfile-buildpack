@@ -15,6 +15,8 @@ echo "====> in boot.sh"
 export APP_ROOT=$HOME
 # export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
+export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
+
 conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
 if [ -f $APP_ROOT/public/nginx.conf ]
 then
@@ -22,15 +24,15 @@ then
 fi
 
 mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
-erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/nginx/conf/nginx.conf
+erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
 # ------------------------------------------------------------------------------------------------
 
-mkfifo $APP_ROOT/openresty/nginx/logs/access.log
-mkfifo $APP_ROOT/openresty/nginx/logs/error.log
-
-cat < $APP_ROOT/openresty/nginx/logs/access.log &
-(>&2 cat) < $APP_ROOT/openresty/nginx/logs/error.log &
+# mkfifo $APP_ROOT/openresty/nginx/logs/access.log
+# mkfifo $APP_ROOT/openresty/nginx/logs/error.log
+#
+# cat < $APP_ROOT/openresty/nginx/logs/access.log &
+# (>&2 cat) < $APP_ROOT/openresty/nginx/logs/error.log &
 
 exec $APP_ROOT/openresty/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/openresty/nginx/conf/nginx.conf
 
