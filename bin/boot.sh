@@ -11,7 +11,7 @@
 # either express or implied. See the License for the specific language governing permissions
 # and  limitations under the License.
 # ------------------------------------------------------------------------------------------------
-
+echo "====> in boot.sh"
 export APP_ROOT=$HOME
 # export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
