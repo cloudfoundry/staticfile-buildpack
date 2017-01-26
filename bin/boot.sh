@@ -17,14 +17,14 @@ export APP_ROOT=$HOME
 
 export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 
-# conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
-# if [ -f $APP_ROOT/public/nginx.conf ]
-# then
-#   conf_file=$APP_ROOT/public/nginx.conf
-# fi
-#
-# mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
-# erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
+conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
+if [ -f $APP_ROOT/public/nginx.conf ]
+then
+  conf_file=$APP_ROOT/public/nginx.conf
+fi
+
+mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
+erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
 
 # mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
@@ -39,40 +39,6 @@ export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 #
 # cat < $APP_ROOT/openresty/nginx/logs/access.log &
 # (>&2 cat) < $APP_ROOT/openresty/nginx/logs/error.log &
-OPENRESTY_PREFIX=$APP_ROOT/openresty
-NGINX_PREFIX=$APP_ROOT/openresty/nginx
-
-
-export PATH="$PATH:/usr/local/sbin:/usr/sbin/:/sbin"
-
-status "==> Downloading OpenResty..." \
- && curl -sSL http://openresty.org/download/ngx_openresty-${OPENRESTY_VERSION}.tar.gz | tar -xvz \
- && echo "==> Configuring OpenResty..." \
- && cd ngx_openresty-* \
- && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
- && echo "using upto $NPROC threads" \
- && ./configure \
-    --prefix=$OPENRESTY_PREFIX \
-    --http-client-body-temp-path=$NGINX_PREFIX/client_body_temp \
-    --http-log-path=$NGINX_PREFIX/logs/access.log \
-    --error-log-path=$NGINX_PREFIX/logs/error.log \
-    --with-luajit \
-    --with-pcre-jit \
-    --with-ipv6 \
-    --with-http_ssl_module \
-    --without-http_ssi_module \
-    --without-http_userid_module \
-    --without-http_fastcgi_module \
-    --without-http_uwsgi_module \
-    --without-http_scgi_module \
-    --without-http_memcached_module \
-    -j${NPROC} \
- && echo "==> Building OpenResty..." \
- && make -j${NPROC} \
- && echo "==> Installing OpenResty..." \
- && make install \
- && echo "==> Finishing..." \
-
 
 exec $APP_ROOT/openresty/nginx/sbin/nginx -c $APP_ROOT/openresty/nginx/conf/nginx.conf
 
