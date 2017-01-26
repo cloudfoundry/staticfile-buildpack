@@ -115,13 +115,14 @@ status "==> Downloading OpenResty..." \
  # && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* lua \
 
 
-cd OPENRESTY_PREFIX
-
-ls
-
 cp $compile_buildpack_bin/boot.sh .
 
 echo "kdjfnkvdnfkj"
+
+echo OPENRESTY_PREFIX
+echo NGINX_PREFIX
+
+pwd
 
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
 
