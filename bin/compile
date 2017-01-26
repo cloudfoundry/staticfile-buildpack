@@ -88,6 +88,9 @@ status "==> Downloading OpenResty..." \
  && echo "using upto $NPROC threads" \
  && ./configure \
     --prefix=$OPENRESTY_PREFIX \
+    --http-client-body-temp-path=$NGINX_PREFIX/client_body_temp \
+    --http-log-path=$NGINX_PREFIX/logs/access.log \
+    --error-log-path=$NGINX_PREFIX/logs/error.log \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
@@ -119,9 +122,9 @@ echo $OPENRESTY_PREFIX
 
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
 
-mkdir -p $build_dir/openresty/nginx/logs
-
-touch $build_dir/openresty/nginx/logs/error.log
-touch $build_dir/openresty/nginx/logs/access.log
+# mkdir -p $build_dir/openresty/nginx/logs
+#
+# touch $build_dir/openresty/nginx/logs/error.log
+# touch $build_dir/openresty/nginx/logs/access.log
 
 echo "---->"
