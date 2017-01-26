@@ -11,6 +11,8 @@ cache_dir=$2
 
 OPENRESTY_VERSION=1.9.3.1
 
+export APP_ROOT=$HOME
+
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
 $compile_buildpack_dir/compile-extensions/bin/check_stack_support
@@ -116,5 +118,10 @@ echo "openresty"
 echo $OPENRESTY_PREFIX
 
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
+
+mkdir -p $APP_ROOT/openresty/nginx/logs
+
+touch $APP_ROOT/openresty/nginx/logs/error.log
+touch $APP_ROOT/openresty/nginx/logs/access.log
 
 echo "---->"
