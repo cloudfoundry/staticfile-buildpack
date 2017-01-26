@@ -86,7 +86,7 @@ status "==> Downloading OpenResty..." \
  && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
  && echo "using upto $NPROC threads" \
  && ./configure \
-    --prefix=$OPENRESTY_PREFIX \
+    --prefix=$build_dir \
     # --http-client-body-temp-path=$NGINX_PREFIX/client_body_temp \
     # --http-log-path=$NGINX_PREFIX/logs/access.log \
     # --error-log-path=$NGINX_PREFIX/logs/error.log \
