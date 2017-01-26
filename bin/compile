@@ -85,6 +85,7 @@ status "==> Downloading OpenResty..." \
  && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
  && echo "using upto $NPROC threads" \
  && ./configure \
+    --prefix=$OPENRESTY_PREFIX \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
