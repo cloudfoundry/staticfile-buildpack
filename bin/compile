@@ -86,12 +86,12 @@ status "==> Downloading OpenResty..." \
  && echo "using upto $NPROC threads" \
  && ./configure \
     --prefix=$OPENRESTY_PREFIX \
-    # --http-client-body-temp-path=$VAR_PREFIX/client_body_temp \
-    # --http-proxy-temp-path=$VAR_PREFIX/proxy_temp \
-    # --http-log-path=$VAR_PREFIX/access.log \
-    # --error-log-path=$VAR_PREFIX/error.log \
-    # --pid-path=$VAR_PREFIX/nginx.pid \
-    # --lock-path=$VAR_PREFIX/nginx.lock \
+    --http-client-body-temp-path=$VAR_PREFIX/client_body_temp \
+    --http-proxy-temp-path=$VAR_PREFIX/proxy_temp \
+    --http-log-path=$VAR_PREFIX/access.log \
+    --error-log-path=$VAR_PREFIX/error.log \
+    --pid-path=$VAR_PREFIX/nginx.pid \
+    --lock-path=$VAR_PREFIX/nginx.lock \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
