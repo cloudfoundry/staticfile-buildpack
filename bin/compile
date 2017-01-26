@@ -86,7 +86,7 @@ status "==> Downloading OpenResty..." \
  && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
  && echo "using upto $NPROC threads" \
  && ./configure \
-    --prefix=$build_dir \
+    --prefix=$OPENRESTY_PREFIX \
     -j${NPROC} \
  && echo "==> Building OpenResty..." \
  && make -j${NPROC} \
@@ -103,14 +103,6 @@ cd $build_dir
 
 cp $compile_buildpack_bin/boot.sh .
 
-echo "openresty"
-echo $OPENRESTY_PREFIX
-
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
-
-# mkdir -p $build_dir/openresty/nginx/logs
-#
-# touch $build_dir/openresty/nginx/logs/error.log
-# touch $build_dir/openresty/nginx/logs/access.log
 
 echo "---->"
