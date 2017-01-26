@@ -115,7 +115,6 @@ status "==> Downloading OpenResty..." \
  # && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* lua \
 
 cd $build_dir
-cd ..
 
 cp $compile_buildpack_bin/boot.sh .
 
