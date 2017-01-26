@@ -21,6 +21,9 @@ mkdir -p /tmp/staged/app/openresty/nginx/logs
 touch /tmp/staged/app/openresty/nginx/logs/error.log
 mkdir -p /tmp/staged/app/openresty/nginx/client_body_temp
 
+mkdir -p $APP_ROOT/nginx/logs
+touch $APP_ROOT/nginx/logs/error.log
+
 conf_file=$APP_ROOT/openresty/nginx/conf/nginx.conf
 if [ -f $APP_ROOT/public/nginx.conf ]
 then
@@ -31,11 +34,7 @@ mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
 erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
 
-# mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
-# mkdir -p $APP_ROOT/nginx/logs
-# cat > $APP_ROOT/nginx/logs/error.log
-# cat > $APP_ROOT/nginx/nginx/error.log
-# cat > $APP_ROOT/nginx/nginx/access.log
+
 # ------------------------------------------------------------------------------------------------
 
 # mkfifo $APP_ROOT/openresty/nginx/logs/access.log
