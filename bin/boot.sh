@@ -12,7 +12,6 @@
 # and  limitations under the License.
 # ------------------------------------------------------------------------------------------------
 echo "====> in boot.sh"
-echo $HOME
 export APP_ROOT=$HOME
 # export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
@@ -28,11 +27,11 @@ mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
 erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
 
-mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
-mkdir -p $APP_ROOT/nginx/logs
-cat > $APP_ROOT/nginx/logs/error.log
-cat > $APP_ROOT/nginx/nginx/error.log
-cat > $APP_ROOT/nginx/nginx/access.log
+# mkdir -p $APP_ROOT/nginx/nginx/client_body_temp
+# mkdir -p $APP_ROOT/nginx/logs
+# cat > $APP_ROOT/nginx/logs/error.log
+# cat > $APP_ROOT/nginx/nginx/error.log
+# cat > $APP_ROOT/nginx/nginx/access.log
 # ------------------------------------------------------------------------------------------------
 
 # mkfifo $APP_ROOT/openresty/nginx/logs/access.log
