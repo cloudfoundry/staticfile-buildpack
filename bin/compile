@@ -19,7 +19,7 @@ $compile_buildpack_dir/compile-extensions/bin/check_buildpack_version $compile_b
 
 OPENRESTY_PREFIX=$build_dir/openresty
 NGINX_PREFIX=$build_dir/openresty/nginx
-VAR_PREFIX=nginx
+VAR_PREFIX=/var/nginx
 
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
