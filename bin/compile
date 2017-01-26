@@ -19,7 +19,6 @@ $compile_buildpack_dir/compile-extensions/bin/check_buildpack_version $compile_b
 
 OPENRESTY_PREFIX=$build_dir/openresty
 NGINX_PREFIX=$build_dir/openresty/nginx
-VAR_PREFIX=nginx
 
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
@@ -86,12 +85,12 @@ status "==> Downloading OpenResty..." \
  && echo "using upto $NPROC threads" \
  && ./configure \
     --prefix=$OPENRESTY_PREFIX \
-    --http-client-body-temp-path=$VAR_PREFIX/client_body_temp \
-    --http-proxy-temp-path=$VAR_PREFIX/proxy_temp \
-    --http-log-path=$VAR_PREFIX/access.log \
-    --error-log-path=$VAR_PREFIX/error.log \
-    --pid-path=$VAR_PREFIX/nginx.pid \
-    --lock-path=$VAR_PREFIX/nginx.lock \
+    --http-client-body-temp-path=$NGINX_PREFIX/client_body_temp \
+    --http-proxy-temp-path=$NGINX_PREFIX/proxy_temp \
+    --http-log-path=$NGINX_PREFIX/access.log \
+    --error-log-path=$NGINX_PREFIX/error.log \
+    --pid-path=$NGINX_PREFIX/nginx.pid \
+    --lock-path=$NGINX_PREFIX/nginx.lock \
     --with-luajit \
     --with-pcre-jit \
     --with-ipv6 \
