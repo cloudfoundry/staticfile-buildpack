@@ -87,9 +87,9 @@ status "==> Downloading OpenResty..." \
  && make install \
  && echo "==> Finishing..." \
 
-rm -rf ngx_openresty-1.9.3.1
-
 cd $build_dir
+
+rm -rf ngx_openresty-*
 
 cp $compile_buildpack_bin/boot.sh .
 
