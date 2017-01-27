@@ -27,13 +27,6 @@ source $compile_buildpack_dir/bin/common.sh
 
 BUILDPACK_PATH=$compile_buildpack_dir source $compile_buildpack_dir/compile-extensions/lib/common
 
-# default_nginx_version="$($compile_buildpack_dir/compile-extensions/bin/default_version_for $compile_buildpack_dir/manifest.yml nginx)"
-# echo "Using Nginx version $default_nginx_version"
-#
-# translated_url=$($compile_buildpack_dir/compile-extensions/bin/download_dependency nginx-$default_nginx_version.tgz /tmp)
-# echo "Downloaded [$translated_url]"
-#
-# compile_nginx_tgz="/tmp/nginx-$default_nginx_version.tgz"
 cd $build_dir
 
 # Alternate root location (default is root of project) for html/js/css
