@@ -20,7 +20,7 @@ url_to_dependency_map:
 dependencies:
 - name: nginx
   version: 1.11.9
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.11.9-linux-x64.tgz
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.11.9-linux-x64-64e70e6d.tgz
   md5: 64e70e6dca6b5883d309f0708d98e1be
   cf_stacks:
   - cflinuxfs2
