@@ -32,8 +32,6 @@ fi
 mv $conf_file $APP_ROOT/openresty/nginx/conf/orig.conf
 erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/nginx.conf
 
-
-
 # ------------------------------------------------------------------------------------------------
 
 mkfifo $APP_ROOT/openresty/nginx/logs/access.log

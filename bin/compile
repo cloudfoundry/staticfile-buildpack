@@ -93,16 +93,11 @@ status "==> Downloading OpenResty..." \
  && echo "==> Installing OpenResty..." \
  && make install \
  && echo "==> Finishing..." \
- # && ln -sf $NGINX_PREFIX/sbin/nginx nginx \
- # && ln -sf $NGINX_PREFIX/sbin/nginx openresty \
- # && ln -sf $OPENRESTY_PREFIX/bin/resty resty \
- # && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* $OPENRESTY_PREFIX/luajit/bin/lua \
- # && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* lua \
+
+rm -rf ngx_openresty-1.9.3.1
 
 cd $build_dir
 
 cp $compile_buildpack_bin/boot.sh .
 
 $compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
-
-echo "---->"
