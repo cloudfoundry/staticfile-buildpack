@@ -7,6 +7,9 @@ types {
   application/x-javascript js;
   application/atom+xml atom;
   application/rss+xml rss;
+  font/ttf ttf;
+  font/woff woff;
+  font/woff2 woff2;
   text/mathml mml;
   text/plain txt;
   text/vnd.sun.j2me.app-descriptor jad;
