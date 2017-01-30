@@ -12,9 +12,6 @@
 # and  limitations under the License.
 # ------------------------------------------------------------------------------------------------
 export APP_ROOT=$HOME
-echo "---- in boot.sh"
-echo $APP_ROOT
-# export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
 export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 
@@ -40,11 +37,11 @@ erb $APP_ROOT/openresty/nginx/conf/orig.conf > $APP_ROOT/openresty/nginx/conf/ng
 
 # ------------------------------------------------------------------------------------------------
 
-mkfifo $APP_ROOT/openresty/nginx/logs/access.log
-mkfifo $APP_ROOT/openresty/nginx/logs/error.log
-
-cat < $APP_ROOT/openresty/nginx/logs/access.log &
-(>&2 cat) < $APP_ROOT/openresty/nginx/logs/error.log &
+# mkfifo $APP_ROOT/openresty/nginx/logs/access.log
+# mkfifo $APP_ROOT/openresty/nginx/logs/error.log
+#
+# cat < $APP_ROOT/openresty/nginx/logs/access.log &
+# (>&2 cat) < $APP_ROOT/openresty/nginx/logs/error.log &
 
 exec $APP_ROOT/openresty/nginx/sbin/nginx -c $APP_ROOT/openresty/nginx/conf/nginx.conf
 
