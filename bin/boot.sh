@@ -24,6 +24,8 @@ mkdir -p /tmp/staged/app/openresty/nginx/logs
 touch /tmp/staged/app/openresty/nginx/logs/error.log
 mkdir -p /tmp/staged/app/openresty/nginx/client_body_temp
 
+cp -a $APP_ROOT/openresty/lualib /tmp/staged/app/openresty/lualib/
+
 mkdir -p $APP_ROOT/nginx/logs
 touch $APP_ROOT/nginx/logs/error.log
 
