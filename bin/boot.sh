@@ -12,6 +12,8 @@
 # and  limitations under the License.
 # ------------------------------------------------------------------------------------------------
 export APP_ROOT=$HOME
+echo "---- in boot.sh"
+echo $APP_ROOT
 # export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
 export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
