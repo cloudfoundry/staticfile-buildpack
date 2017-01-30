@@ -17,6 +17,10 @@ export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 
 export PATH=$APP_ROOT/openresty/bin:$PATH
 
+export JWT_SECRET="vkdbfkvjbdfkv"
+
+export BASIC_AUTH_SECRET="fdkvbhdfjhvbjdfbvj"
+
 mkdir -p /tmp/staged/app/openresty/nginx/logs
 touch /tmp/staged/app/openresty/nginx/logs/error.log
 mkdir -p /tmp/staged/app/openresty/nginx/client_body_temp
