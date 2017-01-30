@@ -16,6 +16,8 @@ export APP_ROOT=$HOME
 
 export LD_LIBRARY_PATH=$APP_ROOT/openresty/luajit/lib:$LD_LIBRARY_PATH
 
+export PATH=$APP_ROOT/openresty/bin:$PATH
+
 mkdir -p /tmp/staged/app/openresty/nginx/logs
 touch /tmp/staged/app/openresty/nginx/logs/error.log
 mkdir -p /tmp/staged/app/openresty/nginx/client_body_temp
