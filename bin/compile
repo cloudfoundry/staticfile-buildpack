@@ -9,24 +9,24 @@ set -o pipefail   # do not ignore exit codes when piping output
 build_dir=$1
 cache_dir=$2
 
+OPENRESTY_VERSION=1.9.3.1
+
+
 compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
 compile_buildpack_bin=$compile_buildpack_dir/bin
 $compile_buildpack_dir/compile-extensions/bin/check_stack_support
 
 $compile_buildpack_dir/compile-extensions/bin/check_buildpack_version $compile_buildpack_dir $cache_dir
 
+OPENRESTY_PREFIX=$build_dir/openresty
+NGINX_PREFIX=$build_dir/openresty/nginx
+VAR_PREFIX=/var/nginx
+
 # Load some convenience functions like status(), echo(), and indent()
 source $compile_buildpack_dir/bin/common.sh
 
 BUILDPACK_PATH=$compile_buildpack_dir source $compile_buildpack_dir/compile-extensions/lib/common
 
-default_nginx_version="$($compile_buildpack_dir/compile-extensions/bin/default_version_for $compile_buildpack_dir/manifest.yml nginx)"
-echo "Using Nginx version $default_nginx_version"
-
-translated_url=$($compile_buildpack_dir/compile-extensions/bin/download_dependency nginx-$default_nginx_version.tgz /tmp)
-echo "Downloaded [$translated_url]"
-
-compile_nginx_tgz="/tmp/nginx-$default_nginx_version.tgz"
 cd $build_dir
 
 # Alternate root location (default is root of project) for html/js/css
@@ -70,50 +70,26 @@ fi
 shopt -u extglob
 shopt -u dotglob
 
+export PATH="$PATH:/usr/local/sbin:/usr/sbin/:/sbin"
 
+status "==> Downloading OpenResty..." \
+ && curl -sSL http://openresty.org/download/ngx_openresty-${OPENRESTY_VERSION}.tar.gz | tar -xvz \
+ && echo "==> Configuring OpenResty..." \
+ && cd ngx_openresty-* \
+ && readonly NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
+ && echo "using upto $NPROC threads" \
+ && ./configure \
+    --prefix=$OPENRESTY_PREFIX \
+    -j${NPROC} \
+ && echo "==> Building OpenResty..." \
+ && make -j${NPROC} \
+ && echo "==> Installing OpenResty..." \
+ && make install \
+ && echo "==> Finishing..." \
 
-status "Setting up nginx"
-tar xzf $compile_nginx_tgz
-cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
-cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
+cd $build_dir
 
-[[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf nginx/conf/nginx.conf
-[[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types nginx/conf/mime.types
-
-if [[ -f Staticfile.auth ]]; then
-  status "Enabling basic authentication using Staticfile.auth"
-  mv Staticfile.auth nginx/conf/.htpasswd
-  protip "Learn about basic authentication" "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication"
-fi
-
-if [[ "$host_dotfiles" = true ]]; then
-  status "Enabling hosting of dotfiles"
-  touch nginx/conf/.enable_dotfiles
-fi
-
-# Enable directory index
-if [[ -e "Staticfile" && "$(grep 'directory:' Staticfile)X" != "X" ]]; then
-  status "Enabling directory index for folders without index.html files"
-  touch nginx/conf/.enable_directory_index
-fi
-
-# Enable ssi module
-if [[ -e "Staticfile" && "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
-  status "Enabling ssi"
-  touch nginx/conf/.enable_ssi
-fi
-
-# Enable pushstate module
-if [[ -e "Staticfile" && "$(grep 'pushstate: enabled' Staticfile)X" != "X" ]]; then
-  status "Enabling pushstate"
-  touch nginx/conf/.enable_pushstate
-fi
-
-# Enable HSTS
-if [[ -e "Staticfile" && "$(grep 'http_strict_transport_security: true' Staticfile)X" != "X" ]]; then
-  status "Enabling HSTS"
-  touch nginx/conf/.enable_hsts
-fi
+rm -rf ngx_openresty-*
 
 cp $compile_buildpack_bin/boot.sh .
 
