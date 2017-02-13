@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'excon'
 
 describe 'deploy a an app with a large page' do
-  let(:app_name) { 'staticfile_app_large_page'}
+  let(:app_name) { 'large_page'}
   let(:app)      { Machete.deploy_app(app_name) }
   let(:browser)  { Machete::Browser.new(app) }
 

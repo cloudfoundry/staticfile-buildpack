@@ -20,7 +20,7 @@ describe 'deploy a an app with dot files' do
 
   context 'host_dot_files: true is present in Staticfile' do
     context 'the app uses the default root location' do
-      let(:app_name)            { 'staticfile_app_with_dotfile'}
+      let(:app_name)            { 'with_dotfile'}
       let(:staticfile_contents) { 'host_dot_files: true' }
 
       it 'hosts the dotfiles' do
@@ -33,7 +33,7 @@ describe 'deploy a an app with dot files' do
     end
 
     context 'the app specifies /public as the root location' do
-      let(:app_name) { 'app_with_dotfile_public'}
+      let(:app_name) { 'dotfile_public'}
       let(:staticfile_contents) { "host_dot_files: true\nroot: public" }
 
       it 'hosts the dotfiles' do
@@ -48,7 +48,7 @@ describe 'deploy a an app with dot files' do
 
   context 'host_dot_files: true not present in Staticfile' do
     context 'the app uses the default root location' do
-      let(:app_name) { 'staticfile_app_with_dotfile'}
+      let(:app_name) { 'with_dotfile'}
       let(:staticfile_contents) { 'host_dot_files: false' }
 
       it 'does not host the dotfiles' do
@@ -61,7 +61,7 @@ describe 'deploy a an app with dot files' do
     end
 
     context 'the app specifies /public as the root location' do
-      let(:app_name) { 'app_with_dotfile_public'}
+      let(:app_name) { 'dotfile_public'}
       let(:staticfile_contents) { "host_dot_files: false\nroot: public" }
 
       it 'does not host the dotfiles' do

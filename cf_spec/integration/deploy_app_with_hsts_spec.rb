@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'deploy an app using hsts' do
-  let(:app_name) { 'staticfile_app_with_hsts'}
+  let(:app_name) { 'with_hsts'}
   let(:app)      { Machete.deploy_app(app_name) }
   let(:browser)  { Machete::Browser.new(app) }
 

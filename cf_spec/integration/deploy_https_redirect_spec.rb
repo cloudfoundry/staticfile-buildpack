@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'excon'
 
 describe 'deploy a staticfile app' do
-  let(:app) { Machete.deploy_app('staticfile_https_app') }
+  let(:app) { Machete.deploy_app('with_https') }
   let(:browser) { Machete::Browser.new(app) }
 
   after do
