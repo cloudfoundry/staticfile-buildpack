@@ -13,6 +13,7 @@ exclude_files:
 - test/
 - buildpack-packager/
 - staticfile_buildpack-*v*.zip
+- pkg/
 url_to_dependency_map:
 - match: nginx-(\d+\.\d+\.\d+)
   name: nginx
@@ -24,3 +25,5 @@ dependencies:
   md5: 4e34e08b0ec58e107c59a752af12aa43
   cf_stacks:
   - cflinuxfs2
+
+pre_package: scripts/build.sh

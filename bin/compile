@@ -1,126 +1,40 @@
-#!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+#!/bin/bash
+set -euo pipefail
 
-set -e            # fail fast
-set -o pipefail   # do not ignore exit codes when piping output
-# set -x          # enable debugging
+BUILD_DIR=$1
+CACHE_DIR=$2
+export BUILDPACK_DIR=`dirname $(readlink -f ${BASH_SOURCE%/*})`
 
-# Configure directories
-build_dir=$1
-cache_dir=$2
+GO_VERSION="1.7.5"
+GO_MD5="c9de5bb95790044de676301898e92a1b"
 
-compile_buildpack_dir=$(cd $(dirname $0); cd ..; pwd)
-compile_buildpack_bin=$compile_buildpack_dir/bin
-$compile_buildpack_dir/compile-extensions/bin/check_stack_support
+URL=https://buildpacks.cloudfoundry.org/dependencies/go/go${GO_VERSION}.linux-amd64-c9de5bb9.tar.gz
 
-$compile_buildpack_dir/compile-extensions/bin/check_buildpack_version $compile_buildpack_dir $cache_dir
+echo "-----> Download go ${GO_VERSION}"
+curl -s -L --retry 15 --retry-delay 2 $URL -o /tmp/go.tar.gz
 
-# Load some convenience functions like status(), echo(), and indent()
-source $compile_buildpack_dir/bin/common.sh
+DOWNLOAD_MD5=$(md5sum /tmp/go.tar.gz | cut -d ' ' -f 1)
 
-BUILDPACK_PATH=$compile_buildpack_dir source $compile_buildpack_dir/compile-extensions/lib/common
+if [[ $DOWNLOAD_MD5 != $GO_MD5 ]]; then
+  echo "       **ERROR** MD5 mismatch: got $DOWNLOAD_MD5 expected $GO_MD5"
+  exit 1
+fi
 
-default_nginx_version="$($compile_buildpack_dir/compile-extensions/bin/default_version_for $compile_buildpack_dir/manifest.yml nginx)"
-echo "Using Nginx version $default_nginx_version"
+tar xzf /tmp/go.tar.gz -C /tmp
 
-translated_url=$($compile_buildpack_dir/compile-extensions/bin/download_dependency nginx-$default_nginx_version.tgz /tmp)
-echo "Downloaded [$translated_url]"
+export GOROOT=/tmp/go
+export GOPATH=$BUILDPACK_DIR
 
-compile_nginx_tgz="/tmp/nginx-$default_nginx_version.tgz"
-cd $build_dir
-
-# Alternate root location (default is root of project) for html/js/css
-# root: dist/
-if [[ -e "Staticfile" && "$(grep 'root:' Staticfile)X" != "X" ]]; then
-  root_dir=$(grep 'root:' Staticfile | sed -e 's/^root: *//;s/\s*$//')
-  status "Root folder $root_dir"
+if [ -f $GOROOT/bin/go ]; then
+  echo "-----> Running go build compile"
+  output_dir=$(mktemp -d -t compileXXX)
+  $GOROOT/bin/go build -o $output_dir/compile compile
 else
-  status "Using root folder"
-fi
-root_dir=${root_dir:-.}
-if [[ ! -e ${root_dir} ]] ; then
-  error "the application Staticfile specifies a root directory \`${root_dir}\` that does not exist"
-fi
-if [[ ! -d ${root_dir} ]] ; then
-  error "the application Staticfile specifies a root directory \`${root_dir}\` that is a plain file, but was expected to be a directory"
+  echo "       **ERROR** Could not download go"
+  exit 1
 fi
 
-if [[ -e "Staticfile" && "$(grep 'host_dot_files: true' Staticfile)X" != "X" ]]; then
-  host_dotfiles=true
-else
-  host_dotfiles=false
-fi
+unset GOROOT
+unset GOPATH
 
-status "Copying project files into public/"
-shopt -s extglob
-root_dir_absolute=`cd $root_dir 2>/dev/null && pwd -P`
-if [ ${build_dir}/public != ${root_dir_absolute} ]; then
-  tmp_dir=`mktemp -d /tmp/XXXXX`
-
-  if [[ "$host_dotfiles" = true ]]; then
-    shopt -s dotglob
-    mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml|.profile|.|..) $tmp_dir || true
-  else
-    mv $root_dir_absolute/!(Staticfile|Staticfile.auth|manifest.yml|stackato.yml) $tmp_dir || true
-  fi
-
-  rm -rf $build_dir/public
-  mv $tmp_dir  $build_dir/public
-fi
-shopt -u extglob
-shopt -u dotglob
-
-
-
-status "Setting up nginx"
-tar xzf $compile_nginx_tgz
-cp -f $compile_buildpack_dir/conf/nginx.conf nginx/conf/nginx.conf
-cp -f $compile_buildpack_dir/conf/mime.types nginx/conf/mime.types
-
-[[ -f $build_dir/public/nginx.conf ]] && mv $build_dir/public/nginx.conf nginx/conf/nginx.conf
-[[ -f $build_dir/public/mime.types ]] && mv $build_dir/public/mime.types nginx/conf/mime.types
-
-if [[ -f Staticfile.auth ]]; then
-  status "Enabling basic authentication using Staticfile.auth"
-  mv Staticfile.auth nginx/conf/.htpasswd
-  protip "Learn about basic authentication" "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication"
-fi
-
-if [[ "$host_dotfiles" = true ]]; then
-  status "Enabling hosting of dotfiles"
-  touch nginx/conf/.enable_dotfiles
-fi
-
-# Nginx location_include
-if [[ -e "Staticfile" && "$(grep 'location_include:' Staticfile)X" != "X" ]]; then
-  location_include=$(grep 'location_include:' Staticfile | sed -e 's/^location_include: *//;s/\s*$//')
-  echo $location_include > nginx/conf/.enable_location_include
-fi
-
-# Enable directory index
-if [[ -e "Staticfile" && "$(grep 'directory:' Staticfile)X" != "X" ]]; then
-  status "Enabling directory index for folders without index.html files"
-  touch nginx/conf/.enable_directory_index
-fi
-
-# Enable ssi module
-if [[ -e "Staticfile" && "$(grep 'ssi: enabled' Staticfile)X" != "X" ]]; then
-  status "Enabling ssi"
-  touch nginx/conf/.enable_ssi
-fi
-
-# Enable pushstate module
-if [[ -e "Staticfile" && "$(grep 'pushstate: enabled' Staticfile)X" != "X" ]]; then
-  status "Enabling pushstate"
-  touch nginx/conf/.enable_pushstate
-fi
-
-# Enable HSTS
-if [[ -e "Staticfile" && "$(grep 'http_strict_transport_security: true' Staticfile)X" != "X" ]]; then
-  status "Enabling HSTS"
-  touch nginx/conf/.enable_hsts
-fi
-
-cp $compile_buildpack_bin/boot.sh .
-
-$compile_buildpack_dir/compile-extensions/bin/store_buildpack_metadata $compile_buildpack_dir $cache_dir
+$output_dir/compile $BUILD_DIR $CACHE_DIR

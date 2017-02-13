@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-echo -e "---\ndefault_process_types:\n  web: sh boot.sh"
+start_command="\$APP_ROOT/nginx/sbin/nginx -p \$APP_ROOT/nginx -c \$APP_ROOT/nginx/conf/nginx.conf"
+
+echo -e "---\ndefault_process_types:\n  web: $start_command"

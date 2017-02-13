@@ -1,5 +1,7 @@
 .vagrant
 .bundle
+/.idea
 cf-ssh.yml
 log/
 staticfile_buildpack*.zip
+pkg/
