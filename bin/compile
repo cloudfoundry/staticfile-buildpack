@@ -91,6 +91,12 @@ if [[ "$host_dotfiles" = true ]]; then
   touch nginx/conf/.enable_dotfiles
 fi
 
+# Nginx location_include
+if [[ -e "Staticfile" && "$(grep 'location_include:' Staticfile)X" != "X" ]]; then
+  location_include=$(grep 'location_include:' Staticfile | sed -e 's/^location_include: *//;s/\s*$//')
+  echo $location_include > nginx/conf/.enable_location_include
+fi
+
 # Enable directory index
 if [[ -e "Staticfile" && "$(grep 'directory:' Staticfile)X" != "X" ]]; then
   status "Enabling directory index for folders without index.html files"
