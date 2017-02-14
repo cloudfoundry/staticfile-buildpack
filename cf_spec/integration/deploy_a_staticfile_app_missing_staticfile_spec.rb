@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'deploy a non staticfile app' do
+describe 'a staticfile app with no staticfile' do
   let(:buildpack) { ENV.fetch('SHARED_HOST')=='true' ? 'staticfile_buildpack' : 'staticfile-test-buildpack' }
   let(:app) { Machete.deploy_app('without_staticfile', buildpack: buildpack, skip_verify_version: true) }
   let(:browser) { Machete::Browser.new(app) }
