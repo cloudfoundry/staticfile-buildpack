@@ -1,3 +1,12 @@
+v1.3.18 Feb 24, 2017
+=====================
+
+* Add nginx 1.11.10, remove nginx 1.11.9
+  (https://www.pivotaltracker.com/story/show/139833155)
+
+* Allow users to include arbitrary nginx configuration
+  (https://www.pivotaltracker.com/story/show/136370663)
+
 v1.3.17 Feb 09, 2017
 =====================
 
