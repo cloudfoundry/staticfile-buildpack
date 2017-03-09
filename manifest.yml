@@ -14,10 +14,7 @@ exclude_files:
 - buildpack-packager/
 - staticfile_buildpack-*v*.zip
 - pkg/
-url_to_dependency_map:
-- match: nginx-(\d+\.\d+\.\d+)
-  name: nginx
-  version: "$1"
+url_to_dependency_map: []
 dependencies:
 - name: nginx
   version: 1.11.10
