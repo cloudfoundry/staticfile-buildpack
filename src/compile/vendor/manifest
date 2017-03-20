@@ -5,7 +5,7 @@
 			"importpath": "github.com/cloudfoundry/libbuildpack",
 			"repository": "https://github.com/cloudfoundry/libbuildpack",
 			"vcs": "git",
-			"revision": "d32277ebf0e58ddb5de6830cc6e2c836165bc85e",
+			"revision": "9021cc37fcd096c98b4ef7c72648897a33030324",
 			"branch": "master",
 			"notests": true
 		},
@@ -31,7 +31,7 @@
 			"importpath": "github.com/golang/protobuf/proto",
 			"repository": "https://github.com/golang/protobuf",
 			"vcs": "git",
-			"revision": "8ee79997227bf9b34611aee7946ae64735e6fd93",
+			"revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
 			"branch": "master",
 			"path": "/proto",
 			"notests": true
@@ -40,7 +40,7 @@
 			"importpath": "github.com/golang/protobuf/ptypes/any",
 			"repository": "https://github.com/golang/protobuf",
 			"vcs": "git",
-			"revision": "8ee79997227bf9b34611aee7946ae64735e6fd93",
+			"revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
 			"branch": "master",
 			"path": "ptypes/any",
 			"notests": true
@@ -49,7 +49,7 @@
 			"importpath": "github.com/onsi/ginkgo",
 			"repository": "https://github.com/onsi/ginkgo",
 			"vcs": "git",
-			"revision": "bb93381d543b0e5725244abe752214a110791d01",
+			"revision": "67b9df7f55fe1165fd9ad49aca7754cce01a42b8",
 			"branch": "master",
 			"notests": true
 		},
@@ -57,7 +57,7 @@
 			"importpath": "github.com/onsi/gomega",
 			"repository": "https://github.com/onsi/gomega",
 			"vcs": "git",
-			"revision": "c463cd2a8578290d4be7a25cba69de81cf35785e",
+			"revision": "c5ef0831376c8ddd17f7deb3d343d981d38a3c23",
 			"branch": "master",
 			"notests": true
 		},
@@ -65,7 +65,7 @@
 			"importpath": "golang.org/x/sys/unix",
 			"repository": "https://go.googlesource.com/sys",
 			"vcs": "git",
-			"revision": "075e574b89e4c2d22f2286a7e2b919519c6f3547",
+			"revision": "99f16d856c9836c42d24e7ab64ea72916925fa97",
 			"branch": "master",
 			"path": "/unix",
 			"notests": true

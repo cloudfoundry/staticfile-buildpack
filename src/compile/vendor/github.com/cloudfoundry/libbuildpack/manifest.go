@@ -121,6 +121,9 @@ func (m *manifest) Version() (string, error) {
 func (m *manifest) CheckStackSupport() error {
 	requiredStack := os.Getenv("CF_STACK")
 
+	if len(m.ManifestEntries) == 0 {
+		return nil
+	}
 	for _, entry := range m.ManifestEntries {
 		for _, stack := range entry.CFStacks {
 			if stack == requiredStack {
