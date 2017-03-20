@@ -64,6 +64,12 @@ func main() {
 func (sc *StaticfileCompiler) Compile() error {
 	var err error
 
+	err = bp.RunBeforeCompile(sc.Compiler)
+	if err != nil {
+		sc.Compiler.Log.Error(err.Error())
+		return err
+	}
+
 	err = sc.LoadStaticfile()
 	if err != nil {
 		sc.Compiler.Log.Error("Unable to load Staticfile: %s", err.Error())
@@ -97,6 +103,12 @@ func (sc *StaticfileCompiler) Compile() error {
 	err = bp.WriteProfileD(sc.Compiler.BuildDir, "staticfile.sh", InitScript)
 	if err != nil {
 		sc.Compiler.Log.Error("Could not write .profile.d script: %s", err.Error())
+		return err
+	}
+
+	err = bp.RunAfterCompile(sc.Compiler)
+	if err != nil {
+		sc.Compiler.Log.Error(err.Error())
 		return err
 	}
 

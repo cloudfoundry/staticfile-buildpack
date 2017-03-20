@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'excon'
 
 describe 'deploy a staticfile app' do
-  let(:app) { Machete.deploy_app('staticfile_app') }
+  let(:app) { Machete.deploy_app('staticfile_app', env: {'BP_DEBUG' => '1'}) }
   let(:browser) { Machete::Browser.new(app) }
 
   after do
@@ -11,6 +11,8 @@ describe 'deploy a staticfile app' do
 
   specify do
     expect(app).to have_logged(/Buildpack version [\d\.]{5,}/)
+    expect(app).to have_logged(/HOOKS 1: BeforeCompile/)
+    expect(app).to have_logged(/HOOKS 2: AfterCompile/)
     expect(app).to be_running
 
     browser.visit_path('/')
@@ -32,7 +34,7 @@ describe 'deploy a staticfile app' do
       it 'returns and handles the file' do
         expect(app).to be_running
 
-        content = `curl #{compressed_flag} http://#{browser.base_url}/war_and_peace.txt`
+        content = `curl -s #{compressed_flag} http://#{browser.base_url}/war_and_peace.txt | grep --text 'Leo Tolstoy'`
         expect(content).to include("Leo Tolstoy")
       end
     end
@@ -43,7 +45,7 @@ describe 'deploy a staticfile app' do
       it 'returns and handles the file' do
         expect(app).to be_running
 
-        content = `curl #{compressed_flag} http://#{browser.base_url}/war_and_peace.txt`
+        content = `curl -s #{compressed_flag} http://#{browser.base_url}/war_and_peace.txt | grep --text 'Leo Tolstoy'`
         expect(content).to include("Leo Tolstoy")
       end
     end

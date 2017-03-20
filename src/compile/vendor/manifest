@@ -5,7 +5,7 @@
 			"importpath": "github.com/cloudfoundry/libbuildpack",
 			"repository": "https://github.com/cloudfoundry/libbuildpack",
 			"vcs": "git",
-			"revision": "72c85e7a8f7f9e334dca74a2701b5070001c3327",
+			"revision": "568364b93f005c688c5c211ed6781e12abdd92d4",
 			"branch": "master",
 			"notests": true
 		},
