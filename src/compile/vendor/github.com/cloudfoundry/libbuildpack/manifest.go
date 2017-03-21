@@ -237,12 +237,12 @@ func (m *manifest) getEntry(dep Dependency) (*ManifestEntry, error) {
 func (m *manifest) isCached() bool {
 	dependenciesDir := filepath.Join(m.ManifestRootDir, "dependencies")
 
-	_, err := os.Stat(dependenciesDir)
-	if err != nil && os.IsNotExist(err) {
-		return false
+	isCached, err := FileExists(dependenciesDir)
+	if err != nil {
+		Log.Warning("Error determining if buildpack is cached: %s", err.Error())
 	}
 
-	return true
+	return isCached
 }
 
 func (m *manifest) allDependencyVersions(depName string) []string {

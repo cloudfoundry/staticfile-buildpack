@@ -9,11 +9,12 @@ import (
 type Compiler struct {
 	BuildDir string
 	CacheDir string
+	DepsDir  string
 	Manifest Manifest
 	Log      Logger
 }
 
-func NewCompiler(buildDir string, cacheDir string, logger Logger) (*Compiler, error) {
+func NewCompiler(args []string, logger Logger) (*Compiler, error) {
 	bpDir, err := GetBuildpackDir()
 	if err != nil {
 		logger.Error("Unable to determine buildpack directory: %s", err.Error())
@@ -26,8 +27,17 @@ func NewCompiler(buildDir string, cacheDir string, logger Logger) (*Compiler, er
 		return nil, err
 	}
 
+	buildDir := args[0]
+	cacheDir := args[1]
+	depsDir := ""
+
+	if len(args) >= 4 {
+		depsDir = args[3]
+	}
+
 	c := &Compiler{BuildDir: buildDir,
 		CacheDir: cacheDir,
+		DepsDir:  depsDir,
 		Manifest: manifest,
 		Log:      logger}
 
@@ -66,6 +76,26 @@ func (c *Compiler) CheckBuildpackValid() error {
 	}
 
 	c.Manifest.CheckBuildpackVersion(c.CacheDir)
+
+	return nil
+}
+
+func (c *Compiler) LoadSuppliedDeps() error {
+	if c.DepsDir == "" {
+		return nil
+	}
+
+	err := SetEnvironmentFromSupply(c.DepsDir)
+	if err != nil {
+		c.Log.Error("Unable to setup environment variables: %s", err.Error())
+		return err
+	}
+
+	err = WriteProfileDFromSupply(c.DepsDir, c.BuildDir)
+	if err != nil {
+		c.Log.Error("Unable to write .profile.d supply script: %s", err.Error())
+		return err
+	}
 
 	return nil
 }

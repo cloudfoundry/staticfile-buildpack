@@ -85,6 +85,19 @@ func CopyFile(source, destFile string) error {
 	return writeToFile(fh, destFile, fileInfo.Mode())
 }
 
+func FileExists(file string) (bool, error) {
+	_, err := os.Stat(file)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	return true, nil
+}
+
 func extractTar(src io.Reader, destDir string) error {
 	tr := tar.NewReader(src)
 
