@@ -2,7 +2,7 @@
 language: staticfile
 default_versions:
 - name: nginx
-  version: 1.11.10
+  version: 1.11.11
 exclude_files:
 - ".git/"
 - ".gitignore"
@@ -17,10 +17,9 @@ exclude_files:
 url_to_dependency_map: []
 dependencies:
 - name: nginx
-  version: 1.11.10
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.11.10-linux-x64-4e34e08b.tgz
-  md5: 4e34e08b0ec58e107c59a752af12aa43
+  version: 1.11.11
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.11.11-linux-x64-7503af72.tgz
+  md5: 7503af722b904cc7edbe0484b56c00ba
   cf_stacks:
   - cflinuxfs2
-
 pre_package: scripts/build.sh
