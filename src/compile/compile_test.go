@@ -603,50 +603,6 @@ var _ = Describe("Compile", func() {
 		})
 	})
 
-	Describe("WriteProfileD", func() {
-		var (
-			info           os.FileInfo
-			profileDScript string
-		)
-		BeforeEach(func() {
-			profileDScript = filepath.Join(buildDir, ".profile.d", "staticfile.sh")
-		})
-
-		JustBeforeEach(func() {
-			err = compiler.WriteProfileD()
-			Expect(err).To(BeNil())
-		})
-
-		Context(".profile.d directory exists", func() {
-			BeforeEach(func() {
-				err = os.Mkdir(filepath.Join(buildDir, ".profile.d"), 0755)
-				Expect(err).To(BeNil())
-			})
-
-			It("creates the file as an executable", func() {
-				Expect(profileDScript).To(BeAnExistingFile())
-
-				info, err = os.Stat(profileDScript)
-				Expect(err).To(BeNil())
-
-				// make sure at least 1 executable bit is set
-				Expect(info.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
-			})
-
-		})
-		Context(".profile.d directory does not exist", func() {
-			It("creates the file as an executable", func() {
-				Expect(profileDScript).To(BeAnExistingFile())
-
-				info, err = os.Stat(profileDScript)
-				Expect(err).To(BeNil())
-
-				// make sure at least 1 executable bit is set
-				Expect(info.Mode().Perm() & 0111).NotTo(Equal(0000))
-			})
-		})
-	})
-
 	Describe("InstallNginx", func() {
 		It("Installs nginx to builddir", func() {
 			dep := bp.Dependency{Name: "nginx", Version: "99.99"}

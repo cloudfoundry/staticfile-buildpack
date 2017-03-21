@@ -41,11 +41,13 @@ var skipCopyFile = map[string]bool{
 }
 
 func main() {
-	buildDir := os.Args[1]
-	cacheDir := os.Args[2]
-
-	compiler, err := bp.NewCompiler(buildDir, cacheDir, bp.NewLogger())
+	compiler, err := bp.NewCompiler(os.Args[1:], bp.NewLogger())
 	err = compiler.CheckBuildpackValid()
+	if err != nil {
+		panic(err)
+	}
+
+	err = compiler.LoadSuppliedDeps()
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +94,7 @@ func (sc *StaticfileCompiler) Compile() error {
 		return err
 	}
 
-	err = sc.WriteProfileD()
+	err = bp.WriteProfileD(sc.Compiler.BuildDir, "staticfile.sh", InitScript)
 	if err != nil {
 		sc.Compiler.Log.Error("Could not write .profile.d script: %s", err.Error())
 		return err
@@ -301,20 +303,4 @@ func (sc *StaticfileCompiler) generateNginxConf() (string, error) {
 		return "", err
 	}
 	return buffer.String(), nil
-}
-
-func (sc *StaticfileCompiler) WriteProfileD() error {
-	err := os.MkdirAll(filepath.Join(sc.Compiler.BuildDir, ".profile.d"), 0755)
-	if err != nil {
-		return err
-	}
-
-	script := filepath.Join(sc.Compiler.BuildDir, ".profile.d", "staticfile.sh")
-
-	err = ioutil.WriteFile(script, []byte(InitScript), 0755)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
