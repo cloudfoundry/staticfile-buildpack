@@ -1,3 +1,20 @@
+v1.4.0 Mar 22, 2017
+=====================
+
+* Hook Support
+  Add support for BeforeCompile and AfterCompile hooks
+  (https://www.pivotaltracker.com/story/show/141975819)
+
+* Add support for supply buildpacks
+  (https://www.pivotaltracker.com/story/show/141617933)
+
+* Add nginx 1.11.11, remove nginx 1.11.10
+  (https://www.pivotaltracker.com/story/show/142148789)
+
+* Implement staticfile buildpack in Go
+  - there should be no change in observed behavior
+  (https://www.pivotaltracker.com/story/show/139019387)
+
 v1.3.18 Feb 24, 2017
 =====================
 
