@@ -55,7 +55,7 @@ describe 'deploy a an app with dot files' do
         expect(app).to be_running
         expect(app).not_to have_logged /Enabling hosting of dotfiles/
 
-        browser.visit_path('/.hidden.html')
+        browser.visit_path('/.hidden.html', allow_404: true)
         expect(browser).to have_body '404 Not Found'
       end
     end
@@ -68,7 +68,7 @@ describe 'deploy a an app with dot files' do
         expect(app).to be_running
         expect(app).not_to have_logged /Enabling hosting of dotfiles/
 
-        browser.visit_path('/.hidden.html')
+        browser.visit_path('/.hidden.html', allow_404: true)
         expect(browser).to have_body '404 Not Found'
       end
     end
