@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/cloudfoundry/buildpack-packager
-  revision: 4dbb1042af7585fef7fe8185a5c7aeea47695af1
-  tag: v2.3.6
+  revision: 82f301072cbb1ab1275fc0fb00a18e4e2ca4ee29
+  tag: v2.3.7
   specs:
-    buildpack-packager (2.3.6)
+    buildpack-packager (2.3.7)
       activesupport (~> 4.1)
       kwalify (~> 0)
       terminal-table (~> 1.4)
@@ -32,7 +32,7 @@ GEM
     ffi (1.9.18)
     httparty (0.14.0)
       multi_xml (>= 0.5.2)
-    i18n (0.8.0)
+    i18n (0.8.1)
     kwalify (0.7.2)
     minitest (5.10.1)
     multi_xml (0.6.0)
@@ -54,8 +54,8 @@ GEM
     rspec-support (3.5.0)
     terminal-table (1.7.3)
       unicode-display_width (~> 1.1.1)
-    thread_safe (0.3.5)
-    tzinfo (1.2.2)
+    thread_safe (0.3.6)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
     unicode-display_width (1.1.3)
 
