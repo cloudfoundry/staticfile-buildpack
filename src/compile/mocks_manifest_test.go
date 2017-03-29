@@ -116,3 +116,23 @@ func (_m *MockManifest) StoreBuildpackMetadata(cacheDir string) {
 func (_mr *_MockManifestRecorder) StoreBuildpackMetadata(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "StoreBuildpackMetadata", arg0)
 }
+
+func (_m *MockManifest) AllDependencyVersions(_param0 string) []string {
+	ret := _m.ctrl.Call(_m, "AllDependencyVersions", _param0)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+func (_mr *_MockManifestRecorder) AllDependencyVersions(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "AllDependencyVersions", arg0)
+}
+
+func (_m *MockManifest) InstallOnlyVersion(depName string, installDir string) error {
+	ret := _m.ctrl.Call(_m, "InstallOnlyVersion", depName, installDir)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockManifestRecorder) InstallOnlyVersion(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "InstallOnlyVersion", arg0, arg1)
+}

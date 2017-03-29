@@ -1,9 +1,11 @@
 package libbuildpack
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Compiler struct {
@@ -12,6 +14,7 @@ type Compiler struct {
 	DepsDir  string
 	Manifest Manifest
 	Log      Logger
+	Command  CommandRunner
 }
 
 func NewCompiler(args []string, logger Logger) (*Compiler, error) {
@@ -21,7 +24,7 @@ func NewCompiler(args []string, logger Logger) (*Compiler, error) {
 		return nil, err
 	}
 
-	manifest, err := NewManifest(bpDir)
+	manifest, err := NewManifest(bpDir, time.Now())
 	if err != nil {
 		logger.Error("Unable to load buildpack manifest: %s", err.Error())
 		return nil, err
@@ -39,7 +42,8 @@ func NewCompiler(args []string, logger Logger) (*Compiler, error) {
 		CacheDir: cacheDir,
 		DepsDir:  depsDir,
 		Manifest: manifest,
-		Log:      logger}
+		Log:      logger,
+		Command:  NewCommandRunner()}
 
 	return c, nil
 }
@@ -102,4 +106,20 @@ func (c *Compiler) LoadSuppliedDeps() error {
 
 func (c *Compiler) StagingComplete() {
 	c.Manifest.StoreBuildpackMetadata(c.CacheDir)
+}
+
+func (c *Compiler) ClearCache() error {
+	files, err := ioutil.ReadDir(c.CacheDir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		err = os.RemoveAll(filepath.Join(c.CacheDir, file.Name()))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

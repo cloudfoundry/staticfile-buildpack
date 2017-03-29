@@ -9,11 +9,52 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 )
+
+// CopyDirectory copies srcDir to destDir
+func CopyDirectory(srcDir, destDir string) error {
+	destExists, _ := FileExists(destDir)
+	if !destExists {
+		return errors.New("destination dir must exist")
+	}
+
+	files, err := ioutil.ReadDir(srcDir)
+	if err != nil {
+		return err
+	}
+
+	for _, f := range files {
+		src := filepath.Join(srcDir, f.Name())
+		dest := filepath.Join(destDir, f.Name())
+
+		if f.IsDir() {
+			err = os.MkdirAll(dest, f.Mode())
+			if err != nil {
+				return err
+			}
+			err = CopyDirectory(src, dest)
+		} else {
+			rc, err := os.Open(src)
+			if err != nil {
+				return err
+			}
+
+			err = writeToFile(rc, dest, f.Mode())
+			if err != nil {
+				rc.Close()
+				return err
+			}
+			rc.Close()
+		}
+	}
+
+	return nil
+}
 
 // ExtractZip extracts zipfile to destDir
 func ExtractZip(zipfile, destDir string) error {
@@ -77,11 +118,6 @@ func CopyFile(source, destFile string) error {
 
 	defer fh.Close()
 
-	err = os.MkdirAll(filepath.Dir(destFile), 0755)
-	if err != nil {
-		Log.Error("Could not create %s", filepath.Dir(destFile))
-		return err
-	}
 	return writeToFile(fh, destFile, fileInfo.Mode())
 }
 
@@ -107,9 +143,18 @@ func extractTar(src io.Reader, destDir string) error {
 			break
 		}
 		path := filepath.Join(destDir, hdr.Name)
+		fi := hdr.FileInfo()
 
-		if hdr.FileInfo().IsDir() {
+		if fi.IsDir() {
 			err = os.MkdirAll(path, hdr.FileInfo().Mode())
+		} else if fi.Mode()&os.ModeSymlink != 0 {
+			target := hdr.Linkname
+			if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+				return err
+			}
+			if err = os.Symlink(target, path); err != nil {
+				return err
+			}
 		} else {
 			err = writeToFile(tr, path, hdr.FileInfo().Mode())
 		}
@@ -177,15 +222,16 @@ func downloadFile(url, destFile string) error {
 		return errors.New("file download failed")
 	}
 
-	err = os.MkdirAll(filepath.Dir(destFile), 0755)
-	if err != nil {
-		Log.Error("Could not create %s", filepath.Dir(destFile))
-		return err
-	}
 	return writeToFile(resp.Body, destFile, 0666)
 }
 
 func writeToFile(source io.Reader, destFile string, mode os.FileMode) error {
+	err := os.MkdirAll(filepath.Dir(destFile), 0755)
+	if err != nil {
+		Log.Error("Could not create %s", filepath.Dir(destFile))
+		return err
+	}
+
 	fh, err := os.OpenFile(destFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
 		Log.Error("Could not create %s", destFile)
