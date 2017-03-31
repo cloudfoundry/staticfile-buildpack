@@ -10,7 +10,7 @@ import (
 
 var envVarDirs = map[string]string{
 	"PATH":            "bin",
-	"LD_LIBRARY_PATH": "ld_library_path",
+	"LD_LIBRARY_PATH": "lib",
 }
 
 func SetEnvironmentFromSupply(depsDir string) error {
