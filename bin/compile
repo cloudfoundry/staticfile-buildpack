@@ -7,10 +7,9 @@ ENV_DIR=${3:-}
 DEPS_DIR=${4:-}
 export BUILDPACK_DIR=`dirname $(readlink -f ${BASH_SOURCE%/*})`
 
-GO_VERSION="1.7.5"
-GO_MD5="c9de5bb95790044de676301898e92a1b"
-
-URL=https://buildpacks.cloudfoundry.org/dependencies/go/go${GO_VERSION}.linux-amd64-c9de5bb9.tar.gz
+GO_VERSION="1.8"
+GO_MD5="7eff0eab89b4bbdc4edea6beb672ed66"
+URL=https://buildpacks.cloudfoundry.org/dependencies/go/go${GO_VERSION}.linux-amd64-${GO_MD5:0:8}.tar.gz
 
 echo "-----> Download go ${GO_VERSION}"
 curl -s -L --retry 15 --retry-delay 2 $URL -o /tmp/go.tar.gz
