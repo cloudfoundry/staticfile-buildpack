@@ -96,6 +96,8 @@ describe 'deploy a staticfile app' do
   end
 
   context 'running a task' do
+    before { skip_if_no_run_task_support_on_targeted_cf }
+
     it 'exits' do
       expect(app).to be_running
 

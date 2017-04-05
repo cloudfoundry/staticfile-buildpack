@@ -20,3 +20,9 @@ def wait_until(timeout = 10)
     value
   end
 end
+
+def skip_if_no_run_task_support_on_targeted_cf
+  minimum_acceptable_cf_api_version = '2.75.0'
+  skip_reason = "run task functionality not supported before CF API version #{minimum_acceptable_cf_api_version}"
+  Machete::RSpecHelpers.skip_if_cf_api_below(version: minimum_acceptable_cf_api_version, reason: skip_reason)
+end
