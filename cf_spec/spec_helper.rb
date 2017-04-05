@@ -12,3 +12,11 @@ RSpec.configure do |config|
   config.filter_run_excluding :cached => ENV['BUILDPACK_MODE'] == 'uncached'
   config.filter_run_excluding :uncached => ENV['BUILDPACK_MODE'] == 'cached'
 end
+
+def wait_until(timeout = 10)
+  require "timeout"
+  Timeout.timeout(timeout) do
+    sleep(0.1) until value = yield
+    value
+  end
+end

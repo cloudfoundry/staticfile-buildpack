@@ -106,6 +106,12 @@ func (sc *StaticfileCompiler) Compile() error {
 		return err
 	}
 
+	err = ioutil.WriteFile(filepath.Join(sc.Compiler.BuildDir, "start_logging.sh"), []byte(StartLoggingScript), 0755)
+	if err != nil {
+		sc.Compiler.Log.Error("Could not write start_logging.sh script: %s", err.Error())
+		return err
+	}
+
 	err = bp.RunAfterCompile(sc.Compiler)
 	if err != nil {
 		sc.Compiler.Log.Error(err.Error())

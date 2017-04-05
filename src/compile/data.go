@@ -28,7 +28,9 @@ fi
 if [[ ! -f $APP_ROOT/nginx/logs/error.log ]]; then
     mkfifo $APP_ROOT/nginx/logs/error.log
 fi
+`
 
+var StartLoggingScript = `
 cat < $APP_ROOT/nginx/logs/access.log &
 (>&2 cat) < $APP_ROOT/nginx/logs/error.log &
 `
