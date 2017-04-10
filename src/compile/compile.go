@@ -126,10 +126,7 @@ func (sc *StaticfileCompiler) LoadStaticfile() error {
 	conf := &sc.Config
 
 	err := sc.YAML.Load(filepath.Join(sc.Compiler.BuildDir, "Staticfile"), &hash)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
+	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 

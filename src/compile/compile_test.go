@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"bytes"
 
@@ -216,22 +217,38 @@ var _ = Describe("Compile", func() {
 
 		Context("Staticfile.auth is present", func() {
 			BeforeEach(func() {
-				mockYaml.EXPECT().Load(gomock.Any(), gomock.Any())
-
 				err = ioutil.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("some credentials"), 0644)
 				Expect(err).To(BeNil())
 			})
-
 			JustBeforeEach(func() {
 				err = compiler.LoadStaticfile()
 				Expect(err).To(BeNil())
 			})
 
-			It("sets BasicAuth", func() {
-				Expect(compiler.Config.BasicAuth).To(Equal(true))
+			Context("the staticfile exists", func() {
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(gomock.Any(), gomock.Any())
+				})
+
+				It("sets BasicAuth", func() {
+					Expect(compiler.Config.BasicAuth).To(Equal(true))
+				})
+				It("Logs", func() {
+					Expect(buffer.String()).To(ContainSubstring("-----> Enabling basic authentication using Staticfile.auth\n"))
+				})
 			})
-			It("Logs", func() {
-				Expect(buffer.String()).To(ContainSubstring("-----> Enabling basic authentication using Staticfile.auth\n"))
+
+			Context("the staticfile does not exist", func() {
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(gomock.Any(), gomock.Any()).Return(syscall.ENOENT)
+				})
+
+				It("sets BasicAuth", func() {
+					Expect(compiler.Config.BasicAuth).To(Equal(true))
+				})
+				It("Logs", func() {
+					Expect(buffer.String()).To(ContainSubstring("-----> Enabling basic authentication using Staticfile.auth\n"))
+				})
 			})
 		})
 
