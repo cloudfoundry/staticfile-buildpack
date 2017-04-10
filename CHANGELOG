@@ -1,3 +1,18 @@
+v1.4.4 Apr 10, 2017
+====================
+
+* Add nginx 1.11.13, remove nginx 1.11.12
+  (https://www.pivotaltracker.com/story/show/143052671)
+
+* Fix bug with "run-task", where by tasks would not exit
+  (https://www.pivotaltracker.com/story/show/142863193)
+
+* Packaging a uncached buildpack now compiles bin/compile
+  (https://www.pivotaltracker.com/story/show/143040749)
+
+* Fix bug with "basic-auth" when a Staticfile is not provided
+  (https://www.pivotaltracker.com/story/show/143385535)
+
 v1.4.2 Mar 29, 2017
 ====================
 
