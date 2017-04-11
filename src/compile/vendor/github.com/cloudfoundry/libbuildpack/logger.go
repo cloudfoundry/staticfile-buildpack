@@ -21,14 +21,15 @@ type logger struct {
 	w io.Writer
 }
 
-var msgPrefix, msgError, msgWarning, msgProtip string
-
-func init() {
-	msgPrefix = "       "
-	msgError = msgPrefix + red("**ERROR**")
-	msgWarning = msgPrefix + red("**WARNING**")
-	msgProtip = msgPrefix + blue("PRO TIP:")
-}
+const (
+	msgPrefix   = "       "
+	redPrefix   = "\033[31;1m"
+	bluePrefix  = "\033[34;1m"
+	colorSuffix = "\033[0m"
+	msgError    = msgPrefix + redPrefix + "**ERROR**" + colorSuffix
+	msgWarning  = msgPrefix + redPrefix + "**WARNING**" + colorSuffix
+	msgProtip   = msgPrefix + bluePrefix + "PRO TIP:" + colorSuffix
+)
 
 func NewLogger() Logger {
 	return &logger{w: os.Stdout}
@@ -68,18 +69,6 @@ func (l *logger) GetOutput() io.Writer {
 
 func (l *logger) SetOutput(w io.Writer) {
 	l.w = w
-}
-
-func red(uncolored string) string {
-	return fmt.Sprintf("\033[31;1m%s\033[0m", uncolored)
-}
-
-func yellow(uncolored string) string {
-	return fmt.Sprintf("\033[33;1m%s\033[0m", uncolored)
-}
-
-func blue(uncolored string) string {
-	return fmt.Sprintf("\033[34;1m%s\033[0m", uncolored)
 }
 
 var Log = &logger{w: os.Stdout}
