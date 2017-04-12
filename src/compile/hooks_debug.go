@@ -22,12 +22,12 @@ func init() {
 	}
 }
 
-func (h hooks1) BeforeCompile(compiler *libbuildpack.Compiler) error {
+func (h hooks1) BeforeCompile(compiler *libbuildpack.Stager) error {
 	fmt.Println("HOOKS 1: BeforeCompile")
 	return nil
 }
 
-func (h hooks2) AfterCompile(compiler *libbuildpack.Compiler) error {
+func (h hooks2) AfterCompile(compiler *libbuildpack.Stager) error {
 	fmt.Println("HOOKS 2: AfterCompile")
 	return nil
 }

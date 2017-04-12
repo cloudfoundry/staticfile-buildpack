@@ -26,9 +26,9 @@ type Staticfile struct {
 }
 
 type StaticfileCompiler struct {
-	Compiler *bp.Compiler
-	Config   Staticfile
-	YAML     bp.YAML
+	Stager *bp.Stager
+	Config Staticfile
+	YAML   bp.YAML
 }
 
 var skipCopyFile = map[string]bool{
@@ -41,80 +41,80 @@ var skipCopyFile = map[string]bool{
 }
 
 func main() {
-	compiler, err := bp.NewCompiler(os.Args[1:], bp.NewLogger())
-	err = compiler.CheckBuildpackValid()
+	stager, err := bp.NewStager(os.Args[1:], bp.NewLogger())
+	err = stager.CheckBuildpackValid()
 	if err != nil {
 		panic(err)
 	}
 
-	err = compiler.LoadSuppliedDeps()
-	if err != nil {
-		panic(err)
-	}
-
-	sc := StaticfileCompiler{Compiler: compiler, Config: Staticfile{}, YAML: bp.NewYAML()}
+	sc := StaticfileCompiler{Stager: stager, Config: Staticfile{}, YAML: bp.NewYAML()}
 	err = sc.Compile()
 	if err != nil {
 		panic(err)
 	}
 
-	compiler.StagingComplete()
+	stager.StagingComplete()
 }
 
 func (sc *StaticfileCompiler) Compile() error {
 	var err error
 
-	err = bp.RunBeforeCompile(sc.Compiler)
+	err = bp.RunBeforeCompile(sc.Stager)
 	if err != nil {
-		sc.Compiler.Log.Error(err.Error())
+		sc.Stager.Log.Error(err.Error())
 		return err
 	}
 
 	err = sc.LoadStaticfile()
 	if err != nil {
-		sc.Compiler.Log.Error("Unable to load Staticfile: %s", err.Error())
+		sc.Stager.Log.Error("Unable to load Staticfile: %s", err.Error())
 		return err
 	}
 
 	appRootDir, err := sc.GetAppRootDir()
 	if err != nil {
-		sc.Compiler.Log.Error("Invalid root directory: %s", err.Error())
+		sc.Stager.Log.Error("Invalid root directory: %s", err.Error())
 		return err
 	}
 
 	err = sc.CopyFilesToPublic(appRootDir)
 	if err != nil {
-		sc.Compiler.Log.Error("Unable to copy project files: %s", err.Error())
+		sc.Stager.Log.Error("Unable to copy project files: %s", err.Error())
 		return err
 	}
 
 	err = sc.InstallNginx()
 	if err != nil {
-		sc.Compiler.Log.Error("Unable to install nginx: %s", err.Error())
+		sc.Stager.Log.Error("Unable to install nginx: %s", err.Error())
 		return err
 	}
 
 	err = sc.ConfigureNginx()
 	if err != nil {
-		sc.Compiler.Log.Error("Unable to configure nginx: %s", err.Error())
+		sc.Stager.Log.Error("Unable to configure nginx: %s", err.Error())
 		return err
 	}
 
-	err = bp.WriteProfileD(sc.Compiler.BuildDir, "staticfile.sh", InitScript)
+	profiledDir := filepath.Join(sc.Stager.BuildDir, ".profile.d")
+	err = os.MkdirAll(profiledDir, 0755)
 	if err != nil {
-		sc.Compiler.Log.Error("Could not write .profile.d script: %s", err.Error())
+		return err
+	}
+	err = ioutil.WriteFile(filepath.Join(profiledDir, "staticfile.sh"), []byte(InitScript), 0755)
+	if err != nil {
+		sc.Stager.Log.Error("Could not write .profile.d script: %s", err.Error())
 		return err
 	}
 
-	err = ioutil.WriteFile(filepath.Join(sc.Compiler.BuildDir, "start_logging.sh"), []byte(StartLoggingScript), 0755)
+	err = ioutil.WriteFile(filepath.Join(sc.Stager.BuildDir, "start_logging.sh"), []byte(StartLoggingScript), 0755)
 	if err != nil {
-		sc.Compiler.Log.Error("Could not write start_logging.sh script: %s", err.Error())
+		sc.Stager.Log.Error("Could not write start_logging.sh script: %s", err.Error())
 		return err
 	}
 
-	err = bp.RunAfterCompile(sc.Compiler)
+	err = bp.RunAfterCompile(sc.Stager)
 	if err != nil {
-		sc.Compiler.Log.Error(err.Error())
+		sc.Stager.Log.Error(err.Error())
 		return err
 	}
 
@@ -125,7 +125,7 @@ func (sc *StaticfileCompiler) LoadStaticfile() error {
 	var hash = make(map[string]string)
 	conf := &sc.Config
 
-	err := sc.YAML.Load(filepath.Join(sc.Compiler.BuildDir, "Staticfile"), &hash)
+	err := sc.YAML.Load(filepath.Join(sc.Stager.BuildDir, "Staticfile"), &hash)
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
@@ -137,48 +137,48 @@ func (sc *StaticfileCompiler) LoadStaticfile() error {
 			conf.RootDir = value
 		case "host_dot_files":
 			if isEnabled {
-				sc.Compiler.Log.BeginStep("Enabling hosting of dotfiles")
+				sc.Stager.Log.BeginStep("Enabling hosting of dotfiles")
 				conf.HostDotFiles = true
 			}
 		case "location_include":
 			conf.LocationInclude = value
 			if conf.LocationInclude != "" {
-				sc.Compiler.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
+				sc.Stager.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
 			}
 		case "directory":
 			if value != "" {
-				sc.Compiler.Log.BeginStep("Enabling directory index for folders without index.html files")
+				sc.Stager.Log.BeginStep("Enabling directory index for folders without index.html files")
 				conf.DirectoryIndex = true
 			}
 		case "ssi":
 			if isEnabled {
-				sc.Compiler.Log.BeginStep("Enabling SSI")
+				sc.Stager.Log.BeginStep("Enabling SSI")
 				conf.SSI = true
 			}
 		case "pushstate":
 			if isEnabled {
-				sc.Compiler.Log.BeginStep("Enabling pushstate")
+				sc.Stager.Log.BeginStep("Enabling pushstate")
 				conf.PushState = true
 			}
 		case "http_strict_transport_security":
 			if isEnabled {
-				sc.Compiler.Log.BeginStep("Enabling HSTS")
+				sc.Stager.Log.BeginStep("Enabling HSTS")
 				conf.HSTS = true
 			}
 		case "force_https":
 			if isEnabled {
-				sc.Compiler.Log.BeginStep("Enabling HTTPS redirect")
+				sc.Stager.Log.BeginStep("Enabling HTTPS redirect")
 				conf.ForceHTTPS = true
 			}
 		}
 	}
 
-	authFile := filepath.Join(sc.Compiler.BuildDir, "Staticfile.auth")
+	authFile := filepath.Join(sc.Stager.BuildDir, "Staticfile.auth")
 	_, err = os.Stat(authFile)
 	if err == nil {
 		conf.BasicAuth = true
-		sc.Compiler.Log.BeginStep("Enabling basic authentication using Staticfile.auth")
-		sc.Compiler.Log.Protip("Learn about basic authentication", "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication")
+		sc.Stager.Log.BeginStep("Enabling basic authentication using Staticfile.auth")
+		sc.Stager.Log.Protip("Learn about basic authentication", "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication")
 	}
 
 	return nil
@@ -193,12 +193,12 @@ func (sc *StaticfileCompiler) GetAppRootDir() (string, error) {
 		rootDirRelative = "."
 	}
 
-	rootDirAbs, err := filepath.Abs(filepath.Join(sc.Compiler.BuildDir, rootDirRelative))
+	rootDirAbs, err := filepath.Abs(filepath.Join(sc.Stager.BuildDir, rootDirRelative))
 	if err != nil {
 		return "", err
 	}
 
-	sc.Compiler.Log.BeginStep("Root folder %s", rootDirAbs)
+	sc.Stager.Log.BeginStep("Root folder %s", rootDirAbs)
 
 	dirInfo, err := os.Stat(rootDirAbs)
 	if err != nil {
@@ -213,9 +213,9 @@ func (sc *StaticfileCompiler) GetAppRootDir() (string, error) {
 }
 
 func (sc *StaticfileCompiler) CopyFilesToPublic(appRootDir string) error {
-	sc.Compiler.Log.BeginStep("Copying project files into public")
+	sc.Stager.Log.BeginStep("Copying project files into public")
 
-	publicDir := filepath.Join(sc.Compiler.BuildDir, "public")
+	publicDir := filepath.Join(sc.Stager.BuildDir, "public")
 
 	if publicDir == appRootDir {
 		return nil
@@ -255,25 +255,25 @@ func (sc *StaticfileCompiler) CopyFilesToPublic(appRootDir string) error {
 }
 
 func (sc *StaticfileCompiler) InstallNginx() error {
-	sc.Compiler.Log.BeginStep("Installing nginx")
+	sc.Stager.Log.BeginStep("Installing nginx")
 
-	nginx, err := sc.Compiler.Manifest.DefaultVersion("nginx")
+	nginx, err := sc.Stager.Manifest.DefaultVersion("nginx")
 	if err != nil {
 		return err
 	}
-	sc.Compiler.Log.Info("Using nginx version %s", nginx.Version)
+	sc.Stager.Log.Info("Using nginx version %s", nginx.Version)
 
-	return sc.Compiler.Manifest.InstallDependency(nginx, sc.Compiler.BuildDir)
+	return sc.Stager.Manifest.InstallDependency(nginx, sc.Stager.BuildDir)
 }
 
 func (sc *StaticfileCompiler) ConfigureNginx() error {
 	var err error
 
-	sc.Compiler.Log.BeginStep("Configuring nginx")
+	sc.Stager.Log.BeginStep("Configuring nginx")
 
 	nginxConf, err := sc.generateNginxConf()
 	if err != nil {
-		sc.Compiler.Log.Error("Unable to generate nginx.conf: %s", err.Error())
+		sc.Stager.Log.Error("Unable to generate nginx.conf: %s", err.Error())
 		return err
 	}
 
@@ -282,8 +282,8 @@ func (sc *StaticfileCompiler) ConfigureNginx() error {
 		"mime.types": MimeTypes}
 
 	for file, contents := range confFiles {
-		confDest := filepath.Join(sc.Compiler.BuildDir, "nginx", "conf", file)
-		customConfFile := filepath.Join(sc.Compiler.BuildDir, "public", file)
+		confDest := filepath.Join(sc.Stager.BuildDir, "nginx", "conf", file)
+		customConfFile := filepath.Join(sc.Stager.BuildDir, "public", file)
 
 		_, err = os.Stat(customConfFile)
 		if err == nil {
@@ -298,8 +298,8 @@ func (sc *StaticfileCompiler) ConfigureNginx() error {
 	}
 
 	if sc.Config.BasicAuth {
-		authFile := filepath.Join(sc.Compiler.BuildDir, "Staticfile.auth")
-		err = bp.CopyFile(authFile, filepath.Join(sc.Compiler.BuildDir, "nginx", "conf", ".htpasswd"))
+		authFile := filepath.Join(sc.Stager.BuildDir, "Staticfile.auth")
+		err = bp.CopyFile(authFile, filepath.Join(sc.Stager.BuildDir, "nginx", "conf", ".htpasswd"))
 		if err != nil {
 			return err
 		}

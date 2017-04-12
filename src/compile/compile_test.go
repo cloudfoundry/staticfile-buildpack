@@ -53,14 +53,14 @@ var _ = Describe("Compile", func() {
 	})
 
 	JustBeforeEach(func() {
-		bpc := &bp.Compiler{BuildDir: buildDir,
+		bpc := &bp.Stager{BuildDir: buildDir,
 			CacheDir: cacheDir,
 			Manifest: mockManifest,
 			Log:      logger}
 
-		compiler = &c.StaticfileCompiler{Compiler: bpc,
-			Config: sf,
-			YAML:   mockYaml}
+		compiler = &c.StaticfileCompiler{Stager: bpc,
+			Config:                          sf,
+			YAML:                            mockYaml}
 	})
 
 	AfterEach(func() {

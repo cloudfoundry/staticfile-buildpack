@@ -5,8 +5,8 @@ import (
 )
 
 type Hook interface {
-	BeforeCompile(*Compiler) error
-	AfterCompile(*Compiler) error
+	BeforeCompile(*Stager) error
+	AfterCompile(*Stager) error
 }
 
 var hookArray []Hook
@@ -23,24 +23,25 @@ func ClearHooks() {
 	hookArrayLock.Unlock()
 }
 
-func RunBeforeCompile(compiler *Compiler) error {
+func RunBeforeCompile(stager *Stager) error {
 	for _, hook := range hookArray {
-		if err := hook.BeforeCompile(compiler); err != nil {
+		if err := hook.BeforeCompile(stager); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func RunAfterCompile(compiler *Compiler) error {
+func RunAfterCompile(stager *Stager) error {
 	for _, hook := range hookArray {
-		if err := hook.AfterCompile(compiler); err != nil {
+		if err := hook.AfterCompile(stager); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-type DefaultHook struct {}
-func (d DefaultHook) BeforeCompile(compiler *Compiler) error { return nil }
-func (d DefaultHook) AfterCompile(compiler *Compiler) error { return nil }
+type DefaultHook struct{}
+
+func (d DefaultHook) BeforeCompile(stager *Stager) error { return nil }
+func (d DefaultHook) AfterCompile(stager *Stager) error  { return nil }
