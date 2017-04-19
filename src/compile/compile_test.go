@@ -64,6 +64,8 @@ var _ = Describe("Compile", func() {
 	})
 
 	AfterEach(func() {
+		mockCtrl.Finish()
+
 		err = os.RemoveAll(buildDir)
 		Expect(err).To(BeNil())
 
@@ -96,6 +98,7 @@ var _ = Describe("Compile", func() {
 			})
 
 			It("does not log enabling statements", func() {
+				err = compiler.LoadStaticfile()
 				Expect(buffer.String()).To(Equal(""))
 			})
 		})
