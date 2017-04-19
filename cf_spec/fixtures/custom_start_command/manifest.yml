@@ -1,0 +1,4 @@
+---
+applications:
+  - name: custom_start_command
+    command: echo "A custom start command" && $HOME/boot.sh
