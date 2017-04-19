@@ -112,6 +112,11 @@ func (sc *StaticfileCompiler) Compile() error {
 		return err
 	}
 
+	if err := sc.WriteBootScript(); err != nil {
+		sc.Stager.Log.Error("Could not write boot.sh script: %s", err.Error())
+		return err
+	}
+
 	err = bp.RunAfterCompile(sc.Stager)
 	if err != nil {
 		sc.Stager.Log.Error(err.Error())
@@ -303,6 +308,16 @@ func (sc *StaticfileCompiler) ConfigureNginx() error {
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (sc *StaticfileCompiler) WriteBootScript() error {
+	bootScript := filepath.Join(sc.Stager.BuildDir, "boot.sh")
+
+	if err := ioutil.WriteFile(bootScript, []byte(StartCommand), 0755); err != nil {
+		return err
 	}
 
 	return nil

@@ -54,9 +54,9 @@ var _ = Describe("Compile", func() {
 
 	JustBeforeEach(func() {
 		bpc := &bp.Stager{BuildDir: buildDir,
-			CacheDir: cacheDir,
-			Manifest: mockManifest,
-			Log:      logger}
+			CacheDir:           cacheDir,
+			Manifest:           mockManifest,
+			Log:                logger}
 
 		compiler = &c.StaticfileCompiler{Stager: bpc,
 			Config:                          sf,
@@ -726,4 +726,25 @@ var _ = Describe("Compile", func() {
 			})
 		})
 	})
+
+	Describe("WriteBootScript", func() {
+		It("writes boot.sh in appdir", func() {
+			err = compiler.WriteBootScript()
+			Expect(err).To(BeNil())
+
+			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
+			Expect(err).To(BeNil())
+			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\n$APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf"))
+		})
+
+		It("boot.sh is an executable file", func() {
+			err = compiler.WriteBootScript()
+			Expect(err).To(BeNil())
+
+			fi, err := os.Stat(filepath.Join(buildDir, "boot.sh"))
+			Expect(err).To(BeNil())
+			Expect(fi.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+		})
+	})
 })
+

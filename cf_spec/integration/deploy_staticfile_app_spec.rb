@@ -16,6 +16,7 @@ describe 'deploy a staticfile app' do
     expect(app).to have_logged(/HOOKS 1: BeforeCompile/)
     expect(app).to have_logged(/HOOKS 2: AfterCompile/)
     expect(app).to be_running
+    expect(app).to have_logged(%r{.*/nginx/sbin/nginx -p .*/nginx -c .*/nginx/conf/nginx.conf})
 
     browser.visit_path('/')
     expect(browser).to have_body('This is an example app for Cloud Foundry that is only static HTML/JS/CSS assets.')

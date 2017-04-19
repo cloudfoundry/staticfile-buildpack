@@ -35,6 +35,11 @@ cat < $APP_ROOT/nginx/logs/access.log &
 (>&2 cat) < $APP_ROOT/nginx/logs/error.log &
 `
 
+var StartCommand = `#!/bin/sh
+set -ex
+$APP_ROOT/start_logging.sh
+$APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf`
+
 var NginxConfTemplate = `
 worker_processes 1;
 daemon off;
