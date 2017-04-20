@@ -1,3 +1,9 @@
+v1.4.5 Apr 20, 2017
+====================
+
+* Use boot.sh for start command
+  (https://www.pivotaltracker.com/story/show/143954449)
+
 v1.4.4 Apr 10, 2017
 ====================
 
