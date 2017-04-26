@@ -73,7 +73,7 @@ func (s *Stager) DepDir() string {
 }
 
 func (s *Stager) WriteConfigYml() error {
-	configContent := "---\nname: " + s.Manifest.Language() + "\nconfig: {}"
+	configContent := "---\nname: " + s.Manifest.Language() + "\nconfig: {}\n"
 	return ioutil.WriteFile(filepath.Join(s.DepDir(), "config.yml"), []byte(configContent), 0644)
 }
 
