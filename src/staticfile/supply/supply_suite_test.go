@@ -1,4 +1,4 @@
-package main_test
+package supply_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCompile(t *testing.T) {
+func TestSupply(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Compile Suite")
+	RunSpecs(t, "Supply Suite")
 }

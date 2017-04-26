@@ -1,6 +1,7 @@
-package main
+package finalize
 
-var InitScript = `
+const (
+	initScript = `
 # ------------------------------------------------------------------------------------------------
 # Copyright 2013 Jordon Bedwell.
 # Apache License.
@@ -30,17 +31,18 @@ if [[ ! -f $APP_ROOT/nginx/logs/error.log ]]; then
 fi
 `
 
-var StartLoggingScript = `
+	startLoggingScript = `
 cat < $APP_ROOT/nginx/logs/access.log &
 (>&2 cat) < $APP_ROOT/nginx/logs/error.log &
 `
 
-var StartCommand = `#!/bin/sh
+	startCommand = `#!/bin/sh
 set -ex
 $APP_ROOT/start_logging.sh
-$APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf`
+nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
+`
 
-var NginxConfTemplate = `
+	nginxConfTemplate = `
 worker_processes 1;
 daemon off;
 
@@ -129,7 +131,7 @@ http {
   }
 }
 `
-var MimeTypes = `
+	MimeTypes = `
 types {
   text/html html htm shtml;
   text/css css;
@@ -209,3 +211,4 @@ types {
   video/x-msvideo avi;
 }
 `
+)

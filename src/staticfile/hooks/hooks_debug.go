@@ -1,4 +1,4 @@
-package main
+package hooks
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 )
 
-type hooks1 struct{
+type hooks1 struct {
 	libbuildpack.DefaultHook
 }
 
-type hooks2 struct{
+type hooks2 struct {
 	libbuildpack.DefaultHook
 }
 

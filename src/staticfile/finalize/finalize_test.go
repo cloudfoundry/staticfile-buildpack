@@ -1,33 +1,33 @@
-package main_test
+package finalize_test
 
 import (
-	c "compile"
 	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"staticfile/finalize"
 	"syscall"
 
 	"bytes"
 
-	bp "github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack"
 	"github.com/golang/mock/gomock"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-//go:generate mockgen -source=vendor/github.com/cloudfoundry/libbuildpack/yaml.go --destination=mocks_yaml_test.go --package=main_test
-//go:generate mockgen -source=vendor/github.com/cloudfoundry/libbuildpack/manifest.go --destination=mocks_manifest_test.go --package=main_test --imports=.=github.com/cloudfoundry/libbuildpack
+//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/yaml.go --destination=mocks_yaml_test.go --package=finalize_test
+//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/manifest.go --destination=mocks_manifest_test.go --package=finalize_test --imports=.=github.com/cloudfoundry/libbuildpack
 
 var _ = Describe("Compile", func() {
 	var (
-		sf           c.Staticfile
+		staticfile   finalize.Staticfile
 		err          error
 		buildDir     string
 		cacheDir     string
-		compiler     *c.StaticfileCompiler
-		logger       bp.Logger
+		finalizer    *finalize.Finalizer
+		logger       libbuildpack.Logger
 		mockCtrl     *gomock.Controller
 		mockYaml     *MockYAML
 		mockManifest *MockManifest
@@ -44,7 +44,7 @@ var _ = Describe("Compile", func() {
 
 		buffer = new(bytes.Buffer)
 
-		logger = bp.NewLogger()
+		logger = libbuildpack.NewLogger()
 		logger.SetOutput(buffer)
 
 		mockCtrl = gomock.NewController(GinkgoT())
@@ -53,14 +53,14 @@ var _ = Describe("Compile", func() {
 	})
 
 	JustBeforeEach(func() {
-		bpc := &bp.Stager{BuildDir: buildDir,
-			CacheDir:           cacheDir,
-			Manifest:           mockManifest,
-			Log:                logger}
+		bps := &libbuildpack.Stager{BuildDir: buildDir,
+			CacheDir: cacheDir,
+			Manifest: mockManifest,
+			Log:      logger}
 
-		compiler = &c.StaticfileCompiler{Stager: bpc,
-			Config:                          sf,
-			YAML:                            mockYaml}
+		finalizer = &finalize.Finalizer{Stager: bps,
+			Config: staticfile,
+			YAML:   mockYaml}
 	})
 
 	AfterEach(func() {
@@ -79,32 +79,32 @@ var _ = Describe("Compile", func() {
 				mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Return(os.ErrNotExist)
 			})
 			It("does not return an error", func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(err).To(BeNil())
 			})
 
 			It("has default values", func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(err).To(BeNil())
-				Expect(compiler.Config.RootDir).To(Equal(""))
-				Expect(compiler.Config.HostDotFiles).To(Equal(false))
-				Expect(compiler.Config.LocationInclude).To(Equal(""))
-				Expect(compiler.Config.DirectoryIndex).To(Equal(false))
-				Expect(compiler.Config.SSI).To(Equal(false))
-				Expect(compiler.Config.PushState).To(Equal(false))
-				Expect(compiler.Config.HSTS).To(Equal(false))
-				Expect(compiler.Config.ForceHTTPS).To(Equal(false))
-				Expect(compiler.Config.BasicAuth).To(Equal(false))
+				Expect(finalizer.Config.RootDir).To(Equal(""))
+				Expect(finalizer.Config.HostDotFiles).To(Equal(false))
+				Expect(finalizer.Config.LocationInclude).To(Equal(""))
+				Expect(finalizer.Config.DirectoryIndex).To(Equal(false))
+				Expect(finalizer.Config.SSI).To(Equal(false))
+				Expect(finalizer.Config.PushState).To(Equal(false))
+				Expect(finalizer.Config.HSTS).To(Equal(false))
+				Expect(finalizer.Config.ForceHTTPS).To(Equal(false))
+				Expect(finalizer.Config.BasicAuth).To(Equal(false))
 			})
 
 			It("does not log enabling statements", func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(buffer.String()).To(Equal(""))
 			})
 		})
 		Context("the staticfile exists", func() {
 			JustBeforeEach(func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(err).To(BeNil())
 			})
 
@@ -115,7 +115,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets RootDir", func() {
-					Expect(compiler.Config.RootDir).To(Equal("root_test"))
+					Expect(finalizer.Config.RootDir).To(Equal("root_test"))
 				})
 			})
 
@@ -126,7 +126,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets HostDotFiles", func() {
-					Expect(compiler.Config.HostDotFiles).To(Equal(true))
+					Expect(finalizer.Config.HostDotFiles).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling hosting of dotfiles\n"))
@@ -140,7 +140,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets location_include", func() {
-					Expect(compiler.Config.LocationInclude).To(Equal("a/b/c"))
+					Expect(finalizer.Config.LocationInclude).To(Equal("a/b/c"))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling location include file a/b/c\n"))
@@ -154,7 +154,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets location_include", func() {
-					Expect(compiler.Config.DirectoryIndex).To(Equal(true))
+					Expect(finalizer.Config.DirectoryIndex).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling directory index for folders without index.html files\n"))
@@ -168,7 +168,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets ssi", func() {
-					Expect(compiler.Config.SSI).To(Equal(true))
+					Expect(finalizer.Config.SSI).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling SSI\n"))
@@ -182,7 +182,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets pushstate", func() {
-					Expect(compiler.Config.PushState).To(Equal(true))
+					Expect(finalizer.Config.PushState).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling pushstate\n"))
@@ -196,7 +196,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets pushstate", func() {
-					Expect(compiler.Config.HSTS).To(Equal(true))
+					Expect(finalizer.Config.HSTS).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HSTS\n"))
@@ -210,7 +210,7 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets force_https", func() {
-					Expect(compiler.Config.ForceHTTPS).To(Equal(true))
+					Expect(finalizer.Config.ForceHTTPS).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HTTPS redirect\n"))
@@ -224,7 +224,7 @@ var _ = Describe("Compile", func() {
 				Expect(err).To(BeNil())
 			})
 			JustBeforeEach(func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(err).To(BeNil())
 			})
 
@@ -234,7 +234,7 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("sets BasicAuth", func() {
-					Expect(compiler.Config.BasicAuth).To(Equal(true))
+					Expect(finalizer.Config.BasicAuth).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(ContainSubstring("-----> Enabling basic authentication using Staticfile.auth\n"))
@@ -247,7 +247,7 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("sets BasicAuth", func() {
-					Expect(compiler.Config.BasicAuth).To(Equal(true))
+					Expect(finalizer.Config.BasicAuth).To(Equal(true))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(ContainSubstring("-----> Enabling basic authentication using Staticfile.auth\n"))
@@ -261,7 +261,7 @@ var _ = Describe("Compile", func() {
 			})
 
 			It("returns an error", func() {
-				err = compiler.LoadStaticfile()
+				err = finalizer.LoadStaticfile()
 				Expect(err).NotTo(BeNil())
 			})
 		})
@@ -273,13 +273,13 @@ var _ = Describe("Compile", func() {
 		)
 
 		JustBeforeEach(func() {
-			returnDir, err = compiler.GetAppRootDir()
+			returnDir, err = finalizer.GetAppRootDir()
 		})
 
 		Context("the staticfile has a root directory specified", func() {
 			Context("the directory does not exist", func() {
 				BeforeEach(func() {
-					sf.RootDir = "not_exist"
+					staticfile.RootDir = "not_exist"
 				})
 
 				It("logs the staticfile's root directory", func() {
@@ -299,7 +299,7 @@ var _ = Describe("Compile", func() {
 			Context("the directory exists but is actually a file", func() {
 				BeforeEach(func() {
 					ioutil.WriteFile(filepath.Join(buildDir, "actually_a_file"), []byte("xxx"), 0644)
-					sf.RootDir = "actually_a_file"
+					staticfile.RootDir = "actually_a_file"
 				})
 
 				It("logs the staticfile's root directory", func() {
@@ -318,7 +318,7 @@ var _ = Describe("Compile", func() {
 			Context("the directory exists", func() {
 				BeforeEach(func() {
 					os.Mkdir(filepath.Join(buildDir, "a_directory"), 0755)
-					sf.RootDir = "a_directory"
+					staticfile.RootDir = "a_directory"
 				})
 
 				It("logs the staticfile's root directory", func() {
@@ -335,7 +335,7 @@ var _ = Describe("Compile", func() {
 
 		Context("the staticfile does not have an root directory", func() {
 			BeforeEach(func() {
-				sf.RootDir = ""
+				staticfile.RootDir = ""
 			})
 
 			It("logs the build directory as the root directory", func() {
@@ -350,13 +350,8 @@ var _ = Describe("Compile", func() {
 	})
 
 	Describe("ConfigureNginx", func() {
-		BeforeEach(func() {
-			err = os.MkdirAll(filepath.Join(buildDir, "nginx", "conf"), 0755)
-			Expect(err).To(BeNil())
-		})
-
 		JustBeforeEach(func() {
-			err = compiler.ConfigureNginx()
+			err = finalizer.ConfigureNginx()
 			Expect(err).To(BeNil())
 		})
 
@@ -408,7 +403,7 @@ var _ = Describe("Compile", func() {
 `
 			Context("host_dot_files is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.HostDotFiles = true
+					staticfile.HostDotFiles = true
 				})
 				It("allows dotfiles to be hosted", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -419,7 +414,7 @@ var _ = Describe("Compile", func() {
 
 			Context("host_dot_files is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.HostDotFiles = false
+					staticfile.HostDotFiles = false
 				})
 				It("allows dotfiles to be hosted", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -430,7 +425,7 @@ var _ = Describe("Compile", func() {
 
 			Context("location_include is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.LocationInclude = "a/b/c"
+					staticfile.LocationInclude = "a/b/c"
 				})
 				It("includes the file", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -441,7 +436,7 @@ var _ = Describe("Compile", func() {
 
 			Context("location_include is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.LocationInclude = ""
+					staticfile.LocationInclude = ""
 				})
 				It("does not include the file", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -452,7 +447,7 @@ var _ = Describe("Compile", func() {
 
 			Context("directory is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.DirectoryIndex = true
+					staticfile.DirectoryIndex = true
 				})
 				It("sets autoindex on", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -463,7 +458,7 @@ var _ = Describe("Compile", func() {
 
 			Context("directory is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.DirectoryIndex = false
+					staticfile.DirectoryIndex = false
 				})
 				It("does not set autoindex on", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -474,7 +469,7 @@ var _ = Describe("Compile", func() {
 
 			Context("ssi is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.SSI = true
+					staticfile.SSI = true
 				})
 				It("enables SSI", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -485,7 +480,7 @@ var _ = Describe("Compile", func() {
 
 			Context("ssi is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.SSI = false
+					staticfile.SSI = false
 				})
 				It("does not enable SSI", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -496,7 +491,7 @@ var _ = Describe("Compile", func() {
 
 			Context("pushstate is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.PushState = true
+					staticfile.PushState = true
 				})
 				It("it adds the configuration", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -507,7 +502,7 @@ var _ = Describe("Compile", func() {
 
 			Context("pushstate is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.PushState = false
+					staticfile.PushState = false
 				})
 				It("it does not add the configuration", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -518,7 +513,7 @@ var _ = Describe("Compile", func() {
 
 			Context("http_strict_transport_security is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.HSTS = true
+					staticfile.HSTS = true
 				})
 				It("it adds the HSTS header", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -529,7 +524,7 @@ var _ = Describe("Compile", func() {
 
 			Context("http_strict_transport_security is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.HSTS = false
+					staticfile.HSTS = false
 				})
 				It("it does not add the HSTS header", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -540,7 +535,7 @@ var _ = Describe("Compile", func() {
 
 			Context("force_https is set in staticfile", func() {
 				BeforeEach(func() {
-					sf.ForceHTTPS = true
+					staticfile.ForceHTTPS = true
 				})
 				It("the 301 redirect does not depend on ENV['FORCE_HTTPS']", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -553,7 +548,7 @@ var _ = Describe("Compile", func() {
 
 			Context("force_https is NOT set in staticfile", func() {
 				BeforeEach(func() {
-					sf.ForceHTTPS = false
+					staticfile.ForceHTTPS = false
 				})
 				It("the 301 redirect does depend on ENV['FORCE_HTTPS']", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -564,7 +559,7 @@ var _ = Describe("Compile", func() {
 
 			Context("there is a Staticfile.auth", func() {
 				BeforeEach(func() {
-					sf.BasicAuth = true
+					staticfile.BasicAuth = true
 					err = ioutil.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("authentication info"), 0644)
 					Expect(err).To(BeNil())
 				})
@@ -584,7 +579,7 @@ var _ = Describe("Compile", func() {
 
 			Context("there is not a Staticfile.auth", func() {
 				BeforeEach(func() {
-					sf.BasicAuth = false
+					staticfile.BasicAuth = false
 				})
 				It("it does not enable basic authenticaiont", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
@@ -618,39 +613,41 @@ var _ = Describe("Compile", func() {
 			It("uses the provided mime.types", func() {
 				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
 				Expect(err).To(BeNil())
-				Expect(string(data)).To(Equal(c.MimeTypes))
+				Expect(string(data)).To(Equal(finalize.MimeTypes))
 			})
-		})
-	})
-
-	Describe("InstallNginx", func() {
-		It("Installs nginx to builddir", func() {
-			dep := bp.Dependency{Name: "nginx", Version: "99.99"}
-
-			mockManifest.EXPECT().DefaultVersion("nginx").Return(dep, nil)
-			mockManifest.EXPECT().InstallDependency(dep, buildDir)
-
-			compiler.InstallNginx()
-			Expect(buffer.String()).To(ContainSubstring("-----> Installing nginx"))
-			Expect(buffer.String()).To(ContainSubstring("       Using nginx version 99.99"))
 		})
 	})
 
 	Describe("CopyFilesToPublic", func() {
 		var (
-			appRootDir    string
-			buildDirFiles []string
+			appRootDir          string
+			appRootFiles        []string
+			buildDirFiles       []string
+			buildDirDirectories []string
 		)
 
 		JustBeforeEach(func() {
-			buildDirFiles = []string{"Staticfile", "Staticfile.auth", "manifest.yml", ".profile", "stackato.yml", ".hidden.html", "index.html"}
+			buildDirFiles = []string{"Staticfile", "Staticfile.auth", "manifest.yml", ".profile", "stackato.yml"}
 
 			for _, file := range buildDirFiles {
+				err = ioutil.WriteFile(filepath.Join(buildDir, file), []byte(file+"contents"), 0644)
+				Expect(err).To(BeNil())
+			}
+
+			appRootFiles = []string{".hidden.html", "index.html"}
+
+			for _, file := range appRootFiles {
 				err = ioutil.WriteFile(filepath.Join(appRootDir, file), []byte(file+"contents"), 0644)
 				Expect(err).To(BeNil())
 			}
 
-			err = compiler.CopyFilesToPublic(appRootDir)
+			buildDirDirectories = []string{".profile.d", ".cloudfoundry"}
+			for _, dir := range buildDirDirectories {
+				err = os.MkdirAll(filepath.Join(buildDir, dir), 0755)
+				Expect(err).To(BeNil())
+			}
+
+			err = finalizer.CopyFilesToPublic(appRootDir)
 			Expect(err).To(BeNil())
 		})
 
@@ -670,8 +667,15 @@ var _ = Describe("Compile", func() {
 
 			It("doesn't copy any files", func() {
 				for _, file := range buildDirFiles {
-					_, err = os.Stat(filepath.Join(buildDir, file))
-					Expect(os.IsNotExist(err)).To(BeTrue())
+					Expect(filepath.Join(buildDir, file)).To(BeAnExistingFile())
+				}
+
+				for _, dir := range buildDirDirectories {
+					Expect(filepath.Join(buildDir, dir)).To(BeADirectory())
+				}
+
+				for _, file := range appRootFiles {
+					Expect(filepath.Join(appRootDir, file)).To(BeAnExistingFile())
 				}
 
 				Expect(filepath.Join(appRootDir, "index2.html")).To(BeAnExistingFile())
@@ -681,7 +685,7 @@ var _ = Describe("Compile", func() {
 		Context("The appRootDir is NOT <buildDir>/public", func() {
 			Context("host dotfiles is set", func() {
 				BeforeEach(func() {
-					sf.HostDotFiles = true
+					staticfile.HostDotFiles = true
 					appRootDir, err = ioutil.TempDir("", "staticfile-buildpack.app_root.")
 					Expect(err).To(BeNil())
 				})
@@ -695,20 +699,31 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("Does not move the blacklisted files to public/", func() {
+					Expect(filepath.Join(buildDir, "Staticfile")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "Staticfile.auth")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "manifest.yml")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, ".profile")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "stackato.yml")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, ".profile.d")).To(BeADirectory())
+					Expect(filepath.Join(buildDir, ".cloudfoundry")).To(BeADirectory())
+
 					Expect(filepath.Join(buildDir, "public", "Staticfile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "Staticfile.auth")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "manifest.yml")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", ".profile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "stackato.yml")).ToNot(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "public", ".profile.d")).ToNot(BeADirectory())
+					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
 				})
 			})
 			Context("host dotfiles is NOT set", func() {
 				BeforeEach(func() {
-					sf.HostDotFiles = false
+					staticfile.HostDotFiles = false
 					appRootDir = buildDir
 				})
 
 				It("does NOT move the dot files to public/", func() {
+					Expect(filepath.Join(buildDir, ".hidden.html")).To(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", ".hidden.html")).NotTo(BeAnExistingFile())
 				})
 
@@ -717,11 +732,21 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("Does not move the blacklisted files to public/", func() {
+					Expect(filepath.Join(buildDir, "Staticfile")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "Staticfile.auth")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "manifest.yml")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, ".profile")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "stackato.yml")).To(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, ".profile.d")).To(BeADirectory())
+					Expect(filepath.Join(buildDir, ".cloudfoundry")).To(BeADirectory())
+
 					Expect(filepath.Join(buildDir, "public", "Staticfile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "Staticfile.auth")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "manifest.yml")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", ".profile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "stackato.yml")).ToNot(BeAnExistingFile())
+					Expect(filepath.Join(buildDir, "public", ".profile.d")).ToNot(BeADirectory())
+					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
 				})
 			})
 		})
@@ -729,16 +754,16 @@ var _ = Describe("Compile", func() {
 
 	Describe("WriteBootScript", func() {
 		It("writes boot.sh in appdir", func() {
-			err = compiler.WriteBootScript()
+			err = finalizer.WriteBootScript()
 			Expect(err).To(BeNil())
 
 			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
 			Expect(err).To(BeNil())
-			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\n$APP_ROOT/nginx/sbin/nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf"))
+			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\nnginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
 		})
 
 		It("boot.sh is an executable file", func() {
-			err = compiler.WriteBootScript()
+			err = finalizer.WriteBootScript()
 			Expect(err).To(BeNil())
 
 			fi, err := os.Stat(filepath.Join(buildDir, "boot.sh"))
@@ -747,4 +772,3 @@ var _ = Describe("Compile", func() {
 		})
 	})
 })
-
