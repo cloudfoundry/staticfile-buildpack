@@ -12,6 +12,7 @@ type Logger interface {
 	Warning(format string, args ...interface{})
 	Error(format string, args ...interface{})
 	BeginStep(format string, args ...interface{})
+	Debug(format string, args ...interface{})
 	Protip(tip string, help_url string)
 	GetOutput() io.Writer
 	SetOutput(w io.Writer)
@@ -29,6 +30,7 @@ const (
 	msgError    = msgPrefix + redPrefix + "**ERROR**" + colorSuffix
 	msgWarning  = msgPrefix + redPrefix + "**WARNING**" + colorSuffix
 	msgProtip   = msgPrefix + bluePrefix + "PRO TIP:" + colorSuffix
+	msgDebug    = msgPrefix + bluePrefix + "DEBUG:" + colorSuffix
 )
 
 func NewLogger() Logger {
@@ -45,6 +47,12 @@ func (l *logger) Warning(format string, args ...interface{}) {
 }
 func (l *logger) Error(format string, args ...interface{}) {
 	l.printWithHeader(msgError, format, args...)
+}
+
+func (l *logger) Debug(format string, args ...interface{}) {
+	if os.Getenv("BP_DEBUG") != "" {
+		l.printWithHeader(msgDebug, format, args...)
+	}
 }
 
 func (l *logger) BeginStep(format string, args ...interface{}) {
