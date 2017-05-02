@@ -72,9 +72,12 @@ func (s *Stager) DepDir() string {
 	return filepath.Join(s.DepsDir, s.DepsIdx)
 }
 
-func (s *Stager) WriteConfigYml() error {
-	configContent := "---\nname: " + s.Manifest.Language() + "\nconfig: {}\n"
-	return ioutil.WriteFile(filepath.Join(s.DepDir(), "config.yml"), []byte(configContent), 0644)
+func (s *Stager) WriteConfigYml(config interface{}) error {
+	if config == nil {
+		config = map[interface{}]interface{}{}
+	}
+	data := map[string]interface{}{"name": s.Manifest.Language(), "config": config}
+	return NewYAML().Write(filepath.Join(s.DepDir(), "config.yml"), data)
 }
 
 func (s *Stager) WriteEnvFile(envVar, envVal string) error {
@@ -82,6 +85,7 @@ func (s *Stager) WriteEnvFile(envVar, envVal string) error {
 
 	if err := os.MkdirAll(envDir, 0755); err != nil {
 		return err
+
 	}
 
 	return ioutil.WriteFile(filepath.Join(envDir, envVar), []byte(envVal), 0644)

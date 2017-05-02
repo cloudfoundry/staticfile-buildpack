@@ -39,7 +39,7 @@ func main() {
 		os.Exit(14)
 	}
 
-	if err := stager.WriteConfigYml(); err != nil {
+	if err := stager.WriteConfigYml(nil); err != nil {
 		stager.Log.Error("Error writing config.yml: %s", err.Error())
 		os.Exit(15)
 	}
