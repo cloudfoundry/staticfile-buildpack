@@ -12,7 +12,7 @@ describe 'golang unit tests' do
   end
 
   it 'passes all the unit tests' do
-    unit_test_dirs = ['src/staticfile/supply', 'src/staticfile/finalize']
+    unit_test_dirs = ['src/staticfile/supply', 'src/staticfile/finalize', 'src/staticfile/hooks']
 
     unit_test_dirs.each do |dir|
       Dir.chdir(dir) do

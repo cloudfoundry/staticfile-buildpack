@@ -4,10 +4,11 @@ require 'open3'
 require 'timeout'
 
 describe 'deploy a staticfile app with dynatrace agent' do
+	let(:service_name) { "dynatrace-test-service-staticfile-#{rand(100000)}"}
 	let(:app) {
 		app = Machete.deploy_app('staticfile_app', env: {'BP_DEBUG' => '1'})
-		Machete::SystemHelper.run_cmd(%(cf cups dynatrace-test-service -p '{"apitoken":"secretpaastoken","apiurl":"https://s3.amazonaws.com/dt-paas","environmentid":"envid"}'))
-		Machete::SystemHelper.run_cmd(%(cf bind-service #{app.name} dynatrace-test-service))
+		Machete::SystemHelper.run_cmd(%(cf cups #{service_name} -p '{"apitoken":"secretpaastoken","apiurl":"https://s3.amazonaws.com/dt-paas","environmentid":"envid"}'))
+		Machete::SystemHelper.run_cmd(%(cf bind-service #{app.name} #{service_name}))
 		Machete::SystemHelper.run_cmd(%(cf restage #{app.name}))
 		app
 	}
@@ -15,6 +16,7 @@ describe 'deploy a staticfile app with dynatrace agent' do
 
 	after do
 		Machete::CF::DeleteApp.new.execute(app)
+		Machete::SystemHelper.run_cmd(%(cf delete-service -f #{service_name}))
 	end
 
 	context "" do

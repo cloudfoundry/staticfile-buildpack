@@ -1,31 +1,31 @@
 package hooks
 
 import (
+	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-	"github.com/cloudfoundry/libbuildpack"
-	"encoding/json"
 	"strings"
-	"os/exec"
-	"errors"
+
+	"github.com/cloudfoundry/libbuildpack"
 )
 
-type dynatraceHook struct {
+type DynatraceHook struct {
 	libbuildpack.DefaultHook
 }
 
 func init() {
-	libbuildpack.AddHook(dynatraceHook{})
+	libbuildpack.AddHook(DynatraceHook{})
 }
 
-func (h dynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
-	stager.Log.BeginStep("Checking for enabled dynatrace service...")
+func (h DynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
+	stager.Log.Debug("Checking for enabled dynatrace service...")
 
 	credentials := h.dtCredentials()
 	if credentials == nil {
-		stager.Log.Info("Dynatrace service not found!")
+		stager.Log.Debug("Dynatrace service not found!")
 		return nil
 	}
 
@@ -54,15 +54,15 @@ func (h dynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
 	}
 
 	stager.Log.Debug("Making %s executable...", installerPath)
-	os.Chmod(installerPath, 0777)
+	os.Chmod(installerPath, 0755)
 
 	stager.Log.BeginStep("Starting Dynatrace PaaS agent installer")
-	cmd := exec.Command(installerPath, stager.BuildDir)
-	if os.Getenv("BP_DEBUG") != "" {
-		cmd.Stdout = os.Stdout
-	}
-	err = cmd.Run()
 
+	if os.Getenv("BP_DEBUG") != "" {
+		err = stager.Command.Run(installerPath, stager.BuildDir)
+	} else {
+		_, err = stager.Command.CaptureOutput(installerPath, stager.BuildDir)
+	}
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (h dynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
 
 	dynatraceEnvName := "dynatrace-env.sh"
 	installDir := filepath.Join(stager.BuildDir, "dynatrace", "oneagent")
-	dynatraceEnvPath := filepath.Join(stager.BuildDir, ".profile.d", dynatraceEnvName)
+	dynatraceEnvPath := filepath.Join(stager.DepDir(), "profile.d", dynatraceEnvName)
 	agentLibPath := "dynatrace/oneagent/agent/lib64/liboneagentproc.so"
 
 	_, err = os.Stat(filepath.Join(stager.BuildDir, agentLibPath))
@@ -112,22 +112,20 @@ func (h dynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
 	return nil
 }
 
-func (h dynatraceHook) dtCredentials() map[string]string {
-	var rawServices map[string]interface{}
-	err := json.Unmarshal([]byte(os.Getenv("VCAP_SERVICES")), &rawServices)
+func (h DynatraceHook) dtCredentials() map[string]string {
+	var vcapServices map[string][]struct {
+		Name        string            `json:"name"`
+		Credentials map[string]string `json:"credentials"`
+	}
+	err := json.Unmarshal([]byte(os.Getenv("VCAP_SERVICES")), &vcapServices)
 	if err != nil {
 		return nil
 	}
 
-	for _, services := range rawServices {
-		for _, rawService := range services.([]interface{}) {
-			service := rawService.(map[string]interface{})
-			if strings.Contains(service["name"].(string), "dynatrace") {
-				credentials := make(map[string]string)
-				for k, v := range service["credentials"].(map[string]interface{}) {
-					credentials[k] = v.(string)
-				}
-				return credentials
+	for _, services := range vcapServices {
+		for _, service := range services {
+			if strings.Contains(service.Name, "dynatrace") {
+				return service.Credentials
 			}
 		}
 	}
@@ -135,17 +133,19 @@ func (h dynatraceHook) dtCredentials() map[string]string {
 	return nil
 }
 
-func (h dynatraceHook) appName() string {
-	var application map[string]interface{}
+func (h DynatraceHook) appName() string {
+	var application struct {
+		Name string `json:"name"`
+	}
 	err := json.Unmarshal([]byte(os.Getenv("VCAP_APPLICATION")), &application)
 	if err != nil {
 		return ""
 	}
 
-	return application["name"].(string)
+	return application.Name
 }
 
-func (h dynatraceHook) downloadFile(url, path string) error {
+func (h DynatraceHook) downloadFile(url, path string) error {
 	out, err := os.Create(path)
 	if err != nil {
 		return err

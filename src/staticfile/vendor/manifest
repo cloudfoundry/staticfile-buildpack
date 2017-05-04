@@ -79,6 +79,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "gopkg.in/jarcoal/httpmock.v1",
+			"repository": "https://gopkg.in/jarcoal/httpmock.v1",
+			"vcs": "git",
+			"revision": "cf52904a3cf0f78f199ecade6a6df8e245d5b25a",
+			"branch": "v1",
+			"notests": true
+		},
+		{
 			"importpath": "gopkg.in/yaml.v2",
 			"repository": "https://gopkg.in/yaml.v2",
 			"vcs": "git",
