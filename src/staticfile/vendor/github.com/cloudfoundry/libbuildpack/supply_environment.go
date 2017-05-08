@@ -83,7 +83,7 @@ func SetLaunchEnvironment(depsDir, buildDir string) error {
 		return err
 	}
 
-	scriptLocation := filepath.Join(buildDir, ".profile.d", "000-multi-supply.sh")
+	scriptLocation := filepath.Join(buildDir, ".profile.d", "000_multi-supply.sh")
 	if err := writeToFile(strings.NewReader(scriptContents), scriptLocation, 0755); err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func SetLaunchEnvironment(depsDir, buildDir string) error {
 		for _, file := range files {
 			if file.Mode().IsRegular() {
 				src := filepath.Join(dir, file.Name())
-				dest := filepath.Join(buildDir, ".profile.d", depsIdx+"-"+file.Name())
+				dest := filepath.Join(buildDir, ".profile.d", depsIdx+"_"+file.Name())
 
 				if err := CopyFile(src, dest); err != nil {
 					return err
