@@ -4,9 +4,9 @@ require 'open3'
 require 'timeout'
 
 describe 'deploy a staticfile app with dynatrace agent' do
-	let(:service_name) { "dynatrace-test-service-staticfile-#{rand(100000)}"}
+	let(:service_name) { "dynatrace-#{rand(100000)}-service"}
 	let(:app) {
-		app = Machete.deploy_app('staticfile_app', env: {'BP_DEBUG' => '1'})
+		app = Machete.deploy_app('logenv', env: {'BP_DEBUG' => '1'})
 		Machete::SystemHelper.run_cmd(%(cf cups #{service_name} -p '{"apitoken":"secretpaastoken","apiurl":"https://s3.amazonaws.com/dt-paas","environmentid":"envid"}'))
 		Machete::SystemHelper.run_cmd(%(cf bind-service #{app.name} #{service_name}))
 		Machete::SystemHelper.run_cmd(%(cf restage #{app.name}))
@@ -29,8 +29,11 @@ describe 'deploy a staticfile app with dynatrace agent' do
 			expect(app).to have_logged('Dynatrace PaaS agent injection is set up.')
 			expect(app).to be_running
 
+			## Test dynatrcae profile script has loaded
+			expect(app).to have_logged('ProfileD: DT_HOST_ID=logenv_0')
+
 			browser.visit_path('/')
-			expect(browser).to have_body('This is an example app for Cloud Foundry that is only static HTML/JS/CSS assets.')
+			expect(browser).to have_body('Hello from dynatrace app')
 		end
 	end
 end

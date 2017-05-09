@@ -68,29 +68,33 @@ func Run(sf *Finalizer) error {
 		return err
 	}
 
-	profiledDir := filepath.Join(sf.Stager.BuildDir, ".profile.d")
-	err = os.MkdirAll(profiledDir, 0755)
+	err = sf.WriteStartupFiles()
+	if err != nil {
+		sf.Stager.Log.Error("Unable to write startup file: %s", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (sf *Finalizer) WriteStartupFiles() error {
+	profiledDir := filepath.Join(sf.Stager.DepDir(), "profile.d")
+	err := os.MkdirAll(profiledDir, 0755)
 	if err != nil {
 		return err
 	}
+
 	err = ioutil.WriteFile(filepath.Join(profiledDir, "staticfile.sh"), []byte(initScript), 0755)
 	if err != nil {
-		sf.Stager.Log.Error("Could not write .profile.d script: %s", err.Error())
 		return err
 	}
 
 	err = ioutil.WriteFile(filepath.Join(sf.Stager.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
 	if err != nil {
-		sf.Stager.Log.Error("Could not write start_logging.sh script: %s", err.Error())
 		return err
 	}
 
-	if err := sf.WriteBootScript(); err != nil {
-		sf.Stager.Log.Error("Could not write boot.sh script: %s", err.Error())
-		return err
-	}
-
-	return nil
+	bootScript := filepath.Join(sf.Stager.BuildDir, "boot.sh")
+	return ioutil.WriteFile(bootScript, []byte(startCommand), 0755)
 }
 
 func (sf *Finalizer) LoadStaticfile() error {
@@ -273,16 +277,6 @@ func (sf *Finalizer) ConfigureNginx() error {
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (sf *Finalizer) WriteBootScript() error {
-	bootScript := filepath.Join(sf.Stager.BuildDir, "boot.sh")
-
-	if err := ioutil.WriteFile(bootScript, []byte(startCommand), 0755); err != nil {
-		return err
 	}
 
 	return nil

@@ -25,6 +25,8 @@ var _ = Describe("Compile", func() {
 		staticfile   finalize.Staticfile
 		err          error
 		buildDir     string
+		depsDir      string
+		depsIdx      string
 		cacheDir     string
 		finalizer    *finalize.Finalizer
 		logger       libbuildpack.Logger
@@ -42,6 +44,13 @@ var _ = Describe("Compile", func() {
 		cacheDir, err = ioutil.TempDir("", "staticfile-buildpack.cache.")
 		Expect(err).To(BeNil())
 
+		depsDir, err = ioutil.TempDir("", "staticfile-buildpack.depsDir.")
+		Expect(err).To(BeNil())
+
+		depsIdx = "02"
+		err = os.MkdirAll(filepath.Join(depsDir, depsIdx), 0755)
+		Expect(err).To(BeNil())
+
 		buffer = new(bytes.Buffer)
 
 		logger = libbuildpack.NewLogger()
@@ -56,7 +65,9 @@ var _ = Describe("Compile", func() {
 		bps := &libbuildpack.Stager{BuildDir: buildDir,
 			CacheDir: cacheDir,
 			Manifest: mockManifest,
-			Log:      logger}
+			Log:      logger,
+			DepsDir:  depsDir,
+			DepsIdx:  depsIdx}
 
 		finalizer = &finalize.Finalizer{Stager: bps,
 			Config: staticfile,
@@ -71,6 +82,56 @@ var _ = Describe("Compile", func() {
 
 		err = os.RemoveAll(cacheDir)
 		Expect(err).To(BeNil())
+
+		err = os.RemoveAll(depsDir)
+		Expect(err).To(BeNil())
+	})
+
+	Describe("WriteStartupFiles", func() {
+		It("writes staticfile.sh to the profile.d directory", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			contents, err := ioutil.ReadFile(filepath.Join(depsDir, depsIdx, "profile.d", "staticfile.sh"))
+			Expect(err).To(BeNil())
+			Expect(string(contents)).To(ContainSubstring("export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH"))
+		})
+
+		It("writes start_logging.sh in appdir", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "start_logging.sh"))
+			Expect(err).To(BeNil())
+			Expect(string(contents)).To(Equal("\ncat < $APP_ROOT/nginx/logs/access.log &\n(>&2 cat) < $APP_ROOT/nginx/logs/error.log &\n"))
+		})
+
+		It("start_logging.sh is an executable file", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			fi, err := os.Stat(filepath.Join(buildDir, "start_logging.sh"))
+			Expect(err).To(BeNil())
+			Expect(fi.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+		})
+
+		It("writes boot.sh in appdir", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
+			Expect(err).To(BeNil())
+			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\nnginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
+		})
+
+		It("boot.sh is an executable file", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			fi, err := os.Stat(filepath.Join(buildDir, "boot.sh"))
+			Expect(err).To(BeNil())
+			Expect(fi.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+		})
 	})
 
 	Describe("LoadStaticfile", func() {
@@ -749,26 +810,6 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
 				})
 			})
-		})
-	})
-
-	Describe("WriteBootScript", func() {
-		It("writes boot.sh in appdir", func() {
-			err = finalizer.WriteBootScript()
-			Expect(err).To(BeNil())
-
-			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
-			Expect(err).To(BeNil())
-			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\nnginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
-		})
-
-		It("boot.sh is an executable file", func() {
-			err = finalizer.WriteBootScript()
-			Expect(err).To(BeNil())
-
-			fi, err := os.Stat(filepath.Join(buildDir, "boot.sh"))
-			Expect(err).To(BeNil())
-			Expect(fi.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
 		})
 	})
 })

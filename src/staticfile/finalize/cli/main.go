@@ -28,13 +28,13 @@ func main() {
 		os.Exit(12)
 	}
 
-	if err := libbuildpack.SetLaunchEnvironment(stager.DepsDir, stager.BuildDir); err != nil {
-		stager.Log.Error("Unable to setup launch environment: %s", err.Error())
+	if err := libbuildpack.RunAfterCompile(stager); err != nil {
+		stager.Log.Error("After Compile: %s", err.Error())
 		os.Exit(13)
 	}
 
-	if err := libbuildpack.RunAfterCompile(stager); err != nil {
-		stager.Log.Error("After Compile: %s", err.Error())
+	if err := libbuildpack.SetLaunchEnvironment(stager.DepsDir, stager.BuildDir); err != nil {
+		stager.Log.Error("Unable to setup launch environment: %s", err.Error())
 		os.Exit(14)
 	}
 
