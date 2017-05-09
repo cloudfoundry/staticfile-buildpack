@@ -78,8 +78,9 @@ func SetLaunchEnvironment(depsDir, buildDir string) error {
 		}
 
 		if len(depsPaths) != 0 {
-			scriptContents += fmt.Sprintf(`export %[1]s=%[2]s$([[ ! -z "${%[1]s:-}" ]] && echo ":$%[1]s")\n`, envVar, strings.Join(depsPaths, ":"))
-		}
+			scriptContents += fmt.Sprintf(`export %[1]s=%[2]s$([[ ! -z "${%[1]s:-}" ]] && echo ":$%[1]s")`, envVar, strings.Join(depsPaths, ":"))
+		  scriptContents += "\n"
+	  }
 	}
 
 	if err := os.MkdirAll(filepath.Join(buildDir, ".profile.d"), 0755); err != nil {
