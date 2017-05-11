@@ -37,6 +37,7 @@ type DeprecationDate struct {
 	Name        string `yaml:"name"`
 	VersionLine string `yaml:"version_line"`
 	Date        string `yaml:"date"`
+	Link        string `yaml:"link"`
 }
 
 type ManifestEntry struct {
@@ -261,7 +262,7 @@ func (m *manifest) warnEndOfLife(dep Dependency) error {
 			return err
 		}
 		if versionLine.Check(v) && eolTime.Sub(m.currentTime) < thirtyDays {
-			Log.Warning(endOfLifeWarning(dep.Name, deprecation.VersionLine, deprecation.Date))
+			Log.Warning(endOfLifeWarning(dep.Name, deprecation.VersionLine, deprecation.Date, deprecation.Link))
 		}
 	}
 	return nil

@@ -34,8 +34,12 @@ func outdatedDependencyWarning(dep Dependency, newest string) string {
 	return fmt.Sprintf(warning, dep.Name, newest, dep.Version, dep.Name)
 }
 
-func endOfLifeWarning(depName, versionLine, eolDate string) string {
+func endOfLifeWarning(depName, versionLine, eolDate, link string) string {
 	warning := "%s %s will no longer be available in new buildpacks released after %s"
+	if link != "" {
+		warning += ". See: %s"
+		return fmt.Sprintf(warning, depName, versionLine, eolDate, link)
+	}
 
 	return fmt.Sprintf(warning, depName, versionLine, eolDate)
 }
