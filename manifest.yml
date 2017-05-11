@@ -19,7 +19,6 @@ exclude_files:
 - cf.Gemfile.lock
 - scripts/
 - src/
-url_to_dependency_map: []
 dependencies:
 - name: nginx
   version: 1.11.13
