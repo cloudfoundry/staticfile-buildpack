@@ -110,3 +110,12 @@ func (c *commandRunner) ResetOutput() {
 	c.stdout = os.Stdout
 	c.stderr = os.Stderr
 }
+
+func (c *commandRunner) Execute(dir string, stdout io.Writer, stderr io.Writer, program string, args ...string) error {
+	cmd := exec.Command(program, args...)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	cmd.Dir = dir
+
+	return cmd.Run()
+}
