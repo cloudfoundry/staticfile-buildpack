@@ -106,6 +106,31 @@ func (s *Stager) AddBinDependencyLink(destPath, sourceName string) error {
 	return os.Symlink(relPath, filepath.Join(binDir, sourceName))
 }
 
+func (s *Stager) LinkDirectoryInDepDir(destDir, depSubDir string) error {
+	srcDir := filepath.Join(s.DepDir(), depSubDir)
+	if err := os.MkdirAll(srcDir, 0755); err != nil {
+		return err
+	}
+
+	files, err := ioutil.ReadDir(destDir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		relPath, err := filepath.Rel(srcDir, filepath.Join(destDir, file.Name()))
+		if err != nil {
+			return err
+		}
+
+		if err := os.Symlink(relPath, filepath.Join(srcDir, file.Name())); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *Stager) CheckBuildpackValid() error {
 	version, err := s.Manifest.Version()
 	if err != nil {
