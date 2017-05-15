@@ -19,6 +19,7 @@ type CommandRunner interface {
 	CaptureOutput(program string, args ...string) (string, error)
 	CaptureStdout(program string, args ...string) (string, error)
 	CaptureStderr(program string, args ...string) (string, error)
+	Execute(dir string, stdout io.Writer, stderr io.Writer, program string, args ...string) error
 }
 
 type commandRunner struct {

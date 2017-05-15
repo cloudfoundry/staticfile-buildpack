@@ -139,3 +139,18 @@ func (_mr *_MockCommandRunnerRecorder) CaptureStderr(arg0 interface{}, arg1 ...i
 	_s := append([]interface{}{arg0}, arg1...)
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CaptureStderr", _s...)
 }
+
+func (_m *MockCommandRunner) Execute(dir string, stdout io.Writer, stderr io.Writer, program string, args ...string) error {
+	_s := []interface{}{dir, stdout, stderr, program}
+	for _, _x := range args {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "Execute", _s...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockCommandRunnerRecorder) Execute(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Execute", _s...)
+}
