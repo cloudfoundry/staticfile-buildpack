@@ -1,3 +1,12 @@
+v1.4.6 May 15, 2017
+====================
+
+* Add Dynatrace OneAgent integration to staticfile buildpack
+  (https://www.pivotaltracker.com/story/show/144856601)
+
+* Add multiple buildpack support
+  (https://www.pivotaltracker.com/story/show/142852459)
+
 v1.4.5 Apr 20, 2017
 ====================
 
