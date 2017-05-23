@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,24 +13,36 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 )
 
+type Command interface {
+	Execute(string, io.Writer, io.Writer, string, ...string) error
+}
+
 type DynatraceHook struct {
 	libbuildpack.DefaultHook
+	Log     *libbuildpack.Logger
+	Command Command
 }
 
 func init() {
-	libbuildpack.AddHook(DynatraceHook{})
+	logger := libbuildpack.NewLogger(os.Stdout)
+	command := &libbuildpack.Command{}
+
+	libbuildpack.AddHook(DynatraceHook{
+		Log:     logger,
+		Command: command,
+	})
 }
 
 func (h DynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
-	stager.Log.Debug("Checking for enabled dynatrace service...")
+	h.Log.Debug("Checking for enabled dynatrace service...")
 
 	credentials := h.dtCredentials()
 	if credentials == nil {
-		stager.Log.Debug("Dynatrace service not found!")
+		h.Log.Debug("Dynatrace service not found!")
 		return nil
 	}
 
-	stager.Log.Info("Dynatrace service found. Setting up Dynatrace PaaS agent.")
+	h.Log.Info("Dynatrace service found. Setting up Dynatrace PaaS agent.")
 
 	apiurl, present := credentials["apiurl"]
 	if !present && credentials["environmentid"] != "" {
@@ -47,47 +60,47 @@ func (h DynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
 	url := apiurl + "/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&bitness=64&Api-Token=" + credentials["apitoken"]
 	installerPath := filepath.Join(os.TempDir(), "paasInstaller.sh")
 
-	stager.Log.Debug("Downloading '%s' to '%s'", url, installerPath)
+	h.Log.Debug("Downloading '%s' to '%s'", url, installerPath)
 	err := h.downloadFile(url, installerPath)
 	if err != nil {
 		return err
 	}
 
-	stager.Log.Debug("Making %s executable...", installerPath)
+	h.Log.Debug("Making %s executable...", installerPath)
 	os.Chmod(installerPath, 0755)
 
-	stager.Log.BeginStep("Starting Dynatrace PaaS agent installer")
+	h.Log.BeginStep("Starting Dynatrace PaaS agent installer")
 
 	if os.Getenv("BP_DEBUG") != "" {
-		err = stager.Command.Run(installerPath, stager.BuildDir)
+		err = h.Command.Execute("", os.Stdout, os.Stderr, installerPath, stager.BuildDir())
 	} else {
-		_, err = stager.Command.CaptureOutput(installerPath, stager.BuildDir)
+		err = h.Command.Execute("", ioutil.Discard, ioutil.Discard, installerPath, stager.BuildDir())
 	}
 	if err != nil {
 		return err
 	}
 
-	stager.Log.Info("Dynatrace PaaS agent installed.")
+	h.Log.Info("Dynatrace PaaS agent installed.")
 
 	dynatraceEnvName := "dynatrace-env.sh"
-	installDir := filepath.Join(stager.BuildDir, "dynatrace", "oneagent")
+	installDir := filepath.Join(stager.BuildDir(), "dynatrace", "oneagent")
 	dynatraceEnvPath := filepath.Join(stager.DepDir(), "profile.d", dynatraceEnvName)
 	agentLibPath := "dynatrace/oneagent/agent/lib64/liboneagentproc.so"
 
-	_, err = os.Stat(filepath.Join(stager.BuildDir, agentLibPath))
+	_, err = os.Stat(filepath.Join(stager.BuildDir(), agentLibPath))
 	if os.IsNotExist(err) {
-		stager.Log.Error("Agent library (%s) not found!", agentLibPath)
+		h.Log.Error("Agent library (%s) not found!", agentLibPath)
 		return err
 	}
 
-	stager.Log.BeginStep("Setting up Dynatrace PaaS agent injection...")
-	stager.Log.Debug("Copy %s to %s", dynatraceEnvName, dynatraceEnvPath)
+	h.Log.BeginStep("Setting up Dynatrace PaaS agent injection...")
+	h.Log.Debug("Copy %s to %s", dynatraceEnvName, dynatraceEnvPath)
 	err = libbuildpack.CopyFile(filepath.Join(installDir, dynatraceEnvName), dynatraceEnvPath)
 	if err != nil {
 		return err
 	}
 
-	stager.Log.Debug("Open %s for modification...", dynatraceEnvPath)
+	h.Log.Debug("Open %s for modification...", dynatraceEnvPath)
 	f, err := os.OpenFile(dynatraceEnvPath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return err
@@ -95,19 +108,19 @@ func (h DynatraceHook) AfterCompile(stager *libbuildpack.Stager) error {
 
 	defer f.Close()
 
-	stager.Log.Debug("Write LD_PRELOAD...")
+	h.Log.Debug("Write LD_PRELOAD...")
 	_, err = f.WriteString("\nexport LD_PRELOAD=${HOME}/" + agentLibPath)
 	if err != nil {
 		return err
 	}
 
-	stager.Log.Debug("Write DT_HOST_ID...")
+	h.Log.Debug("Write DT_HOST_ID...")
 	_, err = f.WriteString("\nexport DT_HOST_ID=" + h.appName() + "_${CF_INSTANCE_INDEX}")
 	if err != nil {
 		return err
 	}
 
-	stager.Log.Info("Dynatrace PaaS agent injection is set up.")
+	h.Log.Info("Dynatrace PaaS agent injection is set up.")
 
 	return nil
 }

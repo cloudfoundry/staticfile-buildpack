@@ -1,6 +1,7 @@
 package hooks_test
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -18,21 +19,21 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/command_runner.go --destination=mocks_command_runner_test.go --package=hooks_test
+//go:generate mockgen -source=dynatrace.go --destination=mocks_test.go --package=hooks_test
 
 var _ = Describe("dynatraceHook", func() {
 	var (
-		err               error
-		buildDir          string
-		depsDir           string
-		depsIdx           string
-		logger            libbuildpack.Logger
-		stager            *libbuildpack.Stager
-		mockCtrl          *gomock.Controller
-		mockCommandRunner *MockCommandRunner
-		buffer            *bytes.Buffer
-		dynatrace         hooks.DynatraceHook
-		runInstaller      func(string, string)
+		err          error
+		buildDir     string
+		depsDir      string
+		depsIdx      string
+		logger       *libbuildpack.Logger
+		stager       *libbuildpack.Stager
+		mockCtrl     *gomock.Controller
+		mockCommand  *MockCommand
+		buffer       *bytes.Buffer
+		dynatrace    hooks.DynatraceHook
+		runInstaller func(string, io.Writer, io.Writer, string, string)
 	)
 
 	BeforeEach(func() {
@@ -46,17 +47,18 @@ var _ = Describe("dynatraceHook", func() {
 		err = os.MkdirAll(filepath.Join(depsDir, depsIdx), 0755)
 
 		buffer = new(bytes.Buffer)
-
-		logger = libbuildpack.NewLogger()
-		logger.SetOutput(buffer)
+		logger = libbuildpack.NewLogger(buffer)
 
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockCommandRunner = NewMockCommandRunner(mockCtrl)
-		dynatrace = hooks.DynatraceHook{}
+		mockCommand = NewMockCommand(mockCtrl)
+		dynatrace = hooks.DynatraceHook{
+			Command: mockCommand,
+			Log:     logger,
+		}
 
 		httpmock.Reset()
 
-		runInstaller = func(file string, _ string) {
+		runInstaller = func(_ string, _, _ io.Writer, file string, _ string) {
 			contents, err := ioutil.ReadFile(file)
 			Expect(err).To(BeNil())
 
@@ -74,12 +76,8 @@ var _ = Describe("dynatraceHook", func() {
 	})
 
 	JustBeforeEach(func() {
-		stager = &libbuildpack.Stager{
-			BuildDir: buildDir,
-			DepsDir:  depsDir,
-			DepsIdx:  depsIdx,
-			Command:  mockCommandRunner,
-			Log:      logger}
+		args := []string{buildDir, "", depsDir, depsIdx}
+		stager = libbuildpack.NewStager(args, logger, &libbuildpack.Manifest{})
 	})
 
 	AfterEach(func() {
@@ -155,8 +153,8 @@ var _ = Describe("dynatraceHook", func() {
 					httpmock.NewStringResponder(200, "echo Install Dynatrace"))
 			})
 
-			It("installs dyntatrace", func() {
-				mockCommandRunner.EXPECT().CaptureOutput(gomock.Any(), buildDir).Do(runInstaller)
+			It("installs dynatrace", func() {
+				mockCommand.EXPECT().Execute("", gomock.Any(), gomock.Any(), gomock.Any(), buildDir).Do(runInstaller)
 
 				err = dynatrace.AfterCompile(stager)
 				Expect(err).To(BeNil())
@@ -187,7 +185,7 @@ var _ = Describe("dynatraceHook", func() {
 			})
 
 			It("installs dyntatrace", func() {
-				mockCommandRunner.EXPECT().CaptureOutput(gomock.Any(), buildDir).Do(runInstaller)
+				mockCommand.EXPECT().Execute("", gomock.Any(), gomock.Any(), gomock.Any(), buildDir).Do(runInstaller)
 
 				err = dynatrace.AfterCompile(stager)
 				Expect(err).To(BeNil())

@@ -87,6 +87,23 @@ func ExtractZip(zipfile, destDir string) error {
 	return nil
 }
 
+// Gets the buildpack directory
+func GetBuildpackDir() (string, error) {
+	var err error
+
+	bpDir := os.Getenv("BUILDPACK_DIR")
+
+	if bpDir == "" {
+		bpDir, err = filepath.Abs(filepath.Join(filepath.Dir(os.Args[0]), ".."))
+
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return bpDir, nil
+}
+
 // ExtractTarGz extracts tar.gz to destDir
 func ExtractTarGz(tarfile, destDir string) error {
 	file, err := os.Open(tarfile)
@@ -106,13 +123,11 @@ func ExtractTarGz(tarfile, destDir string) error {
 func CopyFile(source, destFile string) error {
 	fh, err := os.Open(source)
 	if err != nil {
-		Log.Error("Could not be found")
 		return err
 	}
 
 	fileInfo, err := fh.Stat()
 	if err != nil {
-		Log.Error("Could not stat")
 		return err
 	}
 
@@ -204,8 +219,7 @@ func checkMD5(filePath, expectedMD5 string) error {
 	actualMD5 := hex.EncodeToString(hashInBytes)
 
 	if actualMD5 != expectedMD5 {
-		Log.Error("DEPENDENCY_MD5_MISMATCH: expected md5: %s, actual md5: %s", expectedMD5, actualMD5)
-		return fmt.Errorf("expected md5: %s actual md5: %s", expectedMD5, actualMD5)
+		return fmt.Errorf("dependency md5 mismatch: expected md5 %s, actual md5 %s", expectedMD5, actualMD5)
 	}
 	return nil
 }
@@ -218,8 +232,7 @@ func downloadFile(url, destFile string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		Log.Error("Could not download: %d", resp.StatusCode)
-		return errors.New("file download failed")
+		return fmt.Errorf("could not download: %d", resp.StatusCode)
 	}
 
 	return writeToFile(resp.Body, destFile, 0666)
@@ -228,20 +241,17 @@ func downloadFile(url, destFile string) error {
 func writeToFile(source io.Reader, destFile string, mode os.FileMode) error {
 	err := os.MkdirAll(filepath.Dir(destFile), 0755)
 	if err != nil {
-		Log.Error("Could not create %s", filepath.Dir(destFile))
 		return err
 	}
 
 	fh, err := os.OpenFile(destFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mode)
 	if err != nil {
-		Log.Error("Could not create %s", destFile)
 		return err
 	}
 	defer fh.Close()
 
 	_, err = io.Copy(fh, source)
 	if err != nil {
-		Log.Error("Could not write to %s", destFile)
 		return err
 	}
 

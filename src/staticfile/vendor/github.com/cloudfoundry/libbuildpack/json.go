@@ -6,19 +6,14 @@ import (
 	"io/ioutil"
 )
 
-type JSON interface {
-	Load(file string, obj interface{}) error
-	Write(dest string, obj interface{}) error
+type JSON struct {
 }
 
-type jsonStruct struct {
+func NewJSON() *JSON {
+	return &JSON{}
 }
 
-func NewJSON() JSON {
-	return &jsonStruct{}
-}
-
-func (y *jsonStruct) Load(file string, obj interface{}) error {
+func (j *JSON) Load(file string, obj interface{}) error {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
@@ -32,7 +27,7 @@ func (y *jsonStruct) Load(file string, obj interface{}) error {
 	return nil
 }
 
-func (y *jsonStruct) Write(dest string, obj interface{}) error {
+func (j *JSON) Write(dest string, obj interface{}) error {
 	data, err := json.Marshal(&obj)
 	if err != nil {
 		return err

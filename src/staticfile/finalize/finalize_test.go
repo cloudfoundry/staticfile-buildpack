@@ -17,61 +17,44 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/yaml.go --destination=mocks_yaml_test.go --package=finalize_test
-//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/manifest.go --destination=mocks_manifest_test.go --package=finalize_test --imports=.=github.com/cloudfoundry/libbuildpack
+//go:generate mockgen -source=finalize.go --destination=mocks_test.go --package=finalize_test
 
 var _ = Describe("Compile", func() {
 	var (
-		staticfile   finalize.Staticfile
-		err          error
-		buildDir     string
-		depsDir      string
-		depsIdx      string
-		cacheDir     string
-		finalizer    *finalize.Finalizer
-		logger       libbuildpack.Logger
-		mockCtrl     *gomock.Controller
-		mockYaml     *MockYAML
-		mockManifest *MockManifest
-		buffer       *bytes.Buffer
-		data         []byte
+		staticfile finalize.Staticfile
+		err        error
+		buildDir   string
+		depDir     string
+		finalizer  *finalize.Finalizer
+		logger     *libbuildpack.Logger
+		mockCtrl   *gomock.Controller
+		mockYaml   *MockYAML
+		buffer     *bytes.Buffer
+		data       []byte
 	)
 
 	BeforeEach(func() {
 		buildDir, err = ioutil.TempDir("", "staticfile-buildpack.build.")
 		Expect(err).To(BeNil())
 
-		cacheDir, err = ioutil.TempDir("", "staticfile-buildpack.cache.")
-		Expect(err).To(BeNil())
-
-		depsDir, err = ioutil.TempDir("", "staticfile-buildpack.depsDir.")
-		Expect(err).To(BeNil())
-
-		depsIdx = "02"
-		err = os.MkdirAll(filepath.Join(depsDir, depsIdx), 0755)
+		depDir, err = ioutil.TempDir("", "staticfile-buildpack.depDir.")
 		Expect(err).To(BeNil())
 
 		buffer = new(bytes.Buffer)
-
-		logger = libbuildpack.NewLogger()
-		logger.SetOutput(buffer)
+		logger = libbuildpack.NewLogger(buffer)
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockYaml = NewMockYAML(mockCtrl)
-		mockManifest = NewMockManifest(mockCtrl)
 	})
 
 	JustBeforeEach(func() {
-		bps := &libbuildpack.Stager{BuildDir: buildDir,
-			CacheDir: cacheDir,
-			Manifest: mockManifest,
+		finalizer = &finalize.Finalizer{
+			BuildDir: buildDir,
+			DepDir:   depDir,
+			Config:   staticfile,
+			YAML:     mockYaml,
 			Log:      logger,
-			DepsDir:  depsDir,
-			DepsIdx:  depsIdx}
-
-		finalizer = &finalize.Finalizer{Stager: bps,
-			Config: staticfile,
-			YAML:   mockYaml}
+		}
 	})
 
 	AfterEach(func() {
@@ -80,10 +63,7 @@ var _ = Describe("Compile", func() {
 		err = os.RemoveAll(buildDir)
 		Expect(err).To(BeNil())
 
-		err = os.RemoveAll(cacheDir)
-		Expect(err).To(BeNil())
-
-		err = os.RemoveAll(depsDir)
+		err = os.RemoveAll(depDir)
 		Expect(err).To(BeNil())
 	})
 
@@ -92,7 +72,7 @@ var _ = Describe("Compile", func() {
 			err = finalizer.WriteStartupFiles()
 			Expect(err).To(BeNil())
 
-			contents, err := ioutil.ReadFile(filepath.Join(depsDir, depsIdx, "profile.d", "staticfile.sh"))
+			contents, err := ioutil.ReadFile(filepath.Join(depDir, "profile.d", "staticfile.sh"))
 			Expect(err).To(BeNil())
 			Expect(string(contents)).To(ContainSubstring("export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH"))
 		})

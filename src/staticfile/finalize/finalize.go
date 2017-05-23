@@ -25,10 +25,16 @@ type Staticfile struct {
 	BasicAuth       bool
 }
 
+type YAML interface {
+	Load(string, interface{}) error
+}
+
 type Finalizer struct {
-	Stager *libbuildpack.Stager
-	Config Staticfile
-	YAML   libbuildpack.YAML
+	BuildDir string
+	DepDir   string
+	Log      *libbuildpack.Logger
+	Config   Staticfile
+	YAML     YAML
 }
 
 var skipCopyFile = map[string]bool{
@@ -46,38 +52,38 @@ func Run(sf *Finalizer) error {
 
 	err = sf.LoadStaticfile()
 	if err != nil {
-		sf.Stager.Log.Error("Unable to load Staticfile: %s", err.Error())
+		sf.Log.Error("Unable to load Staticfile: %s", err.Error())
 		return err
 	}
 
 	appRootDir, err := sf.GetAppRootDir()
 	if err != nil {
-		sf.Stager.Log.Error("Invalid root directory: %s", err.Error())
+		sf.Log.Error("Invalid root directory: %s", err.Error())
 		return err
 	}
 
 	err = sf.CopyFilesToPublic(appRootDir)
 	if err != nil {
-		sf.Stager.Log.Error("Unable to copy project files: %s", err.Error())
+		sf.Log.Error("Unable to copy project files: %s", err.Error())
 		return err
 	}
 
 	err = sf.ConfigureNginx()
 	if err != nil {
-		sf.Stager.Log.Error("Unable to configure nginx: %s", err.Error())
+		sf.Log.Error("Unable to configure nginx: %s", err.Error())
 		return err
 	}
 
 	err = sf.WriteStartupFiles()
 	if err != nil {
-		sf.Stager.Log.Error("Unable to write startup file: %s", err.Error())
+		sf.Log.Error("Unable to write startup file: %s", err.Error())
 		return err
 	}
 	return nil
 }
 
 func (sf *Finalizer) WriteStartupFiles() error {
-	profiledDir := filepath.Join(sf.Stager.DepDir(), "profile.d")
+	profiledDir := filepath.Join(sf.DepDir, "profile.d")
 	err := os.MkdirAll(profiledDir, 0755)
 	if err != nil {
 		return err
@@ -88,12 +94,12 @@ func (sf *Finalizer) WriteStartupFiles() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(filepath.Join(sf.Stager.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
+	err = ioutil.WriteFile(filepath.Join(sf.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
 	if err != nil {
 		return err
 	}
 
-	bootScript := filepath.Join(sf.Stager.BuildDir, "boot.sh")
+	bootScript := filepath.Join(sf.BuildDir, "boot.sh")
 	return ioutil.WriteFile(bootScript, []byte(startCommand), 0755)
 }
 
@@ -101,7 +107,7 @@ func (sf *Finalizer) LoadStaticfile() error {
 	var hash = make(map[string]string)
 	conf := &sf.Config
 
-	err := sf.YAML.Load(filepath.Join(sf.Stager.BuildDir, "Staticfile"), &hash)
+	err := sf.YAML.Load(filepath.Join(sf.BuildDir, "Staticfile"), &hash)
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
@@ -113,48 +119,48 @@ func (sf *Finalizer) LoadStaticfile() error {
 			conf.RootDir = value
 		case "host_dot_files":
 			if isEnabled {
-				sf.Stager.Log.BeginStep("Enabling hosting of dotfiles")
+				sf.Log.BeginStep("Enabling hosting of dotfiles")
 				conf.HostDotFiles = true
 			}
 		case "location_include":
 			conf.LocationInclude = value
 			if conf.LocationInclude != "" {
-				sf.Stager.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
+				sf.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
 			}
 		case "directory":
 			if value != "" {
-				sf.Stager.Log.BeginStep("Enabling directory index for folders without index.html files")
+				sf.Log.BeginStep("Enabling directory index for folders without index.html files")
 				conf.DirectoryIndex = true
 			}
 		case "ssi":
 			if isEnabled {
-				sf.Stager.Log.BeginStep("Enabling SSI")
+				sf.Log.BeginStep("Enabling SSI")
 				conf.SSI = true
 			}
 		case "pushstate":
 			if isEnabled {
-				sf.Stager.Log.BeginStep("Enabling pushstate")
+				sf.Log.BeginStep("Enabling pushstate")
 				conf.PushState = true
 			}
 		case "http_strict_transport_security":
 			if isEnabled {
-				sf.Stager.Log.BeginStep("Enabling HSTS")
+				sf.Log.BeginStep("Enabling HSTS")
 				conf.HSTS = true
 			}
 		case "force_https":
 			if isEnabled {
-				sf.Stager.Log.BeginStep("Enabling HTTPS redirect")
+				sf.Log.BeginStep("Enabling HTTPS redirect")
 				conf.ForceHTTPS = true
 			}
 		}
 	}
 
-	authFile := filepath.Join(sf.Stager.BuildDir, "Staticfile.auth")
+	authFile := filepath.Join(sf.BuildDir, "Staticfile.auth")
 	_, err = os.Stat(authFile)
 	if err == nil {
 		conf.BasicAuth = true
-		sf.Stager.Log.BeginStep("Enabling basic authentication using Staticfile.auth")
-		sf.Stager.Log.Protip("Learn about basic authentication", "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication")
+		sf.Log.BeginStep("Enabling basic authentication using Staticfile.auth")
+		sf.Log.Protip("Learn about basic authentication", "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#authentication")
 	}
 
 	return nil
@@ -169,12 +175,12 @@ func (sf *Finalizer) GetAppRootDir() (string, error) {
 		rootDirRelative = "."
 	}
 
-	rootDirAbs, err := filepath.Abs(filepath.Join(sf.Stager.BuildDir, rootDirRelative))
+	rootDirAbs, err := filepath.Abs(filepath.Join(sf.BuildDir, rootDirRelative))
 	if err != nil {
 		return "", err
 	}
 
-	sf.Stager.Log.BeginStep("Root folder %s", rootDirAbs)
+	sf.Log.BeginStep("Root folder %s", rootDirAbs)
 
 	dirInfo, err := os.Stat(rootDirAbs)
 	if err != nil {
@@ -189,9 +195,9 @@ func (sf *Finalizer) GetAppRootDir() (string, error) {
 }
 
 func (sf *Finalizer) CopyFilesToPublic(appRootDir string) error {
-	sf.Stager.Log.BeginStep("Copying project files into public")
+	sf.Log.BeginStep("Copying project files into public")
 
-	publicDir := filepath.Join(sf.Stager.BuildDir, "public")
+	publicDir := filepath.Join(sf.BuildDir, "public")
 
 	if publicDir == appRootDir {
 		return nil
@@ -233,20 +239,20 @@ func (sf *Finalizer) CopyFilesToPublic(appRootDir string) error {
 func (sf *Finalizer) ConfigureNginx() error {
 	var err error
 
-	sf.Stager.Log.BeginStep("Configuring nginx")
+	sf.Log.BeginStep("Configuring nginx")
 
 	nginxConf, err := sf.generateNginxConf()
 	if err != nil {
-		sf.Stager.Log.Error("Unable to generate nginx.conf: %s", err.Error())
+		sf.Log.Error("Unable to generate nginx.conf: %s", err.Error())
 		return err
 	}
 
-	confDir := filepath.Join(sf.Stager.BuildDir, "nginx", "conf")
+	confDir := filepath.Join(sf.BuildDir, "nginx", "conf")
 	if err := os.MkdirAll(confDir, 0755); err != nil {
 		return err
 	}
 
-	logsDir := filepath.Join(sf.Stager.BuildDir, "nginx", "logs")
+	logsDir := filepath.Join(sf.BuildDir, "nginx", "logs")
 	if err := os.MkdirAll(logsDir, 0755); err != nil {
 		return err
 	}
@@ -257,7 +263,7 @@ func (sf *Finalizer) ConfigureNginx() error {
 
 	for file, contents := range confFiles {
 		confDest := filepath.Join(confDir, file)
-		customConfFile := filepath.Join(sf.Stager.BuildDir, "public", file)
+		customConfFile := filepath.Join(sf.BuildDir, "public", file)
 
 		_, err = os.Stat(customConfFile)
 		if err == nil {
@@ -272,7 +278,7 @@ func (sf *Finalizer) ConfigureNginx() error {
 	}
 
 	if sf.Config.BasicAuth {
-		authFile := filepath.Join(sf.Stager.BuildDir, "Staticfile.auth")
+		authFile := filepath.Join(sf.BuildDir, "Staticfile.auth")
 		err = libbuildpack.CopyFile(authFile, filepath.Join(confDir, ".htpasswd"))
 		if err != nil {
 			return err

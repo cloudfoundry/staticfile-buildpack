@@ -4,24 +4,37 @@ import (
 	"os"
 	"staticfile/finalize"
 	_ "staticfile/hooks"
+	"time"
 
 	"github.com/cloudfoundry/libbuildpack"
 )
 
 func main() {
-	stager, err := libbuildpack.NewStager(os.Args[1:], libbuildpack.NewLogger())
+	logger := libbuildpack.NewLogger(os.Stdout)
+
+	buildpackDir, err := libbuildpack.GetBuildpackDir()
 	if err != nil {
+		logger.Error("Unable to determine buildpack directory: %s", err.Error())
+		os.Exit(9)
+	}
+
+	manifest, err := libbuildpack.NewManifest(buildpackDir, logger, time.Now())
+	if err != nil {
+		logger.Error("Unable to load buildpack manifest: %s", err.Error())
 		os.Exit(10)
 	}
 
-	if err := libbuildpack.SetStagingEnvironment(stager.DepsDir); err != nil {
-		stager.Log.Error("Unable to setup environment variables: %s", err.Error())
+	stager := libbuildpack.NewStager(os.Args[1:], logger, manifest)
+	if err := stager.SetStagingEnvironment(); err != nil {
+		logger.Error("Unable to setup environment variables: %s", err.Error())
 		os.Exit(11)
 	}
 
 	sf := finalize.Finalizer{
-		Stager: stager,
-		YAML:   libbuildpack.NewYAML(),
+		BuildDir: stager.BuildDir(),
+		DepDir:   stager.DepDir(),
+		Log:      logger,
+		YAML:     libbuildpack.NewYAML(),
 	}
 
 	if err := finalize.Run(&sf); err != nil {
@@ -29,12 +42,12 @@ func main() {
 	}
 
 	if err := libbuildpack.RunAfterCompile(stager); err != nil {
-		stager.Log.Error("After Compile: %s", err.Error())
+		logger.Error("After Compile: %s", err.Error())
 		os.Exit(13)
 	}
 
-	if err := libbuildpack.SetLaunchEnvironment(stager.DepsDir, stager.BuildDir); err != nil {
-		stager.Log.Error("Unable to setup launch environment: %s", err.Error())
+	if err := stager.SetLaunchEnvironment(); err != nil {
+		logger.Error("Unable to setup launch environment: %s", err.Error())
 		os.Exit(14)
 	}
 

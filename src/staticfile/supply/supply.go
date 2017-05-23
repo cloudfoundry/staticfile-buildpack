@@ -6,13 +6,25 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 )
 
+type Manifest interface {
+	DefaultVersion(string) (libbuildpack.Dependency, error)
+	InstallDependency(libbuildpack.Dependency, string) error
+}
+
+type Stager interface {
+	AddBinDependencyLink(string, string) error
+	DepDir() string
+}
+
 type Supplier struct {
-	Stager *libbuildpack.Stager
+	Stager   Stager
+	Manifest Manifest
+	Log      *libbuildpack.Logger
 }
 
 func Run(ss *Supplier) error {
 	if err := ss.InstallNginx(); err != nil {
-		ss.Stager.Log.Error("Unable to install nginx: %s", err.Error())
+		ss.Log.Error("Unable to install nginx: %s", err.Error())
 		return err
 	}
 
@@ -20,15 +32,15 @@ func Run(ss *Supplier) error {
 }
 
 func (ss *Supplier) InstallNginx() error {
-	ss.Stager.Log.BeginStep("Installing nginx")
+	ss.Log.BeginStep("Installing nginx")
 
-	nginx, err := ss.Stager.Manifest.DefaultVersion("nginx")
+	nginx, err := ss.Manifest.DefaultVersion("nginx")
 	if err != nil {
 		return err
 	}
-	ss.Stager.Log.Info("Using nginx version %s", nginx.Version)
+	ss.Log.Info("Using nginx version %s", nginx.Version)
 
-	if err := ss.Stager.Manifest.InstallDependency(nginx, ss.Stager.DepDir()); err != nil {
+	if err := ss.Manifest.InstallDependency(nginx, ss.Stager.DepDir()); err != nil {
 		return err
 	}
 

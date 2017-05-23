@@ -15,7 +15,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-//go:generate mockgen -source=../vendor/github.com/cloudfoundry/libbuildpack/manifest.go --destination=mocks_manifest_test.go --package=supply_test --imports=.=github.com/cloudfoundry/libbuildpack
+//go:generate mockgen -source=supply.go --destination=mocks_test.go --package=supply_test
 
 var _ = Describe("Supply", func() {
 	var (
@@ -24,7 +24,7 @@ var _ = Describe("Supply", func() {
 		depsIdx      string
 		depDir       string
 		supplier     *supply.Supplier
-		logger       libbuildpack.Logger
+		logger       *libbuildpack.Logger
 		mockCtrl     *gomock.Controller
 		mockManifest *MockManifest
 		buffer       *bytes.Buffer
@@ -41,24 +41,20 @@ var _ = Describe("Supply", func() {
 		Expect(err).To(BeNil())
 
 		buffer = new(bytes.Buffer)
-
-		logger = libbuildpack.NewLogger()
-		logger.SetOutput(buffer)
+		logger = libbuildpack.NewLogger(buffer)
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockManifest = NewMockManifest(mockCtrl)
 	})
 
 	JustBeforeEach(func() {
-		bps := &libbuildpack.Stager{
-			DepsDir:  depsDir,
-			DepsIdx:  depsIdx,
-			Manifest: mockManifest,
-			Log:      logger,
-		}
+		args := []string{"", "", depsDir, depsIdx}
+		bps := libbuildpack.NewStager(args, logger, &libbuildpack.Manifest{})
 
 		supplier = &supply.Supplier{
-			Stager: bps,
+			Stager:   bps,
+			Manifest: mockManifest,
+			Log:      logger,
 		}
 	})
 
@@ -78,8 +74,7 @@ var _ = Describe("Supply", func() {
 		})
 
 		It("Installs nginx to the depDir, creating a symlink in <depDir>/bin", func() {
-			supplier.InstallNginx()
-			Expect(err).To(BeNil())
+			Expect(supplier.InstallNginx()).To(Succeed())
 			Expect(buffer.String()).To(ContainSubstring("-----> Installing nginx"))
 			Expect(buffer.String()).To(ContainSubstring("       Using nginx version 99.99"))
 
