@@ -725,19 +725,35 @@ var _ = Describe("Compile", func() {
 			})
 		})
 
-		Context("Application_URI has a context path available", func() {
-			contextBlock := `location /mycontextpath {`
-			BeforeEach(func() {
-				staticfile.ContextPaths = []string{"/mycontextpath"}
+		Context("Application_URI has contextpath available", func() {
+			Context("application with multiple contexts", func() {
+				BeforeEach(func() {
+					staticfile.ContextPaths = []string{"/mycontextpath", "/", "/mysecondcontext"}
+				})
+
+				It("adds the alias to the default nginx configuration", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).NotTo(HaveOccurred())
+					Expect(string(data)).To(ContainSubstring("location /mycontextpath {\n        \n          alias <%= ENV[\"APP_ROOT\"] %>/public;"))
+					Expect(string(data)).To(ContainSubstring("location /mysecondcontext {\n        \n          alias <%= ENV[\"APP_ROOT\"] %>/public;"))
+					Expect(string(data)).To(ContainSubstring("location / {\n        \n          root <%= ENV[\"APP_ROOT\"] %>/public;"))
+				})
 			})
 
-			It("adds the alias to the default nginx configuration", func() {
-				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-				Expect(err).NotTo(HaveOccurred())
-				Expect(string(data)).To(ContainSubstring(contextBlock))
+			Context("Have only one route with context path", func() {
+				BeforeEach(func() {
+					staticfile.ContextPaths = []string{"/mycontextpath"}
+				})
+
+				It("adds the alias to the default nginx configuration", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).NotTo(HaveOccurred())
+					Expect(string(data)).To(ContainSubstring("location /mycontextpath {\n        \n          alias <%= ENV[\"APP_ROOT\"] %>/public;"))
+					Expect(string(data)).NotTo(ContainSubstring(`root <%= ENV["APP_ROOT"] %>/public;`))
+				})
 			})
 
-			Context("if there are no contextpath", func() {
+			Context("if there are no contextpaths available", func() {
 				BeforeEach(func() {
 					staticfile.ContextPaths = []string{"/"}
 				})
@@ -745,7 +761,9 @@ var _ = Describe("Compile", func() {
 				It("does not add the alias block", func() {
 					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
 					Expect(err).NotTo(HaveOccurred())
-					Expect(string(data)).NotTo(ContainSubstring(contextBlock))
+					Expect(string(data)).NotTo(ContainSubstring(`location /mycontextpath {`))
+					Expect(string(data)).NotTo(ContainSubstring(`alias <%= ENV["APP_ROOT"] %>/public;`))
+					Expect(string(data)).To(ContainSubstring("location / {\n        \n          root <%= ENV[\"APP_ROOT\"] %>/public;"))
 				})
 			})
 		})

@@ -79,7 +79,11 @@ http {
 
     {{range .ContextPaths}}
       location {{.}} {
-        root <%= ENV["APP_ROOT"] %>/public;
+        {{if eq . "/" }}
+          root <%= ENV["APP_ROOT"] %>/public;
+        {{else}}
+          alias <%= ENV["APP_ROOT"] %>/public;
+        {{end}}
 
         {{if $.PushState}}
           if (!-e $request_filename) {

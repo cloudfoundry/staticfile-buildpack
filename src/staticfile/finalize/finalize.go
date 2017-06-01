@@ -317,6 +317,7 @@ func (sf *Finalizer) generateNginxConf() (string, error) {
 	buffer := new(bytes.Buffer)
 
 	t := template.Must(template.New("nginx.conf").Parse(nginxConfTemplate))
+
 	err := t.Execute(buffer, sf.Config)
 	if err != nil {
 		return "", err
