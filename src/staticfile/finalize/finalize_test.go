@@ -11,6 +11,7 @@ import (
 	"bytes"
 
 	"github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack/ansicleaner"
 	"github.com/golang/mock/gomock"
 
 	. "github.com/onsi/ginkgo"
@@ -41,7 +42,7 @@ var _ = Describe("Compile", func() {
 		Expect(err).To(BeNil())
 
 		buffer = new(bytes.Buffer)
-		logger = libbuildpack.NewLogger(buffer)
+		logger = libbuildpack.NewLogger(ansicleaner.New(buffer))
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockYaml = NewMockYAML(mockCtrl)
@@ -386,6 +387,64 @@ var _ = Describe("Compile", func() {
 			It("returns the build directory", func() {
 				Expect(err).To(BeNil())
 				Expect(returnDir).To(Equal(buildDir))
+			})
+		})
+	})
+
+	Describe("Warnings", func() {
+		JustBeforeEach(func() {
+			finalizer.Warnings()
+		})
+
+		Context("location_include is set", func() {
+			BeforeEach(func() {
+				staticfile.LocationInclude = "includes/*.conf"
+			})
+
+			Context("root is NOT set", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = ""
+				})
+				It("warns the user", func() {
+					Expect(buffer.String()).To(ContainSubstring("**WARNING** The location_include directive only works in conjunction with root."))
+					Expect(buffer.String()).To(ContainSubstring("Please specify root to use location_include"))
+				})
+			})
+
+			Context("root IS set", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = "public"
+				})
+				It("does not warn the user", func() {
+					Expect(buffer.String()).ToNot(ContainSubstring("location_include directive only works in conjunction with root."))
+					Expect(buffer.String()).ToNot(ContainSubstring("Please specify root to use location_include"))
+				})
+			})
+		})
+
+		Context("app dir has a nginx/conf directory", func() {
+			BeforeEach(func() {
+				os.MkdirAll(filepath.Join(buildDir, "nginx", "conf"), 0755)
+			})
+
+			Context("root is NOT set", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = ""
+				})
+				It("warns the user", func() {
+					Expect(buffer.String()).To(ContainSubstring("**WARNING** You have an nginx/conf directory, but have not set *root*."))
+					Expect(buffer.String()).To(ContainSubstring("If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."))
+				})
+			})
+
+			Context("root IS set", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = "somedir"
+				})
+				PIt("does not warn the user", func() {
+					Expect(buffer.String()).ToNot(ContainSubstring("**WARNING** You have an nginx/conf directory, but have not set *root*."))
+					Expect(buffer.String()).ToNot(ContainSubstring("If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."))
+				})
 			})
 		})
 	})
