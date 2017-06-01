@@ -77,50 +77,52 @@ http {
     listen <%= ENV["PORT"] %>;
     server_name localhost;
 
-    location / {
-      root <%= ENV["APP_ROOT"] %>/public;
+    {{range .ContextPaths}}
+      location {{.}} {
+        root <%= ENV["APP_ROOT"] %>/public;
 
-      {{if .PushState}}
-        if (!-e $request_filename) {
-          rewrite ^(.*)$ / break;
-        }
-      {{end}}
+        {{if $.PushState}}
+          if (!-e $request_filename) {
+            rewrite ^(.*)$ / break;
+          }
+        {{end}}
 
-      index index.html index.htm Default.htm;
+        index index.html index.htm Default.htm;
 
-      {{if .DirectoryIndex}}
-        autoindex on;
-      {{end}}
+        {{if $.DirectoryIndex}}
+          autoindex on;
+        {{end}}
 
-      {{if .BasicAuth}}
-        auth_basic "Restricted";  #For Basic Auth
-        auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
-      {{end}}
+        {{if $.BasicAuth}}
+          auth_basic "Restricted";  #For Basic Auth
+          auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
+        {{end}}
 
-      {{if .ForceHTTPS}}
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      {{else}}
-      <% if ENV["FORCE_HTTPS"] %>
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      <% end %>
-      {{end}}
+        {{if $.ForceHTTPS}}
+          if ($http_x_forwarded_proto != "https") {
+            return 301 https://$host$request_uri;
+          }
+        {{else}}
+        <% if ENV["FORCE_HTTPS"] %>
+          if ($http_x_forwarded_proto != "https") {
+            return 301 https://$host$request_uri;
+          }
+        <% end %>
+        {{end}}
 
-      {{if .SSI}}
-        ssi on;
-      {{end}}
+        {{if $.SSI}}
+          ssi on;
+        {{end}}
 
-      {{if .HSTS}}
-        add_header Strict-Transport-Security "max-age=31536000";
-      {{end}}
+        {{if $.HSTS}}
+          add_header Strict-Transport-Security "max-age=31536000";
+        {{end}}
 
-      {{if ne .LocationInclude ""}}
-        include {{.LocationInclude}};
-      {{end}}
-    }
+        {{if ne $.LocationInclude ""}}
+          include {{$.LocationInclude}};
+        {{end}}
+      }
+    {{end}}
 
   {{if not .HostDotFiles}}
     location ~ /\. {

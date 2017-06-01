@@ -134,6 +134,49 @@ var _ = Describe("Compile", func() {
 		})
 	})
 
+	Describe("ParseContextPaths", func() {
+		Context("the vcap_application URI has context path information", func() {
+			BeforeEach(func() {
+				os.Setenv("VCAP_APPLICATION", `{ "application_id": "5babc736-30e4-4ebe-91eb-6c91cb7ed0af", "application_name": "myapp", "application_uris": [ "mydomain.example.com/mycontextpath" ], "application_version": "277f4aea-abeb-49d2-b47b-c10fc26daf06", "limits": { "disk": 128, "fds": 16384, "mem": 128 }, "name": "myapp", "space_id": "92dcbff0-de89-42da-aa97-3074292ad504", "space_name": "dev", "uris": [ "mydomain.example.com/mycontextpath" ], "users": null, "version": "277f4aea-abeb-49d2-b47b-c10fc26daf06" }`)
+			})
+
+			AfterEach(func() {
+				os.Unsetenv("VCAP_APPLICATION")
+			})
+
+			It("parses the vcap_application to get the context path information", func() {
+				err = finalizer.ParseContextPaths()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(finalizer.Config.ContextPaths).To(HaveLen(1))
+				Expect(finalizer.Config.ContextPaths).To(ContainElement("/mycontextpath"))
+			})
+
+			It("sets contextpath to / if there are none available", func() {
+				os.Setenv("VCAP_APPLICATION", `{ "application_id": "5babc736-30e4-4ebe-91eb-6c91cb7ed0af", "application_name": "myapp", "application_uris": [ "mydomain.example.com" ], "application_version": "277f4aea-abeb-49d2-b47b-c10fc26daf06", "limits": { "disk": 128, "fds": 16384, "mem": 128 }, "name": "myapp", "space_id": "92dcbff0-de89-42da-aa97-3074292ad504", "space_name": "dev", "uris": [ "mydomain.example.com/mycontextpath" ], "users": null, "version": "277f4aea-abeb-49d2-b47b-c10fc26daf06" }`)
+
+				err = finalizer.ParseContextPaths()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(finalizer.Config.ContextPaths).To(HaveLen(1))
+				Expect(finalizer.Config.ContextPaths).To(ContainElement("/"))
+			})
+
+			Context("failure scenarios", func() {
+				It("returns an error when the VCAP_APPLICATION could not be parsed", func() {
+					os.Setenv("VCAP_APPLICATION", `asdasd`)
+					err = finalizer.ParseContextPaths()
+					Expect(err).To(MatchError(`invalid character 'a' looking for beginning of value`))
+				})
+
+				It("returns an error when the application_uri is invalid", func() {
+					os.Setenv("VCAP_APPLICATION", `{ "application_id": "5babc736-30e4-4ebe-91eb-6c91cb7ed0af", "application_name": "myapp", "application_uris": [ "mydomain.example.com#$%^&*/myconte$%^&*xtpath" ], "application_version": "277f4aea-abeb-49d2-b47b-c10fc26daf06", "limits": { "disk": 128, "fds": 16384, "mem": 128 }, "name": "myapp", "space_id": "92dcbff0-de89-42da-aa97-3074292ad504", "space_name": "dev", "uris": [ "mydomain.example.com/mycontextpath" ], "users": null, "version": "277f4aea-abeb-49d2-b47b-c10fc26daf06" }`)
+
+					err = finalizer.ParseContextPaths()
+					Expect(err).To(MatchError(`parse https://mydomain.example.com#$%^&*/myconte$%^&*xtpath: invalid URL escape "%^&"`))
+				})
+			})
+		})
+	})
+
 	Describe("LoadStaticfile", func() {
 		Context("the staticfile does not exist", func() {
 			BeforeEach(func() {
@@ -416,6 +459,10 @@ var _ = Describe("Compile", func() {
 			Expect(err).To(BeNil())
 		})
 
+		BeforeEach(func() {
+			staticfile.ContextPaths = []string{"/"}
+		})
+
 		Context("custom nginx.conf exists", func() {
 			BeforeEach(func() {
 				err = os.MkdirAll(filepath.Join(buildDir, "public"), 0755)
@@ -440,27 +487,27 @@ var _ = Describe("Compile", func() {
     }
 `
 			pushStateConf := `
-        if (!-e $request_filename) {
-          rewrite ^(.*)$ / break;
-        }
+          if (!-e $request_filename) {
+            rewrite ^(.*)$ / break;
+          }
 `
 
 			forceHTTPSConf := `
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
+          if ($http_x_forwarded_proto != "https") {
+            return 301 https://$host$request_uri;
+          }
 `
 			forceHTTPSErb := `
-      <% if ENV["FORCE_HTTPS"] %>
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      <% end %>
+        <% if ENV["FORCE_HTTPS"] %>
+          if ($http_x_forwarded_proto != "https") {
+            return 301 https://$host$request_uri;
+          }
+        <% end %>
 `
 
 			basicAuthConf := `
-        auth_basic "Restricted";  #For Basic Auth
-        auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
+          auth_basic "Restricted";  #For Basic Auth
+          auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
 `
 			Context("host_dot_files is set in staticfile", func() {
 				BeforeEach(func() {
@@ -675,6 +722,31 @@ var _ = Describe("Compile", func() {
 				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
 				Expect(err).To(BeNil())
 				Expect(string(data)).To(Equal(finalize.MimeTypes))
+			})
+		})
+
+		Context("Application_URI has a context path available", func() {
+			contextBlock := `location /mycontextpath {`
+			BeforeEach(func() {
+				staticfile.ContextPaths = []string{"/mycontextpath"}
+			})
+
+			It("adds the alias to the default nginx configuration", func() {
+				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+				Expect(err).NotTo(HaveOccurred())
+				Expect(string(data)).To(ContainSubstring(contextBlock))
+			})
+
+			Context("if there are no contextpath", func() {
+				BeforeEach(func() {
+					staticfile.ContextPaths = []string{"/"}
+				})
+
+				It("does not add the alias block", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).NotTo(HaveOccurred())
+					Expect(string(data)).NotTo(ContainSubstring(contextBlock))
+				})
 			})
 		})
 	})
