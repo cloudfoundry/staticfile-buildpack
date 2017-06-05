@@ -1,3 +1,9 @@
+v1.4.7 Jun 05, 2017
+====================
+
+* Warn users that location_include must set root
+  (https://www.pivotaltracker.com/story/show/146409581)
+
 v1.4.6 May 15, 2017
 ====================
 
