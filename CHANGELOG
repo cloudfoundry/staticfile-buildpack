@@ -1,3 +1,10 @@
+v1.4.8 Jun 06, 2017
+====================
+
+* Convert to online-only distribution.
+  - See: http://cf-dev.70369.x6.nabble.com/cf-dev-Discontinuing-Distribution-of-the-Offline-Buildpacks-td6732.html
+  (https://www.pivotaltracker.com/story/show/146375487)
+
 v1.4.7 Jun 05, 2017
 ====================
 
