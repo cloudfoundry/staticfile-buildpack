@@ -141,13 +141,13 @@ func (m *Manifest) CheckStackSupport() error {
 }
 
 func (m *Manifest) DefaultVersion(depName string) (Dependency, error) {
-	var defaultVersion Dependency
+	var defaultVersion string
 	var err error
 	numDefaults := 0
 
-	for _, dep := range m.DefaultVersions {
-		if depName == dep.Name {
-			defaultVersion = dep
+	for _, defaultDep := range m.DefaultVersions {
+		if depName == defaultDep.Name {
+			defaultVersion = defaultDep.Version
 			numDefaults++
 		}
 	}
@@ -163,7 +163,15 @@ func (m *Manifest) DefaultVersion(depName string) (Dependency, error) {
 		return Dependency{}, err
 	}
 
-	return defaultVersion, nil
+	depVersions := m.AllDependencyVersions(depName)
+	highestVersion, err := FindMatchingVersion(defaultVersion, depVersions)
+
+	if err != nil {
+		m.log.Error(defaultVersionsError)
+		return Dependency{}, err
+	}
+
+	return Dependency{Name: depName, Version: highestVersion}, nil
 }
 
 func (m *Manifest) InstallDependency(dep Dependency, outputDir string) error {

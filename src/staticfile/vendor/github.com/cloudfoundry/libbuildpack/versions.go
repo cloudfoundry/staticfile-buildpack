@@ -2,31 +2,39 @@ package libbuildpack
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/Masterminds/semver"
 )
 
-func FindMatchingVersion(versionSpec string, existingVersions []string) (string, error) {
-	constraint, err := semver.NewConstraint(versionSpec)
-	if err != nil {
-		return "", err
-	}
+func FindMatchingVersion(constraint string, versions []string) (string, error) {
+	var err error
+	var depVersions []*semver.Version
+	var depVersion *semver.Version
+	var versionConstraint *semver.Constraints
+	for _, ver := range versions {
+		depVersion, err = semver.NewVersion(ver)
 
-	maxVersion, _ := semver.NewVersion("0")
-
-	for _, ver := range existingVersions {
-		v, err := semver.NewVersion(ver)
 		if err != nil {
 			return "", err
 		}
-		if constraint.Check(v) && maxVersion.LessThan(v) {
-			maxVersion = v
+
+		versionConstraint, err = semver.NewConstraint(constraint)
+
+		if err != nil {
+			return "", err
+		}
+
+		if versionConstraint.Check(depVersion) {
+			depVersions = append(depVersions, depVersion)
 		}
 	}
 
-	if maxVersion.Original() != "0" {
-		return maxVersion.Original(), nil
+	if len(depVersions) != 0 {
+		sort.Sort(semver.Collection(depVersions))
+
+		return depVersions[len(depVersions)-1].String(), nil
 	}
 
-	return "", fmt.Errorf("no match found for %s in %v", versionSpec, existingVersions)
+	return "", fmt.Errorf("no match found for %s in %v", constraint, versions)
 }
