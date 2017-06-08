@@ -2,7 +2,7 @@
 language: staticfile
 default_versions:
 - name: nginx
-  version: 1.11.13
+  version: '1.x'
 exclude_files:
 - ".git/"
 - ".gitignore"
