@@ -21,9 +21,9 @@ exclude_files:
 - src/
 dependencies:
 - name: nginx
-  version: 1.11.13
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.11.13-linux-x64-0ae5f6fb.tgz
-  md5: 0ae5f6fbae17cffb087fea4b9518b4f7
+  version: 1.13.1
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.13.1-linux-x64-6178c85f.tgz
+  md5: 6178c85f0cff4e1e7540890f5d927f0f
   cf_stacks:
   - cflinuxfs2
 pre_package: scripts/build.sh
