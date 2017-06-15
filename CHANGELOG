@@ -1,3 +1,9 @@
+v1.4.9 Jun 15, 2017
+====================
+
+* Add nginx 1.13.1, remove nginx 1.11.13
+  (https://www.pivotaltracker.com/story/show/146651429)
+
 v1.4.8 Jun 06, 2017
 ====================
 
