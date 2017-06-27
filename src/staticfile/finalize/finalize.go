@@ -1,8 +1,10 @@
 package finalize
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,6 +25,7 @@ type Staticfile struct {
 	HSTS            bool   `yaml:"http_strict_transport_security"`
 	ForceHTTPS      bool   `yaml:"force_https"`
 	BasicAuth       bool
+	ContextPaths    []string
 }
 
 type YAML interface {
@@ -53,6 +56,12 @@ func Run(sf *Finalizer) error {
 	err = sf.LoadStaticfile()
 	if err != nil {
 		sf.Log.Error("Unable to load Staticfile: %s", err.Error())
+		return err
+	}
+
+	err = sf.ParseContextPaths()
+	if err != nil {
+		sf.Stager.Log.Error("Unable to Get the ContextPath information for the application: %s", err.Error())
 		return err
 	}
 
@@ -103,6 +112,28 @@ func (sf *Finalizer) WriteStartupFiles() error {
 
 	bootScript := filepath.Join(sf.BuildDir, "boot.sh")
 	return ioutil.WriteFile(bootScript, []byte(startCommand), 0755)
+}
+
+func (sf *Finalizer) ParseContextPaths() error {
+	vcapApplication := os.Getenv("VCAP_APPLICATION")
+	application := struct {
+		URI []string `json:"application_uris"`
+	}{}
+	err := json.Unmarshal([]byte(vcapApplication), &application)
+	if err != nil {
+		return err
+	}
+	for _, uri := range application.URI {
+		appURI, err := url.Parse(fmt.Sprintf("https://%s", uri))
+		if err != nil {
+			return err
+		}
+		if len(appURI.Path) == 0 {
+			appURI.Path = "/"
+		}
+		sf.Config.ContextPaths = append(sf.Config.ContextPaths, appURI.Path)
+	}
+	return nil
 }
 
 func (sf *Finalizer) LoadStaticfile() error {
