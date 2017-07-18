@@ -230,8 +230,11 @@ func (sf *Finalizer) CopyFilesToPublic(appRootDir string) error {
 		}
 	}
 
-	err = os.Rename(tmpDir, publicDir)
-	if err != nil {
+	if err := os.RemoveAll(publicDir); err != nil {
+		return err
+	}
+
+	if err := os.Rename(tmpDir, publicDir); err != nil {
 		return err
 	}
 

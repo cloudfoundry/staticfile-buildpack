@@ -815,6 +815,17 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "public", ".profile.d")).ToNot(BeADirectory())
 					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
 				})
+
+				Context("and <buildDir>/public exists", func() {
+					BeforeEach(func() {
+						Expect(os.Mkdir(filepath.Join(buildDir, "public"), 0755)).To(Succeed())
+						Expect(ioutil.WriteFile(filepath.Join(buildDir, "public", "orig.html"), []byte("html contents"), 0644)).To(Succeed())
+					})
+					It("overrides <buildDir>/public", func() {
+						Expect(filepath.Join(buildDir, "public", "orig.html")).ToNot(BeAnExistingFile())
+						Expect(filepath.Join(buildDir, "public", "index.html")).To(BeAnExistingFile())
+					})
+				})
 			})
 			Context("host dotfiles is NOT set", func() {
 				BeforeEach(func() {
