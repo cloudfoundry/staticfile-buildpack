@@ -441,7 +441,7 @@ var _ = Describe("Compile", func() {
 				BeforeEach(func() {
 					staticfile.RootDir = "somedir"
 				})
-				PIt("does not warn the user", func() {
+				It("does not warn the user", func() {
 					Expect(buffer.String()).ToNot(ContainSubstring("**WARNING** You have an nginx/conf directory, but have not set *root*."))
 					Expect(buffer.String()).ToNot(ContainSubstring("If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."))
 				})

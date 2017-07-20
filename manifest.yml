@@ -3,22 +3,6 @@ language: staticfile
 default_versions:
 - name: nginx
   version: 1.13.3
-exclude_files:
-- ".git/"
-- ".gitignore"
-- ".gitmodules"
-- ".rspec"
-- cf_spec/
-- log/
-- test/
-- buildpack-packager/
-- staticfile_buildpack-*v*.zip
-- pkg/
-- ".envrc"
-- cf.Gemfile
-- cf.Gemfile.lock
-- scripts/
-- src/
 dependencies:
 - name: nginx
   version: 1.13.3
@@ -27,3 +11,18 @@ dependencies:
   cf_stacks:
   - cflinuxfs2
 pre_package: scripts/build.sh
+include_files:
+  - CHANGELOG
+  - CONTRIBUTING.md
+  - ISSUE_TEMPLATE
+  - LICENSE
+  - NOTICE
+  - PULL_REQUEST_TEMPLATE
+  - README.md
+  - VERSION
+  - bin/compile
+  - bin/detect
+  - bin/finalize
+  - bin/release
+  - bin/supply
+  - manifest.yml

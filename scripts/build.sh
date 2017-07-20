@@ -7,5 +7,5 @@ BINDIR=$ROOTDIR/bin
 export GOPATH=$ROOTDIR
 export GOOS=linux
 
-go build -o $BINDIR/supply staticfile/supply/cli
-go build -o $BINDIR/finalize staticfile/finalize/cli
+go build -ldflags="-s -w" -o $BINDIR/supply staticfile/supply/cli
+go build -ldflags="-s -w" -o $BINDIR/finalize staticfile/finalize/cli

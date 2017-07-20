@@ -1,9 +1,11 @@
 package libbuildpack
 
 import (
+	"crypto/md5"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -275,8 +277,15 @@ func (m *Manifest) FetchDependency(dep Dependency, outputFile string) error {
 	}
 
 	if m.isCached() {
-		r := strings.NewReplacer("/", "_", ":", "_", "?", "_", "&", "_")
-		source := filepath.Join(m.manifestRootDir, "dependencies", r.Replace(filteredURI))
+		source := filepath.Join(m.manifestRootDir, "dependencies", fmt.Sprintf("%x", md5.Sum([]byte(entry.URI))), path.Base(entry.URI))
+		exists, err := FileExists(source)
+		if err != nil {
+			m.log.Warning("Error determining if cached file exists: %s", err.Error())
+		}
+		if !exists {
+			r := strings.NewReplacer("/", "_", ":", "_", "?", "_", "&", "_")
+			source = filepath.Join(m.manifestRootDir, "dependencies", r.Replace(filteredURI))
+		}
 		m.log.Info("Copy [%s]", source)
 		err = CopyFile(source, outputFile)
 	} else {

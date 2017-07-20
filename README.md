@@ -10,22 +10,16 @@ Official buildpack documentation can be found at [staticfile buildpack docs](htt
 
 ### Building the Buildpack
 
-1. Make sure you have fetched submodules
-
-  ```bash
-  git submodule update --init
-  ```
-
-1. Get latest buildpack dependencies
+1. Install buildpack-packager
 
   ```shell
-  BUNDLE_GEMFILE=cf.Gemfile bundle
+  (cd src/staticfile/vendor/github.com/cloudfoundry/libbuildpack/packager/buildpack-packager && go install)
   ```
 
 1. Build the buildpack
 
   ```shell
-  BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-packager [ --cached | --uncached ]
+  buildpack-packager [ --cached | --uncached ]
   ```
 
 1. Use in Cloud Foundry
@@ -33,20 +27,34 @@ Official buildpack documentation can be found at [staticfile buildpack docs](htt
   Upload the buildpack to your Cloud Foundry and optionally specify it by name
 
   ```bash
-  cf create-buildpack custom_node_buildpack node_buildpack-offline-custom.zip 1
-  cf push my_app -b custom_node_buildpack
+  cf create-buildpack [BUILDPACK_NAME] [BUILDPACK_ZIP_FILE_PATH] 1
+  cf push my_app -b [BUILDPACK_NAME]
   ```
 
 ### Testing
-Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests.
+Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass) framework for running integration tests.
 
-To test a buildpack, run the following command from the buildpack's directory:
+To test this buildpack, run the following command from the buildpack's directory:
 
-```
-BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-build
-```
+1. Install ginkgo
 
-More options can be found on Machete's [Github page](https://github.com/cloudfoundry/machete).
+  ```bash
+  (cd src/staticfile/vendor/github.com/onsi/ginkgo/ginkgo && go install)
+  ```
+
+1. Run unit tests
+
+  ```bash
+  ./scripts/unit.sh
+  ```
+
+1. Run integration tests
+
+  ```bash
+  ./scripts/integration.sh
+  ```
+
+More information can be found on github [cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass).
 
 ### Contributing
 

@@ -1,0 +1,26 @@
+# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# for detailed Gopkg.toml documentation.
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/cloudfoundry/libbuildpack"
+
+[[constraint]]
+  name = "github.com/golang/mock"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/onsi/ginkgo"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/onsi/gomega"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/elazarl/goproxy"
+  revision = "aacba83f36a55ac31cbb71c06547a328c0cd1604"
+
+[[constraint]]
+  branch = "v1"
+  name = "gopkg.in/jarcoal/httpmock.v1"

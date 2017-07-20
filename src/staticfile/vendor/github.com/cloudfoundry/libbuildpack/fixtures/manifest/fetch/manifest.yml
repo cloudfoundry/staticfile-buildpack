@@ -1,0 +1,74 @@
+---
+language: sample
+dependency_deprecation_dates:
+- name: thing
+  version_line: '6.2.x'
+  date: 2018-04-01
+- name: thing
+  version_line: '4.x'
+  date: 2017-03-01
+  link: http://example.com/eol-policy
+- name: thing
+  version_line: '5.x'
+  date: 2017-04-01
+dependencies:
+- name: other_thing
+  version: 4.5.6
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/other_thing-4.5.6-linux-x64.tgz
+  md5: 7712b658293ea4b2c8505843b0e15441
+- name: thing
+  version: 1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-1-linux-x64.tgz
+  md5: 7712b658293ea4b2c8505843b0e15441
+- name: thing
+  version: 2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-2-linux-x64.tgz
+  md5: e7437e09b0b13de8cd926e4b9b923fcb
+- name: real_tar_file
+  version: 3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/real_tar_file-3-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+- name: real_zip_file
+  version: 3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/real_zip_file-3-linux-x64.zip
+  md5: 8b9658ba9b7f5a384b40a6d542890541
+- name: thing
+  version: 6.2.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.2-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+- name: thing
+  version: 6.2.3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.3-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+- name: thing
+  version: 6.2.1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.1-linux-x64.tgz
+  md5: e7437e09b0b13de8cd926e4b9b923fcb
+- name: thing
+  version: 4.6.1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-4.6.1-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+- name: thing
+  version: 5.2.3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-5.2.3-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
