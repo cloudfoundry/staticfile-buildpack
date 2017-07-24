@@ -1,3 +1,9 @@
+v1.4.12 Jul 24, 2017
+=====================
+
+* Override existing public directory during copy
+  (https://www.pivotaltracker.com/story/show/148930437)
+
 v1.4.11 Jul 13, 2017
 =====================
 
