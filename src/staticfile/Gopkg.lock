@@ -20,7 +20,6 @@
   revision = "724e9ae35449660b15cc772add9164fe9103a3d1"
 
 [[projects]]
-  branch = "master"
   name = "github.com/elazarl/goproxy"
   packages = ["."]
   revision = "aacba83f36a55ac31cbb71c06547a328c0cd1604"
@@ -88,6 +87,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bbd6d393fd614588740a251e401f889de20ca41065f735f63cf313d58a7fb079"
+  inputs-digest = "729e25619d2fea188f15699089f719ef7c7aa08c6151a27f420df2332d4002a8"
   solver-name = "gps-cdcl"
   solver-version = 1
