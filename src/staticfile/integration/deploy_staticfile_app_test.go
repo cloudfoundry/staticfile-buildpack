@@ -70,7 +70,7 @@ var _ = Describe("deploy a staticfile app", func() {
 
 		apiVersion, err := cutlass.ApiVersion()
 		Expect(err).To(BeNil())
-		if apiVersion != "2.75.0" {
+		if apiVersion != "2.75.0" && apiVersion != "2.54.0" {
 			By("running a task", func() {
 				By("exits", func() {
 					command := exec.Command("cf", "run-task", app.Name, "wc -l public/index.html")
