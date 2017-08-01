@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/blang/semver"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	"github.com/cloudfoundry/libbuildpack/packager"
 
@@ -68,9 +69,13 @@ var _ = Describe("deploy a staticfile app", func() {
 			})
 		})
 
-		apiVersion, err := cutlass.ApiVersion()
+		apiVersionString, err := cutlass.ApiVersion()
 		Expect(err).To(BeNil())
-		if apiVersion != "2.75.0" && apiVersion != "2.54.0" {
+		apiVersion, err := semver.Make(apiVersionString)
+		Expect(err).To(BeNil())
+		apiHasTask, err := semver.ParseRange("> 2.75.0")
+		Expect(err).To(BeNil())
+		if apiHasTask(apiVersion) {
 			By("running a task", func() {
 				By("exits", func() {
 					command := exec.Command("cf", "run-task", app.Name, "wc -l public/index.html")
