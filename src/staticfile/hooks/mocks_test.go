@@ -6,6 +6,7 @@ package hooks_test
 import (
 	gomock "github.com/golang/mock/gomock"
 	io "io"
+	reflect "reflect"
 )
 
 // MockCommand is a mock of Command interface
@@ -45,5 +46,5 @@ func (_m *MockCommand) Execute(_param0 string, _param1 io.Writer, _param2 io.Wri
 // Execute indicates an expected call of Execute
 func (_mr *MockCommandMockRecorder) Execute(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
 	_s := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Execute", _s...)
+	return _mr.mock.ctrl.RecordCallWithMethodType(_mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), _s...)
 }

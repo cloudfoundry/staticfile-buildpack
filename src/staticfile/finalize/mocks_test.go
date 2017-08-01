@@ -5,6 +5,7 @@ package finalize_test
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockYAML is a mock of YAML interface
@@ -39,5 +40,5 @@ func (_m *MockYAML) Load(_param0 string, _param1 interface{}) error {
 
 // Load indicates an expected call of Load
 func (_mr *MockYAMLMockRecorder) Load(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Load", arg0, arg1)
+	return _mr.mock.ctrl.RecordCallWithMethodType(_mr.mock, "Load", reflect.TypeOf((*MockYAML)(nil).Load), arg0, arg1)
 }
