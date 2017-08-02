@@ -37,7 +37,9 @@ func CopyDirectory(srcDir, destDir string) error {
 			if err != nil {
 				return err
 			}
-			err = CopyDirectory(src, dest)
+			if err := CopyDirectory(src, dest); err != nil {
+				return err
+			}
 		} else {
 			rc, err := os.Open(src)
 			if err != nil {
