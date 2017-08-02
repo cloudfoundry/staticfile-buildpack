@@ -11,7 +11,7 @@ import (
 )
 
 func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, error) {
-	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and ip -t -Uw /tmp/dumplog &) && /buildpack/bin/detect /tmp/staged && /buildpack/bin/compile /tmp/staged /tmp/cache && /buildpack/bin/release /tmp/staged /tmp/cache && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
+	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) && /buildpack/bin/detect /tmp/staged && /buildpack/bin/compile /tmp/staged /tmp/cache && /buildpack/bin/release /tmp/staged /tmp/cache && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 
 	output, err := executeDockerFile(bp_dir, fixture_path, buildpack_path, envs, network_command)
 	if err != nil {
