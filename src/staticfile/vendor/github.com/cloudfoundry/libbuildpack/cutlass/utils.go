@@ -1,7 +1,6 @@
 package cutlass
 
 import (
-	"errors"
 	"github.com/cloudfoundry/libbuildpack"
 	"io"
 	"io/ioutil"
@@ -14,7 +13,7 @@ func CopyFixture(srcDir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := CopyDirectory(srcDir, destDir); err != nil {
+	if err := libbuildpack.CopyDirectory(srcDir, destDir); err != nil {
 		return "", err
 	}
 	return destDir, nil
