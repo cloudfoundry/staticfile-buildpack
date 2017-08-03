@@ -50,7 +50,7 @@ type App struct {
 
 func New(fixture string) *App {
 	return &App{
-		Name:      filepath.Base(fixture) + "-" + randStringRunes(20),
+		Name:      filepath.Base(fixture) + "-" + RandStringRunes(20),
 		Path:      fixture,
 		Buildpack: "",
 		appGUID:   "",
@@ -92,6 +92,19 @@ func UpdateBuildpack(language, file string) error {
 		return err
 	}
 	return nil
+}
+
+func createBuildpack(language, file string) error {
+	command := exec.Command("cf", "create-buildpack", fmt.Sprintf("%s_buildpack", language), file, "100", "--enable")
+	if _, err := command.CombinedOutput(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func CreateOrUpdateBuildpack(language, file string) error {
+	createBuildpack(language, file)
+	return UpdateBuildpack(language, file)
 }
 
 func (a *App) ConfirmBuildpack(version string) error {
@@ -301,7 +314,7 @@ func (a *App) Destroy() error {
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
 
-func randStringRunes(n int) string {
+func RandStringRunes(n int) string {
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
