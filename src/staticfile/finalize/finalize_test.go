@@ -270,6 +270,7 @@ var _ = Describe("Compile", func() {
 				})
 				It("sets pushstate", func() {
 					Expect(finalizer.Config.HSTS).To(Equal(true))
+					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 					Expect(finalizer.Config.HSTSPreload).To(Equal(true))
 				})
 				It("Logs", func() {

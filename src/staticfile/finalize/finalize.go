@@ -161,6 +161,7 @@ func (sf *Finalizer) LoadStaticfile() error {
 			if isEnabled {
 				sf.Log.BeginStep("Enabling HSTS and HSTS Preload")
 				conf.HSTS = true
+				conf.HSTSIncludeSubDomains = true
 				conf.HSTSPreload = true
 			}
 		case "force_https":
