@@ -135,6 +135,8 @@ var _ = Describe("Compile", func() {
 				Expect(finalizer.Config.SSI).To(Equal(false))
 				Expect(finalizer.Config.PushState).To(Equal(false))
 				Expect(finalizer.Config.HSTS).To(Equal(false))
+				Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(false))
+				Expect(finalizer.Config.HSTSPreload).To(Equal(false))
 				Expect(finalizer.Config.ForceHTTPS).To(Equal(false))
 				Expect(finalizer.Config.BasicAuth).To(Equal(false))
 			})
@@ -242,6 +244,36 @@ var _ = Describe("Compile", func() {
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HSTS\n"))
+				})
+			})
+
+			Context("and sets http_strict_transport_security_include_subdomain", func() {
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
+						(*hash)["http_strict_transport_security_include_subdomain"] = "true"
+					})
+				})
+				It("sets pushstate", func() {
+					Expect(finalizer.Config.HSTS).To(Equal(true))
+					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
+				})
+				It("Logs", func() {
+					Expect(buffer.String()).To(Equal("-----> Enabling HSTS and HSTS includeSubDomains\n"))
+				})
+			})
+
+			Context("and sets http_strict_transport_security_preload", func() {
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
+						(*hash)["http_strict_transport_security_preload"] = "true"
+					})
+				})
+				It("sets pushstate", func() {
+					Expect(finalizer.Config.HSTS).To(Equal(true))
+					Expect(finalizer.Config.HSTSPreload).To(Equal(true))
+				})
+				It("Logs", func() {
+					Expect(buffer.String()).To(Equal("-----> Enabling HSTS and HSTS Preload\n"))
 				})
 			})
 

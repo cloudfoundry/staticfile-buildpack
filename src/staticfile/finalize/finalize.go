@@ -14,15 +14,17 @@ import (
 )
 
 type Staticfile struct {
-	RootDir         string `yaml:"root"`
-	HostDotFiles    bool   `yaml:"host_dot_files"`
-	LocationInclude string `yaml:"location_include"`
-	DirectoryIndex  bool   `yaml:"directory"`
-	SSI             bool   `yaml:"ssi"`
-	PushState       bool   `yaml:"pushstate"`
-	HSTS            bool   `yaml:"http_strict_transport_security"`
-	ForceHTTPS      bool   `yaml:"force_https"`
-	BasicAuth       bool
+	RootDir               string `yaml:"root"`
+	HostDotFiles          bool   `yaml:"host_dot_files"`
+	LocationInclude       string `yaml:"location_include"`
+	DirectoryIndex        bool   `yaml:"directory"`
+	SSI                   bool   `yaml:"ssi"`
+	PushState             bool   `yaml:"pushstate"`
+	HSTS                  bool   `yaml:"http_strict_transport_security"`
+	HSTSIncludeSubDomains bool   `yaml:"http_strict_transport_security_include_subdomains"`
+	HSTSPreload           bool   `yaml:"http_strict_transport_security_preload"`
+	ForceHTTPS            bool   `yaml:"force_https"`
+	BasicAuth             bool
 }
 
 type YAML interface {
@@ -148,6 +150,18 @@ func (sf *Finalizer) LoadStaticfile() error {
 			if isEnabled {
 				sf.Log.BeginStep("Enabling HSTS")
 				conf.HSTS = true
+			}
+		case "http_strict_transport_security_include_subdomains":
+			if isEnabled {
+				sf.Log.BeginStep("Enabling HSTS and HSTS includeSubDomains")
+				conf.HSTS = true
+				conf.HSTSIncludeSubDomains = true
+			}
+		case "http_strict_transport_security_preload":
+			if isEnabled {
+				sf.Log.BeginStep("Enabling HSTS and HSTS Preload")
+				conf.HSTS = true
+				conf.HSTSPreload = true
 			}
 		case "force_https":
 			if isEnabled {
