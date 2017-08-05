@@ -114,7 +114,7 @@ http {
       {{end}}
 
       {{if .HSTS}}
-        add_header Strict-Transport-Security "max-age=31536000 {{if .HSTSIncludeSubDomains}}includeSubDomains;{{end}} {{if .HSTSPreload}}preload{{end}}";
+        add_header Strict-Transport-Security "max-age=31536000{{if .HSTSIncludeSubDomains}}; includeSubDomains{{end}}{{if .HSTSPreload}}; preload{{end}}";
       {{end}}
 
       {{if ne .LocationInclude ""}}
