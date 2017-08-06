@@ -159,7 +159,7 @@ func (sf *Finalizer) LoadStaticfile() error {
 			}
 		case "http_strict_transport_security_preload":
 			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS and HSTS Preload")
+				sf.Log.BeginStep("Enabling HSTS, HSTS includeSubDomains, and HSTS Preload")
 				conf.HSTS = true
 				conf.HSTSIncludeSubDomains = true
 				conf.HSTSPreload = true
