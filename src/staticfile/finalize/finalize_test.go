@@ -239,7 +239,7 @@ var _ = Describe("Compile", func() {
 						(*hash)["http_strict_transport_security"] = "true"
 					})
 				})
-				It("sets pushstate", func() {
+				It("sets http_strict_transport_security", func() {
 					Expect(finalizer.Config.HSTS).To(Equal(true))
 				})
 				It("Logs", func() {
@@ -253,7 +253,7 @@ var _ = Describe("Compile", func() {
 						(*hash)["http_strict_transport_security_include_subdomain"] = "true"
 					})
 				})
-				It("sets pushstate", func() {
+				It("sets http_strict_transport_security_include_subdomain", func() {
 					Expect(finalizer.Config.HSTS).To(Equal(true))
 					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 				})
@@ -268,7 +268,7 @@ var _ = Describe("Compile", func() {
 						(*hash)["http_strict_transport_security_preload"] = "true"
 					})
 				})
-				It("sets pushstate", func() {
+				It("sets http_strict_transport_security_preload", func() {
 					Expect(finalizer.Config.HSTS).To(Equal(true))
 					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 					Expect(finalizer.Config.HSTSPreload).To(Equal(true))
