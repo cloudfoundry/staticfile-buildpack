@@ -3,6 +3,7 @@ package cutlass
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -48,14 +49,15 @@ func executeDockerFile(bp_dir, fixture_path, buildpack_path string, envs []strin
 	// docker_env_vars += get_app_env_vars(fixture_path)
 	dockerfile_contents := dockerfile(fixture_path, buildpack_path, envs, network_command)
 
-	err = ioutil.WriteFile(filepath.Join(bp_dir, "itf.Dockerfile"), []byte(dockerfile_contents), 0755)
+	dockerfile_name := fmt.Sprintf("itf.Dockerfile.%v", rand.Int())
+	err = ioutil.WriteFile(filepath.Join(bp_dir, dockerfile_name), []byte(dockerfile_contents), 0755)
 	if err != nil {
 		return "", err
 	}
-	defer os.Remove(filepath.Join(bp_dir, "itf.Dockerfile"))
+	defer os.Remove(filepath.Join(bp_dir, dockerfile_name))
 	defer exec.Command("docker", "rmi", "-f", docker_image_name).Output()
 
-	cmd := exec.Command("docker", "build", "--rm", "--no-cache", "-t", docker_image_name, "-f", "itf.Dockerfile", ".")
+	cmd := exec.Command("docker", "build", "--rm", "--no-cache", "-t", docker_image_name, "-f", dockerfile_name, ".")
 	cmd.Dir = bp_dir
 	cmd.Stderr = DefaultStdoutStderr
 	output, err := cmd.Output()
