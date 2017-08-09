@@ -255,6 +255,7 @@ var _ = Describe("Compile", func() {
 				})
 				It("sets http_strict_transport_security_include_subdomain", func() {
 					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
+					Expect(finalizer.Config.HSTS).To(Equal(false))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HSTS includeSubDomains\n"))
@@ -269,6 +270,7 @@ var _ = Describe("Compile", func() {
 				})
 				It("sets http_strict_transport_security_preload", func() {
 					Expect(finalizer.Config.HSTSPreload).To(Equal(true))
+					Expect(finalizer.Config.HSTS).To(Equal(false))
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HSTS Preload\n"))
@@ -652,6 +654,31 @@ var _ = Describe("Compile", func() {
 				})
 			})
 
+			Context("http_strict_transport_security and http_strict_transport_security_include_subdomain is set in staticfile", func() {
+				BeforeEach(func() {
+					staticfile.HSTS = true
+					staticfile.HSTSIncludeSubDomains = true
+				})
+				It("it adds the HSTS header", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).To(BeNil())
+					Expect(string(data)).To(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";`))
+				})
+			})
+
+			Context("http_strict_transport_security, http_strict_transport_security_include_subdomain, and http_strict_transport_security_preload is set in staticfile", func() {
+				BeforeEach(func() {
+					staticfile.HSTS = true
+					staticfile.HSTSIncludeSubDomains = true
+					staticfile.HSTSPreload = true
+				})
+				It("it adds the HSTS header", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).To(BeNil())
+					Expect(string(data)).To(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";`))
+				})
+			})
+
 			Context("http_strict_transport_security is NOT set in staticfile", func() {
 				BeforeEach(func() {
 					staticfile.HSTS = false
@@ -662,6 +689,20 @@ var _ = Describe("Compile", func() {
 					Expect(string(data)).NotTo(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
 				})
 			})
+
+			Context("http_strict_transport_security is NOT set in staticfile, but http_strict_transport_security_preload or http_strict_transport_security_include_subdomain are set in staticfile", func() {
+				BeforeEach(func() {
+					staticfile.HSTS = false
+					staticfile.HSTSIncludeSubDomains = true
+					staticfile.HSTSPreload = true
+				})
+				It("it does not add the HSTS header", func() {
+					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+					Expect(err).To(BeNil())
+					Expect(string(data)).NotTo(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
+				})
+			})
+
 
 			Context("force_https is set in staticfile", func() {
 				BeforeEach(func() {
