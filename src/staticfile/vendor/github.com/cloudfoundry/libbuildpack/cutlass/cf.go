@@ -124,7 +124,7 @@ func (a *App) ConfirmBuildpack(version string) error {
 				versionLine = line
 			}
 		}
-		return fmt.Errorf("Wrong buildpack version(%s): %s", version, versionLine)
+		return fmt.Errorf("Wrong buildpack version. Expected %s, but this was logged: %s", version, versionLine)
 	}
 	return nil
 }

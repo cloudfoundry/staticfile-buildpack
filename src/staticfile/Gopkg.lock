@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [".","ansicleaner","cutlass","packager"]
-  revision = "af41876d9ab320c64c27c716443528860879a7d7"
+  revision = "b10b9926c8a6d2f9a16f208691b78c8902349bfa"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
