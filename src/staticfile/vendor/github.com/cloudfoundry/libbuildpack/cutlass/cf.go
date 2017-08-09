@@ -85,6 +85,15 @@ func DeleteOrphanedRoutes() error {
 	return nil
 }
 
+func DeleteBuildpack(language string) error {
+	command := exec.Command("cf", "delete-buildpack", "-f", fmt.Sprintf("%s_buildpack", language))
+	if data, err := command.CombinedOutput(); err != nil {
+		fmt.Println(string(data))
+		return err
+	}
+	return nil
+}
+
 func UpdateBuildpack(language, file string) error {
 	command := exec.Command("cf", "update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file, "--enable")
 	if data, err := command.CombinedOutput(); err != nil {
@@ -116,6 +125,26 @@ func (a *App) ConfirmBuildpack(version string) error {
 			}
 		}
 		return fmt.Errorf("Wrong buildpack version(%s): %s", version, versionLine)
+	}
+	return nil
+}
+
+func (a *App) RunTask(command string) ([]byte, error) {
+	cmd := exec.Command("cf", "run-task", a.Name, command)
+	cmd.Stderr = DefaultStdoutStderr
+	bytes, err := cmd.Output()
+	if err != nil {
+		return bytes, err
+	}
+	return bytes, nil
+}
+
+func (a *App) Restart() error {
+	command := exec.Command("cf", "restart", a.Name)
+	command.Stdout = DefaultStdoutStderr
+	command.Stderr = DefaultStdoutStderr
+	if err := command.Run(); err != nil {
+		return err
 	}
 	return nil
 }
