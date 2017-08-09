@@ -117,14 +117,14 @@ func CreateOrUpdateBuildpack(language, file string) error {
 }
 
 func (a *App) ConfirmBuildpack(version string) error {
-	if !strings.Contains(a.Stdout.String(), fmt.Sprintf("Buildpack version %s", version)) {
+	if !strings.Contains(a.Stdout.String(), fmt.Sprintf("Buildpack version %s\n", version)) {
 		var versionLine string
 		for _, line := range strings.Split(a.Stdout.String(), "\n") {
 			if versionLine == "" && strings.Contains(line, " Buildpack version ") {
 				versionLine = line
 			}
 		}
-		return fmt.Errorf("Wrong buildpack version. Expected %s, but this was logged: %s", version, versionLine)
+		return fmt.Errorf("Wrong buildpack version. Expected '%s', but this was logged: %s", version, versionLine)
 	}
 	return nil
 }
