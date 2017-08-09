@@ -153,15 +153,12 @@ func (sf *Finalizer) LoadStaticfile() error {
 			}
 		case "http_strict_transport_security_include_subdomains":
 			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS and HSTS includeSubDomains")
-				conf.HSTS = true
+				sf.Log.BeginStep("Enabling HSTS includeSubDomains")
 				conf.HSTSIncludeSubDomains = true
 			}
 		case "http_strict_transport_security_preload":
 			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS, HSTS includeSubDomains, and HSTS Preload")
-				conf.HSTS = true
-				conf.HSTSIncludeSubDomains = true
+				sf.Log.BeginStep("Enabling HSTS Preload")
 				conf.HSTSPreload = true
 			}
 		case "force_https":
@@ -170,6 +167,11 @@ func (sf *Finalizer) LoadStaticfile() error {
 				conf.ForceHTTPS = true
 			}
 		}
+	}
+
+	if !conf.HSTS && (conf.HSTSIncludeSubDomains || conf.HSTSPreload) {
+		sf.Log.Warning("http_strict_transport_security is not enabled while http_strict_transport_security_include_subdomains or http_strict_transport_security_preload have been enabled.")
+		sf.Log.Protip("http_strict_transport_security_include_subdomains and http_strict_transport_security_preload do nothing without http_strict_transport_security enabled. http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#strict-security")
 	}
 
 	authFile := filepath.Join(sf.BuildDir, "Staticfile.auth")

@@ -254,11 +254,10 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets http_strict_transport_security_include_subdomain", func() {
-					Expect(finalizer.Config.HSTS).To(Equal(true))
 					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 				})
 				It("Logs", func() {
-					Expect(buffer.String()).To(Equal("-----> Enabling HSTS and HSTS includeSubDomains\n"))
+					Expect(buffer.String()).To(Equal("-----> Enabling HSTS includeSubDomains\n"))
 				})
 			})
 
@@ -269,12 +268,10 @@ var _ = Describe("Compile", func() {
 					})
 				})
 				It("sets http_strict_transport_security_preload", func() {
-					Expect(finalizer.Config.HSTS).To(Equal(true))
-					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 					Expect(finalizer.Config.HSTSPreload).To(Equal(true))
 				})
 				It("Logs", func() {
-					Expect(buffer.String()).To(Equal("-----> Enabling HSTS and HSTS Preload\n"))
+					Expect(buffer.String()).To(Equal("-----> Enabling HSTS Preload\n"))
 				})
 			})
 
