@@ -154,7 +154,11 @@ func (a *App) SetEnv(key, value string) {
 }
 
 func (a *App) SpaceGUID() (string, error) {
-	bytes, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), ".cf", "config.json"))
+	cfHome := os.Getenv("CF_HOME")
+	if cfHome == "" {
+		cfHome = os.Getenv("HOME")
+	}
+	bytes, err := ioutil.ReadFile(filepath.Join(cfHome, ".cf", "config.json"))
 	if err != nil {
 		return "", err
 	}
