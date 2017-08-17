@@ -247,18 +247,18 @@ var _ = Describe("Compile", func() {
 				})
 			})
 
-			Context("and sets http_strict_transport_security_include_subdomain", func() {
+			Context("and sets http_strict_transport_security_include_subdomains", func() {
 				BeforeEach(func() {
 					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["http_strict_transport_security_include_subdomain"] = "true"
+						(*hash)["http_strict_transport_security_include_subdomains"] = "true"
 					})
 				})
-				It("sets http_strict_transport_security_include_subdomain", func() {
+				It("sets http_strict_transport_security_include_subdomains", func() {
 					Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(true))
 					Expect(finalizer.Config.HSTS).To(Equal(false))
 				})
 				It("Logs", func() {
-					Expect(buffer.String()).To(Equal("-----> Enabling HSTS includeSubDomains\n"))
+					Expect(buffer.String()).To(ContainSubstring("-----> Enabling HSTS includeSubDomains\n"))
 				})
 			})
 
@@ -273,7 +273,7 @@ var _ = Describe("Compile", func() {
 					Expect(finalizer.Config.HSTS).To(Equal(false))
 				})
 				It("Logs", func() {
-					Expect(buffer.String()).To(Equal("-----> Enabling HSTS Preload\n"))
+					Expect(buffer.String()).To(ContainSubstring("-----> Enabling HSTS Preload\n"))
 				})
 			})
 
@@ -702,7 +702,6 @@ var _ = Describe("Compile", func() {
 					Expect(string(data)).NotTo(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
 				})
 			})
-
 
 			Context("force_https is set in staticfile", func() {
 				BeforeEach(func() {
