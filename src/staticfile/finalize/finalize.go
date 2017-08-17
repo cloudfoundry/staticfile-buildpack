@@ -14,15 +14,17 @@ import (
 )
 
 type Staticfile struct {
-	RootDir         string `yaml:"root"`
-	HostDotFiles    bool   `yaml:"host_dot_files"`
-	LocationInclude string `yaml:"location_include"`
-	DirectoryIndex  bool   `yaml:"directory"`
-	SSI             bool   `yaml:"ssi"`
-	PushState       bool   `yaml:"pushstate"`
-	HSTS            bool   `yaml:"http_strict_transport_security"`
-	ForceHTTPS      bool   `yaml:"force_https"`
-	BasicAuth       bool
+	RootDir               string `yaml:"root"`
+	HostDotFiles          bool   `yaml:"host_dot_files"`
+	LocationInclude       string `yaml:"location_include"`
+	DirectoryIndex        bool   `yaml:"directory"`
+	SSI                   bool   `yaml:"ssi"`
+	PushState             bool   `yaml:"pushstate"`
+	HSTS                  bool   `yaml:"http_strict_transport_security"`
+	HSTSIncludeSubDomains bool   `yaml:"http_strict_transport_security_include_subdomains"`
+	HSTSPreload           bool   `yaml:"http_strict_transport_security_preload"`
+	ForceHTTPS            bool   `yaml:"force_https"`
+	BasicAuth             bool
 }
 
 type YAML interface {
@@ -149,12 +151,27 @@ func (sf *Finalizer) LoadStaticfile() error {
 				sf.Log.BeginStep("Enabling HSTS")
 				conf.HSTS = true
 			}
+		case "http_strict_transport_security_include_subdomains":
+			if isEnabled {
+				sf.Log.BeginStep("Enabling HSTS includeSubDomains")
+				conf.HSTSIncludeSubDomains = true
+			}
+		case "http_strict_transport_security_preload":
+			if isEnabled {
+				sf.Log.BeginStep("Enabling HSTS Preload")
+				conf.HSTSPreload = true
+			}
 		case "force_https":
 			if isEnabled {
 				sf.Log.BeginStep("Enabling HTTPS redirect")
 				conf.ForceHTTPS = true
 			}
 		}
+	}
+
+	if !conf.HSTS && (conf.HSTSIncludeSubDomains || conf.HSTSPreload) {
+		sf.Log.Warning("http_strict_transport_security is not enabled while http_strict_transport_security_include_subdomains or http_strict_transport_security_preload have been enabled.")
+		sf.Log.Protip("http_strict_transport_security_include_subdomains and http_strict_transport_security_preload do nothing without http_strict_transport_security enabled.", "http://docs.cloudfoundry.org/buildpacks/staticfile/index.html#strict-security")
 	}
 
 	authFile := filepath.Join(sf.BuildDir, "Staticfile.auth")
