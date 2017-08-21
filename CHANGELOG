@@ -1,3 +1,9 @@
+v1.4.14 Aug 21, 2017
+=====================
+
+* Add opt-in richer HSTS support.
+  (https://www.pivotaltracker.com/story/show/149979433)
+
 v1.4.13 Aug 14, 2017
 =====================
 
