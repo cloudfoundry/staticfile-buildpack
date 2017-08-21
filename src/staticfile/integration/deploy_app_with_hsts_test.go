@@ -27,6 +27,6 @@ var _ = Describe("deploy an app using hsts", func() {
 
 		_, headers, err := app.Get("/", map[string]string{})
 		Expect(err).To(BeNil())
-		Expect(headers).To(HaveKey("Strict-Transport-Security"))
+		Expect(headers).To(HaveKeyWithValue("Strict-Transport-Security", []string{"max-age=31536000; includeSubDomains; preload"}))
 	})
 })
