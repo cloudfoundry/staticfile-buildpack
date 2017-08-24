@@ -42,6 +42,7 @@ type App struct {
 	Name      string
 	Path      string
 	Buildpack string
+	Memory    string
 	Stdout    *bytes.Buffer
 	appGUID   string
 	env       map[string]string
@@ -53,6 +54,7 @@ func New(fixture string) *App {
 		Name:      filepath.Base(fixture) + "-" + RandStringRunes(20),
 		Path:      fixture,
 		Buildpack: "",
+		Memory:    DefaultMemory,
 		appGUID:   "",
 		env:       map[string]string{},
 		logCmd:    nil,
@@ -224,8 +226,8 @@ func (a *App) Push() error {
 	if _, err := os.Stat(filepath.Join(a.Path, "manifest.yml")); err == nil {
 		args = append(args, "-f", filepath.Join(a.Path, "manifest.yml"))
 	}
-	if DefaultMemory != "" {
-		args = append(args, "-m", DefaultMemory)
+	if a.Memory != "" {
+		args = append(args, "-m", a.Memory)
 	}
 	if DefaultDisk != "" {
 		args = append(args, "-k", DefaultDisk)

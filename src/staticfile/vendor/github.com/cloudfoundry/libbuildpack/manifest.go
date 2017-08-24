@@ -222,7 +222,7 @@ func (m *Manifest) warnNewerPatch(dep Dependency) error {
 
 	v, err := semver.NewVersion(dep.Version)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	constraint := fmt.Sprintf("%d.%d.x", v.Major(), v.Minor())
@@ -241,7 +241,7 @@ func (m *Manifest) warnNewerPatch(dep Dependency) error {
 func (m *Manifest) warnEndOfLife(dep Dependency) error {
 	v, err := semver.NewVersion(dep.Version)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	for _, deprecation := range m.Deprecations {
