@@ -61,7 +61,7 @@ func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
 		return VersionedBuildpackPackage{}, err
 	}
 
-	err = UpdateBuildpack(manifest.Language, file)
+	err = CreateOrUpdateBuildpack(manifest.Language, file)
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
 	}
