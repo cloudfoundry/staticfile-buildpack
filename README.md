@@ -37,7 +37,7 @@ To build this buildpack, run the following command from the buildpack's director
 
     ```bash
     cf create-buildpack [BUILDPACK_NAME] [BUILDPACK_ZIP_FILE_PATH] 1
-    cf push my_app -b [BUILDPACK_NAME]
+    cf push my_app [-b BUILDPACK_NAME]
     ```
 
 ### Testing
