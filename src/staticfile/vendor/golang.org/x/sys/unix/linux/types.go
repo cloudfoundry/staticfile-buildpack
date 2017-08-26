@@ -62,6 +62,7 @@ package unix
 #include <linux/fs.h>
 #include <linux/vm_sockets.h>
 #include <linux/random.h>
+#include <linux/taskstats.h>
 
 // On mips64, the glibc stat and kernel stat do not agree
 #if (defined(__mips__) && _MIPS_SIM == _MIPS_SIM_ABI64)
@@ -550,3 +551,25 @@ const _SC_PAGESIZE = C._SC_PAGESIZE
 type Termios C.termios_t
 
 type Winsize C.struct_winsize
+
+// Taskstats
+
+type Taskstats C.struct_taskstats
+
+const (
+	TASKSTATS_CMD_UNSPEC                  = C.TASKSTATS_CMD_UNSPEC
+	TASKSTATS_CMD_GET                     = C.TASKSTATS_CMD_GET
+	TASKSTATS_CMD_NEW                     = C.TASKSTATS_CMD_NEW
+	TASKSTATS_TYPE_UNSPEC                 = C.TASKSTATS_TYPE_UNSPEC
+	TASKSTATS_TYPE_PID                    = C.TASKSTATS_TYPE_PID
+	TASKSTATS_TYPE_TGID                   = C.TASKSTATS_TYPE_TGID
+	TASKSTATS_TYPE_STATS                  = C.TASKSTATS_TYPE_STATS
+	TASKSTATS_TYPE_AGGR_PID               = C.TASKSTATS_TYPE_AGGR_PID
+	TASKSTATS_TYPE_AGGR_TGID              = C.TASKSTATS_TYPE_AGGR_TGID
+	TASKSTATS_TYPE_NULL                   = C.TASKSTATS_TYPE_NULL
+	TASKSTATS_CMD_ATTR_UNSPEC             = C.TASKSTATS_CMD_ATTR_UNSPEC
+	TASKSTATS_CMD_ATTR_PID                = C.TASKSTATS_CMD_ATTR_PID
+	TASKSTATS_CMD_ATTR_TGID               = C.TASKSTATS_CMD_ATTR_TGID
+	TASKSTATS_CMD_ATTR_REGISTER_CPUMASK   = C.TASKSTATS_CMD_ATTR_REGISTER_CPUMASK
+	TASKSTATS_CMD_ATTR_DEREGISTER_CPUMASK = C.TASKSTATS_CMD_ATTR_DEREGISTER_CPUMASK
+)

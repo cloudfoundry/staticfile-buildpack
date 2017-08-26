@@ -41,6 +41,7 @@ type cfInstance struct {
 type App struct {
 	Name      string
 	Path      string
+	Stack     string
 	Buildpack string
 	Memory    string
 	Stdout    *bytes.Buffer
@@ -53,6 +54,7 @@ func New(fixture string) *App {
 	return &App{
 		Name:      filepath.Base(fixture) + "-" + RandStringRunes(20),
 		Path:      fixture,
+		Stack:     "",
 		Buildpack: "",
 		Memory:    DefaultMemory,
 		appGUID:   "",
@@ -220,6 +222,9 @@ func (a *App) InstanceStates() ([]string, error) {
 
 func (a *App) Push() error {
 	args := []string{"push", a.Name, "--no-start", "-p", a.Path}
+	if a.Stack != "" {
+		args = append(args, "-s", a.Stack)
+	}
 	if a.Buildpack != "" {
 		args = append(args, "-b", a.Buildpack)
 	}
