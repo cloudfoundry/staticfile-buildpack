@@ -239,26 +239,36 @@ func (m *Manifest) warnNewerPatch(dep Dependency) error {
 }
 
 func (m *Manifest) warnEndOfLife(dep Dependency) error {
+	matchVersion := func(versionLine, depVersion string) bool {
+		return versionLine == depVersion
+	}
+
 	v, err := semver.NewVersion(dep.Version)
-	if err != nil {
-		return nil
+	if err == nil {
+		matchVersion = func(versionLine, depVersion string) bool {
+			constraint, err := semver.NewConstraint(versionLine)
+			if err != nil {
+				return false
+			}
+
+			return constraint.Check(v)
+		}
 	}
 
 	for _, deprecation := range m.Deprecations {
 		if deprecation.Name != dep.Name {
 			continue
 		}
-
-		versionLine, err := semver.NewConstraint(deprecation.VersionLine)
-		if err != nil {
-			return err
+		if !matchVersion(deprecation.VersionLine, dep.Version) {
+			continue
 		}
 
 		eolTime, err := time.Parse(dateFormat, deprecation.Date)
 		if err != nil {
 			return err
 		}
-		if versionLine.Check(v) && eolTime.Sub(m.currentTime) < thirtyDays {
+
+		if eolTime.Sub(m.currentTime) < thirtyDays {
 			m.log.Warning(endOfLifeWarning(dep.Name, deprecation.VersionLine, deprecation.Date, deprecation.Link))
 		}
 	}

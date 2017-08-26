@@ -11,6 +11,9 @@ dependency_deprecation_dates:
 - name: thing
   version_line: '5.x'
   date: 2017-04-01
+- name: nonsemver
+  version_line: 'abc-1.2.3-def-4.5.6'
+  date: 2018-04-01
 dependencies:
 - name: other_thing
   version: 4.5.6
@@ -71,4 +74,10 @@ dependencies:
   cf_stacks:
   - cflinuxfs2
   uri: https://example.com/dependencies/thing-5.2.3-linux-x64.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+- name: nonsemver
+  version: 'abc-1.2.3-def-4.5.6'
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/nonsemver-abc-1.2.3-def-4.5.6-linux-x64.tgz
   md5: 2c93222f86668c41ce947d4232e303c2

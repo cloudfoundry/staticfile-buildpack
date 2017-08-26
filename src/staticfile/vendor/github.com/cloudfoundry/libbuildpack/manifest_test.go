@@ -514,6 +514,50 @@ var _ = Describe("Manifest", func() {
 					})
 				})
 
+				Context("version has an EOL, version line non semver", func() {
+					const warning = "**WARNING** nonsemver abc-1.2.3-def-4.5.6 will no longer be available in new buildpacks released after 2018-04-01"
+					BeforeEach(func() {
+						tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
+						Expect(err).To(BeNil())
+						httpmock.RegisterResponder("GET", "https://example.com/dependencies/nonsemver-abc-1.2.3-def-4.5.6-linux-x64.tgz",
+							httpmock.NewStringResponder(200, string(tgzContents)))
+					})
+
+					Context("less than 30 days in the future", func() {
+						BeforeEach(func() {
+							currentTime, err = time.Parse("2006-01-02", "2018-03-29")
+							Expect(err).To(BeNil())
+						})
+						It("warns the user", func() {
+							err = manifest.InstallDependency(libbuildpack.Dependency{Name: "nonsemver", Version: "abc-1.2.3-def-4.5.6"}, outputDir)
+							Expect(err).To(BeNil())
+							Expect(buffer.String()).To(ContainSubstring(warning))
+						})
+					})
+					Context("in the past", func() {
+						BeforeEach(func() {
+							currentTime, err = time.Parse("2006-01-02", "2019-12-30")
+							Expect(err).To(BeNil())
+						})
+						It("warns the user", func() {
+							err = manifest.InstallDependency(libbuildpack.Dependency{Name: "nonsemver", Version: "abc-1.2.3-def-4.5.6"}, outputDir)
+							Expect(err).To(BeNil())
+							Expect(buffer.String()).To(ContainSubstring(warning))
+						})
+					})
+					Context("more than 30 days in the future", func() {
+						BeforeEach(func() {
+							currentTime, err = time.Parse("2006-01-02", "2018-01-15")
+							Expect(err).To(BeNil())
+						})
+						It("does not warn the user", func() {
+							err = manifest.InstallDependency(libbuildpack.Dependency{Name: "nonsemver", Version: "abc-1.2.3-def-4.5.6"}, outputDir)
+							Expect(err).To(BeNil())
+							Expect(buffer.String()).ToNot(ContainSubstring(warning))
+						})
+					})
+				})
+
 				Context("version does not have an EOL", func() {
 					const warning = "**WARNING** real_tar_file 3 will no longer be available in new buildpacks released after"
 					BeforeEach(func() {
