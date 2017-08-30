@@ -11,13 +11,23 @@ import (
 )
 
 func main() {
-	var cached bool
+	var cached, summary bool
 	var version, cacheDir string
 
 	flag.StringVar(&version, "version", "", "version to build as")
 	flag.BoolVar(&cached, "cached", false, "include dependencies")
+	flag.BoolVar(&summary, "summary", false, "list dependencies")
 	flag.StringVar(&cacheDir, "cachedir", packager.CacheDir, "cache dir")
 	flag.Parse()
+
+	if summary {
+		if summary, err := packager.Summary("."); err != nil {
+			log.Fatalf("error: %v", err)
+		} else {
+			fmt.Println(summary)
+		}
+		os.Exit(0)
+	}
 
 	if version == "" {
 		v, err := ioutil.ReadFile("VERSION")

@@ -16,21 +16,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-type Manifest struct {
-	Language     string   `yaml:"language"`
-	IncludeFiles []string `yaml:"include_files"`
-	PrePackage   string   `yaml:"pre_package"`
-	Dependencies []struct {
-		URI string `yaml:"uri"`
-		MD5 string `yaml:"md5"`
-	} `yaml:"dependencies"`
-}
-
-type File struct {
-	Name, Path string
-}
-
-var CacheDir string = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
+var CacheDir = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
 
 func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
