@@ -58,5 +58,14 @@ Default binary versions:
 `))
 			})
 		})
+
+		Context("no dependencies", func() {
+			BeforeEach(func() {
+				buildpackDir = "./fixtures/no_dependencies"
+			})
+			It("Produces no output", func() {
+				Expect(packager.Summary(buildpackDir)).To(Equal(""))
+			})
+		})
 	})
 })

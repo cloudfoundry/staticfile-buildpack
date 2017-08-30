@@ -28,13 +28,17 @@ func Summary(bpDir string) (string, error) {
 		}
 	}
 
-	out := "Packaged binaries:\n\n"
-	sort.Sort(manifest.Dependencies)
-	if hasModules {
-		out += "| name | version | cf_stacks | modules |\n|-|-|-|-|\n"
-	} else {
-		out += "| name | version | cf_stacks |\n|-|-|-|\n"
+	var out string
+	if len(manifest.Dependencies) > 0 {
+		out = "Packaged binaries:\n\n"
+		sort.Sort(manifest.Dependencies)
+		if hasModules {
+			out += "| name | version | cf_stacks | modules |\n|-|-|-|-|\n"
+		} else {
+			out += "| name | version | cf_stacks |\n|-|-|-|\n"
+		}
 	}
+
 	for _, d := range manifest.Dependencies {
 		sort.Strings(d.Stacks)
 		if hasModules {
