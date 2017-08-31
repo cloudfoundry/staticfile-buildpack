@@ -1,15 +1,20 @@
 package packager_test
 
 import (
+	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	httpmock "gopkg.in/jarcoal/httpmock.v1"
+
+	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/packager"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gopkg.in/jarcoal/httpmock.v1"
 )
 
 var _ = Describe("Packager", func() {
@@ -104,6 +109,37 @@ var _ = Describe("Packager", func() {
 
 			It("includes dependencies", func() {
 				Expect(ZipContents(zipFile, "dependencies/d39cae561ec1f485d1a4a58304e87105/rfc2324.txt")).To(ContainSubstring("Hyper Text Coffee Pot Control Protocol"))
+			})
+
+			Context("dependency uses file://", func() {
+				var tempfile string
+				BeforeEach(func() {
+					var err error
+					tempdir, err := ioutil.TempDir("", "bp_fixture")
+					Expect(err).ToNot(HaveOccurred())
+					Expect(libbuildpack.CopyDirectory(buildpackDir, tempdir)).To(Succeed())
+
+					fh, err := ioutil.TempFile("", "bp_dependency")
+					Expect(err).ToNot(HaveOccurred())
+					fh.WriteString("keaty")
+					fh.Close()
+					tempfile = fh.Name()
+
+					manifestyml, err := ioutil.ReadFile(filepath.Join(tempdir, "manifest.yml"))
+					Expect(err).ToNot(HaveOccurred())
+					manifestyml2 := string(manifestyml)
+					manifestyml2 = strings.Replace(manifestyml2, "https://www.ietf.org/rfc/rfc2324.txt", "file://"+tempfile, -1)
+					manifestyml2 = strings.Replace(manifestyml2, "84fc21c1adb2f0441c357a943ac464bc", "21048456b0162c2badc20be8d13fde6e", -1)
+					Expect(ioutil.WriteFile(filepath.Join(tempdir, "manifest.yml"), []byte(manifestyml2), 0644)).To(Succeed())
+
+					buildpackDir = tempdir
+				})
+				AfterEach(func() { os.RemoveAll(buildpackDir) })
+
+				It("includes dependencies", func() {
+					dest := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte("file://"+tempfile))), filepath.Base(tempfile))
+					Expect(ZipContents(zipFile, dest)).To(ContainSubstring("keaty"))
+				})
 			})
 		})
 

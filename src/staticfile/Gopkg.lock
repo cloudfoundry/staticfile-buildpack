@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [".","ansicleaner","cutlass","packager"]
-  revision = "c8e9de20617dfe949037eb1194cf12f9372c83b1"
+  revision = "2237d2a3b76047b5754a1e07fe43945e5cc954b8"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -70,7 +70,7 @@
   branch = "master"
   name = "golang.org/x/text"
   packages = ["encoding","encoding/charmap","encoding/htmlindex","encoding/internal","encoding/internal/identifier","encoding/japanese","encoding/korean","encoding/simplifiedchinese","encoding/traditionalchinese","encoding/unicode","internal/gen","internal/tag","internal/utf8internal","language","runes","transform","unicode/cldr"]
-  revision = "18c65dde6afd36dbc39197ca72008895b8dfbfb6"
+  revision = "21e35d45962262c8ee80f6cb048dcf95ad0e9d79"
 
 [[projects]]
   branch = "v1"
