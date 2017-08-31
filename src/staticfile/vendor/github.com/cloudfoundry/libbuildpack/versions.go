@@ -8,6 +8,16 @@ import (
 	semver1 "github.com/blang/semver"
 )
 
+type versionWithOriginal struct {
+	original string
+	version  semver1.Version
+}
+type versionsWithOriginal []versionWithOriginal
+
+func (v versionsWithOriginal) Len() int           { return len(v) }
+func (v versionsWithOriginal) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v versionsWithOriginal) Less(i, j int) bool { return v[i].version.LT(v[j].version) }
+
 func FindMatchingVersion(constraint string, versions []string) (string, error) {
 	version, err := matchBlang(constraint, versions)
 	if err == nil {
@@ -18,7 +28,7 @@ func FindMatchingVersion(constraint string, versions []string) (string, error) {
 }
 
 func matchBlang(constraint string, versions []string) (string, error) {
-	var depVersions semver1.Versions
+	var depVersions versionsWithOriginal
 	versionConstraint, err := semver1.ParseRange(constraint)
 	if err != nil {
 		return "", err
@@ -29,15 +39,19 @@ func matchBlang(constraint string, versions []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		versionWithOriginal := versionWithOriginal{
+			original: ver,
+			version:  depVersion,
+		}
 
 		if versionConstraint(depVersion) {
-			depVersions = append(depVersions, depVersion)
+			depVersions = append(depVersions, versionWithOriginal)
 		}
 	}
 
 	if len(depVersions) != 0 {
 		sort.Sort(depVersions)
-		return depVersions[len(depVersions)-1].String(), nil
+		return depVersions[len(depVersions)-1].original, nil
 	}
 
 	return "", fmt.Errorf("no match found for %s in %v", constraint, versions)
@@ -63,7 +77,7 @@ func matchMasterminds(constraint string, versions []string) (string, error) {
 
 	if len(depVersions) != 0 {
 		sort.Sort(semver2.Collection(depVersions))
-		return depVersions[len(depVersions)-1].String(), nil
+		return depVersions[len(depVersions)-1].Original(), nil
 	}
 
 	return "", fmt.Errorf("no match found for %s in %v", constraint, versions)

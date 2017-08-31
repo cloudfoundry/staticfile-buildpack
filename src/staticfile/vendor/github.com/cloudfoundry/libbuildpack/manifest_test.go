@@ -402,6 +402,21 @@ var _ = Describe("Manifest", func() {
 					})
 				})
 
+				Context("version is not semver", func() {
+					BeforeEach(func() {
+						tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
+						Expect(err).To(BeNil())
+						httpmock.RegisterResponder("GET", "https://buildpacks.cloudfoundry.org/dependencies/godep/godep-v79-linux-x64-9e37ce0f.tgz",
+							httpmock.NewStringResponder(200, string(tgzContents)))
+					})
+
+					It("does not warn the user", func() {
+						err = manifest.InstallDependency(libbuildpack.Dependency{Name: "godep", Version: "v79"}, outputDir)
+						Expect(err).To(BeNil())
+						Expect(buffer.String()).NotTo(ContainSubstring("newer version"))
+					})
+				})
+
 				Context("version has an EOL, version line is major", func() {
 					const warning = "**WARNING** thing 4.x will no longer be available in new buildpacks released after 2017-03-01."
 					BeforeEach(func() {

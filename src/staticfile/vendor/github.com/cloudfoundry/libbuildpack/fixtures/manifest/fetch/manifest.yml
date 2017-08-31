@@ -81,3 +81,9 @@ dependencies:
   - cflinuxfs2
   uri: https://example.com/dependencies/nonsemver-abc-1.2.3-def-4.5.6-linux-x64.tgz
   md5: 2c93222f86668c41ce947d4232e303c2
+- name: godep
+  version: v79
+  uri: https://buildpacks.cloudfoundry.org/dependencies/godep/godep-v79-linux-x64-9e37ce0f.tgz
+  md5: 2c93222f86668c41ce947d4232e303c2
+  cf_stacks:
+  - cflinuxfs2
