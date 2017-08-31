@@ -37,7 +37,7 @@ var _ = Describe("Packager", func() {
 	Describe("Package", func() {
 		var zipFile string
 		var cached bool
-		// AfterEach(func() { os.Remove(zipFile) })
+		AfterEach(func() { os.Remove(zipFile) })
 
 		Context("uncached", func() {
 			BeforeEach(func() { cached = false })
