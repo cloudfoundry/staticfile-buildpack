@@ -2,12 +2,12 @@
 language: staticfile
 default_versions:
 - name: nginx
-  version: 1.13.4
+  version: 1.13.5
 dependencies:
 - name: nginx
-  version: 1.13.4
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.13.4-linux-x64-3b4180ad.tgz
-  md5: 3b4180ad6025758250698d0c4e143244
+  version: 1.13.5
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.13.5-linux-x64-50e8d1ff.tgz
+  md5: 50e8d1fff9edde27198db3b933cce203
   cf_stacks:
   - cflinuxfs2
 pre_package: scripts/build.sh
