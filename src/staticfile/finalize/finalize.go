@@ -304,7 +304,7 @@ func (sf *Finalizer) ConfigureNginx() error {
 
 		_, err = os.Stat(customConfFile)
 		if err == nil {
-			err = libbuildpack.CopyFile(customConfFile, confDest)
+			err = os.Rename(customConfFile, confDest)
 		} else {
 			err = ioutil.WriteFile(confDest, []byte(contents), 0644)
 		}

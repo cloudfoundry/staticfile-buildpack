@@ -497,9 +497,14 @@ var _ = Describe("Compile", func() {
 			})
 
 			It("uses the custom configuration", func() {
+				Expect(filepath.Join(buildDir, "nginx", "conf", "nginx.conf")).To(BeARegularFile())
 				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
 				Expect(err).To(BeNil())
 				Expect(data).To(Equal([]byte("nginx configuration")))
+			})
+
+			It("removes the copy in the public directory", func() {
+				Expect(filepath.Join(buildDir, "public", "nginx.conf")).ToNot(BeARegularFile())
 			})
 		})
 
