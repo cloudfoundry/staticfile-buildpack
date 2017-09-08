@@ -1,3 +1,12 @@
+v1.4.15 Sep 08, 2017
+=====================
+
+* Add nginx 1.13.5, remove nginx 1.13.4
+  (https://www.pivotaltracker.com/story/show/150814564)
+
+* Move nginx.conf instead of copying
+  (https://www.pivotaltracker.com/story/show/150757043)
+
 v1.4.14 Aug 21, 2017
 =====================
 
