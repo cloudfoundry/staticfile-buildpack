@@ -2,11 +2,11 @@
 
 [![CF Slack](https://www.google.com/s2/favicons?domain=www.slack.com) Join us on Slack](https://cloudfoundry.slack.com/messages/buildpacks/)
 
-A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for static content such as websites (HTML/JS/CSS).
+A Cloud Foundry [buildpack](https://docs.cloudfoundry.org/buildpacks/) for static content such as websites (HTML/JS/CSS).
 
 ### Buildpack User Documentation
 
-Official buildpack documentation can be found at [staticfile buildpack docs](http://docs.cloudfoundry.org/buildpacks/staticfile/index.html).
+Official buildpack documentation can be found at [staticfile buildpack docs](https://docs.cloudfoundry.org/buildpacks/staticfile/index.html).
 
 ### Building the Buildpack
 
@@ -73,7 +73,7 @@ Find our guidelines [here](./CONTRIBUTING.md).
 
 ### Help and Support
 
-Join the #buildpacks channel in our [Slack community](http://slack.cloudfoundry.org/) if you need any further assistance.
+Join the #buildpacks channel in our [Slack community](https://slack.cloudfoundry.org/) if you need any further assistance.
 
 ### Reporting Issues
 
