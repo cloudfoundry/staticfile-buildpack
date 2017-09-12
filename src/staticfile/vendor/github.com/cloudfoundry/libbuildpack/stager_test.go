@@ -277,6 +277,18 @@ var _ = Describe("Stager", func() {
 			Expect(err).To(BeNil())
 			Expect(string(data)).To(Equal("yyy"))
 		})
+
+		It("overwrites existing links", func() {
+			Expect(os.MkdirAll(filepath.Join(s.DepDir(), "include"), 0755)).To(Succeed())
+			Expect(os.Symlink(filepath.Join(destDir, "thing2"), filepath.Join(s.DepDir(), "include", "thing1"))).To(Succeed())
+
+			err := s.LinkDirectoryInDepDir(destDir, "include")
+			Expect(err).To(BeNil())
+
+			link, err := os.Readlink(filepath.Join(s.DepDir(), "include", "thing1"))
+			Expect(err).To(BeNil())
+			Expect(link).To(Equal("../../../" + path.Base(destDir) + "/thing1"))
+		})
 	})
 
 	Describe("WriteProfileD", func() {
