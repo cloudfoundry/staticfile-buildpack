@@ -77,55 +77,55 @@ http {
     listen <%= ENV["PORT"] %>;
     server_name localhost;
 
-    location / {
-      root <%= ENV["APP_ROOT"] %>/public;
+    root <%= ENV["APP_ROOT"] %>/public;
 
-      {{if .PushState}}
-        if (!-e $request_filename) {
-          rewrite ^(.*)$ / break;
-        }
-      {{end}}
-
-      index index.html index.htm Default.htm;
-
-      {{if .DirectoryIndex}}
-        autoindex on;
-      {{end}}
-
-      {{if .BasicAuth}}
-        auth_basic "Restricted";  #For Basic Auth
-        auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
-      {{end}}
-
-      {{if .ForceHTTPS}}
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      {{else}}
-      <% if ENV["FORCE_HTTPS"] %>
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      <% end %>
-      {{end}}
-
-      {{if .SSI}}
-        ssi on;
-      {{end}}
-
-      {{if .HSTS}}
-        add_header Strict-Transport-Security "max-age=31536000{{if .HSTSIncludeSubDomains}}; includeSubDomains{{end}}{{if .HSTSPreload}}; preload{{end}}";
-      {{end}}
-
-      {{if ne .LocationInclude ""}}
-        include {{.LocationInclude}};
-      {{end}}
+  {{if .PushState}}
+    if (!-e $request_filename) {
+      rewrite ^(.*)$ / break;
     }
+  {{end}}
+
+    index index.html index.htm Default.htm;
+
+  {{if .DirectoryIndex}}
+    autoindex on;
+  {{end}}
+
+  {{if .BasicAuth}}
+    auth_basic "Restricted";  #For Basic Auth
+    auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
+  {{end}}
+
+  {{if .ForceHTTPS}}
+    if ($http_x_forwarded_proto != "https") {
+      return 301 https://$host$request_uri;
+    }
+  {{else}}
+  <% if ENV["FORCE_HTTPS"] %>
+    if ($http_x_forwarded_proto != "https") {
+      return 301 https://$host$request_uri;
+    }
+  <% end %>
+  {{end}}
+
+  {{if .SSI}}
+    ssi on;
+  {{end}}
+
+  {{if .HSTS}}
+    add_header Strict-Transport-Security "max-age=31536000{{if .HSTSIncludeSubDomains}}; includeSubDomains{{end}}{{if .HSTSPreload}}; preload{{end}}";
+  {{end}}
 
   {{if not .HostDotFiles}}
     location ~ /\. {
       deny all;
       return 404;
+    }
+  {{end}}
+
+  {{if ne .LocationInclude ""}}
+    location / {
+      include {{.LocationInclude}};
     }
   {{end}}
   }
