@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"staticfile/finalize"
 	"syscall"
 
@@ -509,42 +510,48 @@ var _ = Describe("Compile", func() {
 		})
 
 		Context("custom nginx.conf does NOT exist", func() {
-			hostDotConf := `
-    location ~ /\. {
-      deny all;
-      return 404;
-    }
-`
-			pushStateConf := `
+			leadCloseWsp := regexp.MustCompile(`(?m)^\s+`)
+			stripStartWsp := func(inp string) string { return leadCloseWsp.ReplaceAllString(inp, "") }
+			readNginxConfAndStrip := func() string {
+				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+				Expect(err).To(BeNil())
+				return stripStartWsp(string(data))
+			}
+
+			hostDotConf := stripStartWsp(`
+				location ~ /\. {
+					deny all;
+					return 404;
+				}
+		  `)
+			pushStateConf := stripStartWsp(`
         if (!-e $request_filename) {
           rewrite ^(.*)$ / break;
         }
-`
-
-			forceHTTPSConf := `
+			`)
+			forceHTTPSConf := stripStartWsp(`
         if ($http_x_forwarded_proto != "https") {
           return 301 https://$host$request_uri;
         }
-`
-			forceHTTPSErb := `
-      <% if ENV["FORCE_HTTPS"] %>
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
-      <% end %>
-`
-
-			basicAuthConf := `
+			`)
+			forceHTTPSErb := stripStartWsp(`
+				<% if ENV["FORCE_HTTPS"] %>
+					if ($http_x_forwarded_proto != "https") {
+						return 301 https://$host$request_uri;
+					}
+				<% end %>
+			`)
+			basicAuthConf := stripStartWsp(`
         auth_basic "Restricted";  #For Basic Auth
         auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
-`
+			`)
+
 			Context("host_dot_files is set in staticfile", func() {
 				BeforeEach(func() {
 					staticfile.HostDotFiles = true
 				})
 				It("allows dotfiles to be hosted", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring(hostDotConf))
 				})
 			})
@@ -554,8 +561,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HostDotFiles = false
 				})
 				It("allows dotfiles to be hosted", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(hostDotConf))
 				})
 			})
@@ -565,8 +571,7 @@ var _ = Describe("Compile", func() {
 					staticfile.LocationInclude = "a/b/c"
 				})
 				It("includes the file", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring("include a/b/c;"))
 				})
 			})
@@ -576,8 +581,7 @@ var _ = Describe("Compile", func() {
 					staticfile.LocationInclude = ""
 				})
 				It("does not include the file", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring("include ;"))
 				})
 			})
@@ -587,8 +591,7 @@ var _ = Describe("Compile", func() {
 					staticfile.DirectoryIndex = true
 				})
 				It("sets autoindex on", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring("autoindex on;"))
 				})
 			})
@@ -598,8 +601,7 @@ var _ = Describe("Compile", func() {
 					staticfile.DirectoryIndex = false
 				})
 				It("does not set autoindex on", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring("autoindex on;"))
 				})
 			})
@@ -609,8 +611,7 @@ var _ = Describe("Compile", func() {
 					staticfile.SSI = true
 				})
 				It("enables SSI", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring("ssi on;"))
 				})
 			})
@@ -620,8 +621,7 @@ var _ = Describe("Compile", func() {
 					staticfile.SSI = false
 				})
 				It("does not enable SSI", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring("ssi on;"))
 				})
 			})
@@ -631,8 +631,7 @@ var _ = Describe("Compile", func() {
 					staticfile.PushState = true
 				})
 				It("it adds the configuration", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(pushStateConf))
 				})
 			})
@@ -642,8 +641,7 @@ var _ = Describe("Compile", func() {
 					staticfile.PushState = false
 				})
 				It("it does not add the configuration", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring(pushStateConf))
 				})
 			})
@@ -653,8 +651,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HSTS = true
 				})
 				It("it adds the HSTS header", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
 				})
 			})
@@ -665,8 +662,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HSTSIncludeSubDomains = true
 				})
 				It("it adds the HSTS header", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";`))
 				})
 			})
@@ -678,8 +674,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HSTSPreload = true
 				})
 				It("it adds the HSTS header", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";`))
 				})
 			})
@@ -689,8 +684,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HSTS = false
 				})
 				It("it does not add the HSTS header", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
 				})
 			})
@@ -702,8 +696,7 @@ var _ = Describe("Compile", func() {
 					staticfile.HSTSPreload = true
 				})
 				It("it does not add the HSTS header", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring(`add_header Strict-Transport-Security "max-age=31536000";`))
 				})
 			})
@@ -713,8 +706,7 @@ var _ = Describe("Compile", func() {
 					staticfile.ForceHTTPS = true
 				})
 				It("the 301 redirect does not depend on ENV['FORCE_HTTPS']", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(forceHTTPSConf))
 					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 					Expect(string(data)).NotTo(ContainSubstring(`<% end %>`))
@@ -726,8 +718,7 @@ var _ = Describe("Compile", func() {
 					staticfile.ForceHTTPS = false
 				})
 				It("the 301 redirect does depend on ENV['FORCE_HTTPS']", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(forceHTTPSErb))
 				})
 			})
@@ -740,8 +731,7 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("it enables basic authentication", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(basicAuthConf))
 				})
 
@@ -757,8 +747,7 @@ var _ = Describe("Compile", func() {
 					staticfile.BasicAuth = false
 				})
 				It("it does not enable basic authenticaiont", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
-					Expect(err).To(BeNil())
+					data := readNginxConfAndStrip()
 					Expect(string(data)).NotTo(ContainSubstring(basicAuthConf))
 				})
 
