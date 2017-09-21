@@ -40,6 +40,10 @@ func NewStager(args []string, logger *Logger, manifest *Manifest) *Stager {
 	return s
 }
 
+func (s *Stager) Logger() *Logger {
+	return s.log
+}
+
 func (s *Stager) DepDir() string {
 	return filepath.Join(s.depsDir, s.depsIdx)
 }

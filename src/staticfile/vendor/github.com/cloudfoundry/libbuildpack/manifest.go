@@ -286,7 +286,7 @@ func (m *Manifest) FetchDependency(dep Dependency, outputFile string) error {
 		return err
 	}
 
-	if m.isCached() {
+	if m.IsCached() {
 		source := filepath.Join(m.manifestRootDir, "dependencies", fmt.Sprintf("%x", md5.Sum([]byte(entry.URI))), path.Base(entry.URI))
 		exists, err := FileExists(source)
 		if err != nil {
@@ -351,7 +351,7 @@ func (m *Manifest) getEntry(dep Dependency) (*ManifestEntry, error) {
 	return nil, fmt.Errorf("dependency %s %s not found", dep.Name, dep.Version)
 }
 
-func (m *Manifest) isCached() bool {
+func (m *Manifest) IsCached() bool {
 	dependenciesDir := filepath.Join(m.manifestRootDir, "dependencies")
 
 	isCached, err := FileExists(dependenciesDir)

@@ -133,6 +133,39 @@ var _ = Describe("Manifest", func() {
 		})
 	})
 
+	Describe("IsCached", func() {
+		BeforeEach(func() {
+			var err error
+			manifestDir, err = ioutil.TempDir("", "cached")
+			Expect(err).To(BeNil())
+
+			data, err := ioutil.ReadFile("fixtures/manifest/fetch/manifest.yml")
+			Expect(err).To(BeNil())
+
+			err = ioutil.WriteFile(filepath.Join(manifestDir, "manifest.yml"), data, 0644)
+			Expect(err).To(BeNil())
+		})
+		AfterEach(func() {
+			Expect(os.RemoveAll(manifestDir)).To(Succeed())
+		})
+
+		Context("uncached", func() {
+			It("is false", func() {
+				Expect(manifest.IsCached()).To(BeFalse())
+			})
+		})
+
+		Context("cached", func() {
+			BeforeEach(func() {
+				dependenciesDir := filepath.Join(manifestDir, "dependencies")
+				Expect(os.MkdirAll(dependenciesDir, 0755)).To(Succeed())
+			})
+			It("is true", func() {
+				Expect(manifest.IsCached()).To(BeTrue())
+			})
+		})
+	})
+
 	Describe("FetchDependency", func() {
 		var tmpdir, outputFile string
 
