@@ -1,3 +1,12 @@
+v1.4.16 Sep 27, 2017
+=====================
+
+* Move nginx config directives from location to server block
+  (https://www.pivotaltracker.com/story/show/148630045)
+
+* Use HTTPS instead of HTTP links in readme and inline explanations
+  (https://www.pivotaltracker.com/story/show/150938423)
+
 v1.4.15 Sep 08, 2017
 =====================
 
