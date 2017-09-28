@@ -267,7 +267,7 @@ func (a *App) Push() error {
 			args = append(args, "-b", buildpack)
 		}
 	} else {
-		args = []string{"start", a.Name, "-p", a.Path}
+		args = []string{"start", a.Name}
 	}
 	command = exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr
