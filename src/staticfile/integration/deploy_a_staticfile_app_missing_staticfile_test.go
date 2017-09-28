@@ -20,7 +20,7 @@ var _ = Describe("a staticfile app with no staticfile", func() {
 
 	BeforeEach(func() {
 		app = cutlass.New(filepath.Join(bpDir, "fixtures", "without_staticfile"))
-		app.Buildpack = "staticfile_buildpack"
+		app.Buildpacks = []string{"staticfile_buildpack"}
 	})
 
 	It("runs", func() {

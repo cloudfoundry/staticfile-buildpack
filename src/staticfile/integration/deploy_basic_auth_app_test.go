@@ -57,7 +57,7 @@ var _ = Describe("deploy a basic auth app", func() {
 			Expect(os.Remove(filepath.Join(appDir, "Staticfile"))).To(Succeed())
 
 			app = cutlass.New(appDir)
-			app.Buildpack = "staticfile_buildpack"
+			app.Buildpacks = []string{"staticfile_buildpack"}
 			PushAppAndConfirm(app)
 		})
 		AfterEach(func() {
