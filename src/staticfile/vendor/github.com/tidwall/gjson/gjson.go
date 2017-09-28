@@ -1790,7 +1790,6 @@ next_key:
 					usedPaths++
 					continue
 				}
-
 				// try to match the key to the path
 				// this is spaghetti code but the idea is to minimize
 				// calls and variable assignments when comparing the
@@ -1810,6 +1809,9 @@ next_key:
 						}
 					}
 					if len(paths[j]) <= len(key) || kplen != 0 {
+						if len(paths[j]) != i {
+							goto nomatch
+						}
 						// matched and at the end of the path
 						goto match_atend
 					}
@@ -1848,6 +1850,9 @@ next_key:
 			nomatch: // noop label
 			}
 
+			if !hasMatch && i < len(json) && json[i] == '}' {
+				return i + 1, true
+			}
 			if !parsedVal {
 				if hasMatch {
 					// we found a match and the value has not been parsed yet.

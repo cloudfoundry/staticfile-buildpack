@@ -39,27 +39,27 @@ type cfInstance struct {
 }
 
 type App struct {
-	Name      string
-	Path      string
-	Stack     string
-	Buildpack string
-	Memory    string
-	Stdout    *bytes.Buffer
-	appGUID   string
-	env       map[string]string
-	logCmd    *exec.Cmd
+	Name       string
+	Path       string
+	Stack      string
+	Buildpacks []string
+	Memory     string
+	Stdout     *bytes.Buffer
+	appGUID    string
+	env        map[string]string
+	logCmd     *exec.Cmd
 }
 
 func New(fixture string) *App {
 	return &App{
-		Name:      filepath.Base(fixture) + "-" + RandStringRunes(20),
-		Path:      fixture,
-		Stack:     "",
-		Buildpack: "",
-		Memory:    DefaultMemory,
-		appGUID:   "",
-		env:       map[string]string{},
-		logCmd:    nil,
+		Name:       filepath.Base(fixture) + "-" + RandStringRunes(20),
+		Path:       fixture,
+		Stack:      "",
+		Buildpacks: []string{},
+		Memory:     DefaultMemory,
+		appGUID:    "",
+		env:        map[string]string{},
+		logCmd:     nil,
 	}
 }
 
@@ -225,8 +225,8 @@ func (a *App) Push() error {
 	if a.Stack != "" {
 		args = append(args, "-s", a.Stack)
 	}
-	if a.Buildpack != "" {
-		args = append(args, "-b", a.Buildpack)
+	if len(a.Buildpacks) == 1 {
+		args = append(args, "-b", a.Buildpacks[len(a.Buildpacks)-1])
 	}
 	if _, err := os.Stat(filepath.Join(a.Path, "manifest.yml")); err == nil {
 		args = append(args, "-f", filepath.Join(a.Path, "manifest.yml"))
@@ -261,7 +261,15 @@ func (a *App) Push() error {
 		return err
 	}
 
-	command = exec.Command("cf", "start", a.Name)
+	if len(a.Buildpacks) > 1 {
+		args = []string{"v3-push", a.Name, "-p", a.Path}
+		for _, buildpack := range a.Buildpacks {
+			args = append(args, "-b", buildpack)
+		}
+	} else {
+		args = []string{"start", a.Name, "-p", a.Path}
+	}
+	command = exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr
 	command.Stderr = DefaultStdoutStderr
 	if err := command.Run(); err != nil {
