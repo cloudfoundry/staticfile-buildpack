@@ -19,15 +19,15 @@ func (v versionsWithOriginal) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
 func (v versionsWithOriginal) Less(i, j int) bool { return v[i].version.LT(v[j].version) }
 
 func FindMatchingVersion(constraint string, versions []string) (string, error) {
-	version, err := matchBlang(constraint, versions)
+	version, err := matchSemver1(constraint, versions)
 	if err == nil {
 		return version, nil
 	}
 
-	return matchMasterminds(constraint, versions)
+	return matchSemver2(constraint, versions)
 }
 
-func matchBlang(constraint string, versions []string) (string, error) {
+func matchSemver1(constraint string, versions []string) (string, error) {
 	var depVersions versionsWithOriginal
 	versionConstraint, err := semver1.ParseRange(constraint)
 	if err != nil {
@@ -57,7 +57,7 @@ func matchBlang(constraint string, versions []string) (string, error) {
 	return "", fmt.Errorf("no match found for %s in %v", constraint, versions)
 }
 
-func matchMasterminds(constraint string, versions []string) (string, error) {
+func matchSemver2(constraint string, versions []string) (string, error) {
 	var depVersions []*semver2.Version
 	versionConstraint, err := semver2.NewConstraint(constraint)
 	if err != nil {
