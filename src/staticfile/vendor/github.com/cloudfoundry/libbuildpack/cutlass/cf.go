@@ -44,6 +44,7 @@ type App struct {
 	Stack      string
 	Buildpacks []string
 	Memory     string
+	Disk       string
 	Stdout     *bytes.Buffer
 	appGUID    string
 	env        map[string]string
@@ -57,6 +58,7 @@ func New(fixture string) *App {
 		Stack:      "",
 		Buildpacks: []string{},
 		Memory:     DefaultMemory,
+		Disk:       DefaultDisk,
 		appGUID:    "",
 		env:        map[string]string{},
 		logCmd:     nil,
@@ -234,8 +236,8 @@ func (a *App) Push() error {
 	if a.Memory != "" {
 		args = append(args, "-m", a.Memory)
 	}
-	if DefaultDisk != "" {
-		args = append(args, "-k", DefaultDisk)
+	if a.Disk != "" {
+		args = append(args, "-k", a.Disk)
 	}
 	command := exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr

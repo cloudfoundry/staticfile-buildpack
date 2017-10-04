@@ -205,6 +205,10 @@ func (m *Manifest) InstallDependency(dep Dependency, outputDir string) error {
 		return err
 	}
 
+	if strings.HasSuffix(entry.URI, ".sh") {
+		return os.Rename(tmpFile, outputDir)
+	}
+
 	err = os.MkdirAll(outputDir, 0755)
 	if err != nil {
 		return err
