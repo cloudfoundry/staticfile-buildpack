@@ -78,6 +78,12 @@ func Run(sf *Finalizer) error {
 		return err
 	}
 
+	err = sf.SetupLogSymlinksForCustomConfigs()
+	if err != nil {
+		sf.Log.Error("Unable to configure nginx log symlinks: %s", err.Error())
+		return err
+	}
+
 	err = sf.WriteStartupFiles()
 	if err != nil {
 		sf.Log.Error("Unable to write startup file: %s", err.Error())
@@ -94,11 +100,6 @@ func (sf *Finalizer) WriteStartupFiles() error {
 	}
 
 	err = ioutil.WriteFile(filepath.Join(profiledDir, "staticfile.sh"), []byte(initScript), 0755)
-	if err != nil {
-		return err
-	}
-
-	err = ioutil.WriteFile(filepath.Join(sf.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
 	if err != nil {
 		return err
 	}
@@ -322,6 +323,22 @@ func (sf *Finalizer) ConfigureNginx() error {
 		}
 	}
 
+	return nil
+}
+
+func (sf *Finalizer) SetupLogSymlinksForCustomConfigs() error {
+	if contents, err := ioutil.ReadFile(filepath.Join(sf.BuildDir, "nginx", "conf", "nginx.conf")); err != nil {
+		return err
+	} else if strings.Contains(string(contents), "access.log") {
+		logsDir := filepath.Join(sf.BuildDir, "nginx", "logs")
+		if err := os.MkdirAll(logsDir, 0755); err != nil {
+			return err
+		}
+		if err := os.Symlink("/dev/stdout", filepath.Join(logsDir, "access.log")); err != nil {
+			return err
+		}
+		return os.Symlink("/dev/stderr", filepath.Join(logsDir, "error.log"))
+	}
 	return nil
 }
 
