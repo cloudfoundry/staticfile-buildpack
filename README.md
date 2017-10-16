@@ -65,7 +65,7 @@ To test this buildpack, run the following command from the buildpack's directory
     ./scripts/integration.sh
     ```
 
-More information can be found on Github [cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass).
+More information can be found on [here](https://github.com/cloudfoundry/libbuildpack/tree/master/cutlass).
 
 ### Contributing
 
