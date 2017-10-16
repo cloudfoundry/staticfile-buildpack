@@ -42,7 +42,7 @@ To build this buildpack, run the following command from the buildpack's director
 
 ### Testing
 
-Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass) framework for running integration tests.
+Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/tree/master/cutlass) framework for running integration tests.
 
 To test this buildpack, run the following command from the buildpack's directory:
 
