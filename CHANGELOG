@@ -1,3 +1,10 @@
+v1.4.18 Oct 17, 2017
+=====================
+
+* Revert change to stdout logging
+  Not all versions of garden support writing to /dev/stdout
+  (https://www.pivotaltracker.com/story/show/151737300)
+
 v1.4.17 Oct 17, 2017
 =====================
 
