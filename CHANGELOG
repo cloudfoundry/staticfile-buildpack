@@ -1,3 +1,12 @@
+v1.4.17 Oct 17, 2017
+=====================
+
+* Add nginx 1.13.6, remove nginx 1.13.5
+  (https://www.pivotaltracker.com/story/show/151849194)
+
+* Use /dev/stderr and /dev/stdout directly
+  (https://www.pivotaltracker.com/story/show/151737300)
+
 v1.4.16 Sep 27, 2017
 =====================
 
