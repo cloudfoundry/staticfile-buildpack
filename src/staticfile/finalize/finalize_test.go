@@ -79,13 +79,31 @@ var _ = Describe("Compile", func() {
 			Expect(string(contents)).To(ContainSubstring("export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH"))
 		})
 
+		It("writes start_logging.sh in appdir", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "start_logging.sh"))
+			Expect(err).To(BeNil())
+			Expect(string(contents)).To(Equal("\ncat < $APP_ROOT/nginx/logs/access.log &\n(>&2 cat) < $APP_ROOT/nginx/logs/error.log &\n"))
+		})
+
+		It("start_logging.sh is an executable file", func() {
+			err = finalizer.WriteStartupFiles()
+			Expect(err).To(BeNil())
+
+			fi, err := os.Stat(filepath.Join(buildDir, "start_logging.sh"))
+			Expect(err).To(BeNil())
+			Expect(fi.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+		})
+
 		It("writes boot.sh in appdir", func() {
 			err = finalizer.WriteStartupFiles()
 			Expect(err).To(BeNil())
 
 			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
 			Expect(err).To(BeNil())
-			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\nexec nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
+			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\nnginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
 		})
 
 		It("boot.sh is an executable file", func() {
@@ -760,44 +778,6 @@ var _ = Describe("Compile", func() {
 				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
 				Expect(err).To(BeNil())
 				Expect(string(data)).To(Equal(finalize.MimeTypes))
-			})
-		})
-
-		It("cerates logs directory", func() {
-			Expect(filepath.Join(buildDir, "nginx", "logs")).To(BeADirectory())
-		})
-	})
-
-	Describe("SetupLogSymlinksForCustomConfigs", func() {
-		JustBeforeEach(func() {
-			err = finalizer.SetupLogSymlinksForCustomConfigs()
-			Expect(err).To(BeNil())
-		})
-
-		Context("custom nginx.conf does NOT contain access.log", func() {
-			BeforeEach(func() {
-				Expect(os.MkdirAll(filepath.Join(buildDir, "nginx", "conf"), 0755)).To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"), []byte("config"), 0644)).To(Succeed())
-			})
-			It("does not create a logs directory or symlinks", func() {
-				Expect(filepath.Join(buildDir, "nginx", "logs")).NotTo(BeADirectory())
-			})
-		})
-
-		Context("custom nginx.conf exists and contains access.log", func() {
-			BeforeEach(func() {
-				Expect(os.MkdirAll(filepath.Join(buildDir, "nginx", "conf"), 0755)).To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"), []byte("preamble\npreamble\nuse access.log\nother"), 0644)).To(Succeed())
-			})
-
-			It("creates log symlink to /dev/stdout", func() {
-				Expect(filepath.Join(buildDir, "nginx", "logs")).To(BeADirectory())
-				Expect(filepath.Join(buildDir, "nginx", "logs", "access.log")).To(BeAnExistingFile())
-			})
-
-			It("creates log symlink to /dev/stderr", func() {
-				Expect(filepath.Join(buildDir, "nginx", "logs")).To(BeADirectory())
-				Expect(filepath.Join(buildDir, "nginx", "logs", "error.log")).To(BeAnExistingFile())
 			})
 		})
 	})

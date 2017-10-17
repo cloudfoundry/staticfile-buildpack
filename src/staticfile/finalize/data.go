@@ -21,24 +21,38 @@ export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
 mv $APP_ROOT/nginx/conf/nginx.conf $APP_ROOT/nginx/conf/nginx.conf.erb
 erb $APP_ROOT/nginx/conf/nginx.conf.erb > $APP_ROOT/nginx/conf/nginx.conf
+
+if [[ ! -f $APP_ROOT/nginx/logs/access.log ]]; then
+    mkfifo $APP_ROOT/nginx/logs/access.log
+fi
+
+if [[ ! -f $APP_ROOT/nginx/logs/error.log ]]; then
+    mkfifo $APP_ROOT/nginx/logs/error.log
+fi
+`
+
+	startLoggingScript = `
+cat < $APP_ROOT/nginx/logs/access.log &
+(>&2 cat) < $APP_ROOT/nginx/logs/error.log &
 `
 
 	startCommand = `#!/bin/sh
 set -ex
-exec nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
+$APP_ROOT/start_logging.sh
+nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
 `
 
 	nginxConfTemplate = `
 worker_processes 1;
 daemon off;
 
-error_log stderr;
+error_log <%= ENV["APP_ROOT"] %>/nginx/logs/error.log;
 events { worker_connections 1024; }
 
 http {
   charset utf-8;
   log_format cloudfoundry '$http_x_forwarded_for - $http_referer - [$time_local] "$request" $status $body_bytes_sent';
-  access_log /dev/stdout cloudfoundry;
+  access_log <%= ENV["APP_ROOT"] %>/nginx/logs/access.log cloudfoundry;
   default_type application/octet-stream;
   include mime.types;
   sendfile on;
