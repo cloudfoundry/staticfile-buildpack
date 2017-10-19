@@ -17,7 +17,7 @@
   branch = "master"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [".","ansicleaner","cutlass","packager"]
-  revision = "16c75df30b08872e3ede89a44478f9ce77b5fd48"
+  revision = "057411e3441613a0f2cee5d83851d27faf8f4463"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -28,7 +28,7 @@
   branch = "master"
   name = "github.com/golang/mock"
   packages = ["gomock"]
-  revision = "4887ba10eac80f57bfb3de234db4ac970d786511"
+  revision = "6e20fef50e74e443696bc32b693cf286b612d45b"
 
 [[projects]]
   branch = "master"
@@ -40,7 +40,7 @@
   branch = "master"
   name = "github.com/onsi/gomega"
   packages = [".","format","internal/assertion","internal/asyncassertion","internal/oraclematcher","internal/testingtsupport","matchers","matchers/support/goraph/bipartitegraph","matchers/support/goraph/edge","matchers/support/goraph/node","matchers/support/goraph/util","types"]
-  revision = "dcabb60a477c2b6f456df65037cb6708210fbb02"
+  revision = "283ed655c6b8238afecd5bea6434bc9b03129f2f"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -58,19 +58,19 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["html","html/atom","html/charset"]
-  revision = "a04bdaca5b32abe1c069418fb7088ae607de5bd0"
+  revision = "1087133bc4af3073e18add999345c6ae75918503"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "314a259e304ff91bd6985da2a7149bbf91237993"
+  revision = "8dbc5d05d6edcc104950cc299a1ce6641235bc86"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["encoding","encoding/charmap","encoding/htmlindex","encoding/internal","encoding/internal/identifier","encoding/japanese","encoding/korean","encoding/simplifiedchinese","encoding/traditionalchinese","encoding/unicode","internal/gen","internal/tag","internal/utf8internal","language","runes","transform","unicode/cldr"]
-  revision = "1cbadb444a806fd9430d14ad08967ed91da4fa0a"
+  revision = "c01e4764d870b77f8abe5096ee19ad20d80e8075"
 
 [[projects]]
   branch = "v1"

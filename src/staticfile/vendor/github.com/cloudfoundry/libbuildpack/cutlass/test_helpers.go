@@ -18,20 +18,23 @@ type VersionedBuildpackPackage struct {
 }
 
 func FindRoot() (string, error) {
-	file := "VERSION"
+	dir, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
 	for {
-		files, err := filepath.Glob(file)
+		if dir == "/" {
+			return "", fmt.Errorf("Could not find VERSION in the directory hierarchy")
+		}
+		if exist, err := libbuildpack.FileExists(filepath.Join(dir, "VERSION")); err != nil {
+			return "", err
+		} else if exist {
+			return dir, nil
+		}
+		dir, err = filepath.Abs(filepath.Join(dir, ".."))
 		if err != nil {
 			return "", err
 		}
-		if len(files) == 1 {
-			file, err = filepath.Abs(filepath.Dir(file))
-			if err != nil {
-				return "", err
-			}
-			return file, nil
-		}
-		file = filepath.Join("..", file)
 	}
 }
 
