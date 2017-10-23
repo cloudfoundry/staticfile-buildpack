@@ -22,6 +22,7 @@ var _ = Describe("Stager", func() {
 		cacheDir    string
 		depsDir     string
 		depsIdx     string
+		profileDir  string
 		logger      *libbuildpack.Logger
 		s           *libbuildpack.Stager
 		err         error
@@ -44,6 +45,9 @@ var _ = Describe("Stager", func() {
 		err = os.MkdirAll(filepath.Join(depsDir, depsIdx), 0755)
 		Expect(err).To(BeNil())
 
+		profileDir, err = ioutil.TempDir("", "profiled")
+		Expect(err).To(BeNil())
+
 		manifestDir = filepath.Join("fixtures", "manifest", "standard")
 
 		manifest, err = libbuildpack.NewManifest(manifestDir, logger, time.Now())
@@ -53,7 +57,7 @@ var _ = Describe("Stager", func() {
 
 		logger = libbuildpack.NewLogger(buffer)
 
-		s = libbuildpack.NewStager([]string{buildDir, cacheDir, depsDir, depsIdx}, logger, manifest)
+		s = libbuildpack.NewStager([]string{buildDir, cacheDir, depsDir, depsIdx, profileDir}, logger, manifest)
 	})
 
 	AfterEach(func() {
@@ -64,6 +68,9 @@ var _ = Describe("Stager", func() {
 		Expect(err).To(BeNil())
 
 		err = os.RemoveAll(depsDir)
+		Expect(err).To(BeNil())
+
+		err = os.RemoveAll(profileDir)
 		Expect(err).To(BeNil())
 	})
 
@@ -79,6 +86,7 @@ var _ = Describe("Stager", func() {
 				Expect(s.CacheDir()).To(Equal("cacheDir"))
 				Expect(s.DepsIdx()).To(Equal("idx"))
 				Expect(s.DepDir()).To(Equal("depsDir/idx"))
+				Expect(s.ProfileDir()).To(Equal("buildDir/.profile.d"))
 			})
 		})
 
@@ -91,6 +99,16 @@ var _ = Describe("Stager", func() {
 				Expect(s.CacheDir()).To(Equal("cacheDir"))
 				Expect(s.DepsIdx()).To(Equal(""))
 				Expect(s.DepDir()).To(Equal(""))
+				Expect(s.ProfileDir()).To(Equal("buildDir/.profile.d"))
+			})
+		})
+
+		Context("A profile.d dir is provided", func() {
+			It("sets ProfileDir", func() {
+				args = []string{"buildDir", "cacheDir", "depsDir", "idx", "rootProfileD"}
+				s = libbuildpack.NewStager(args, logger, manifest)
+				Expect(err).To(BeNil())
+				Expect(s.ProfileDir()).To(Equal("rootProfileD"))
 			})
 		})
 	})
@@ -552,7 +570,7 @@ var _ = Describe("Stager", func() {
 				err = s.SetLaunchEnvironment()
 				Expect(err).To(BeNil())
 
-				contents, err := ioutil.ReadFile(filepath.Join(buildDir, ".profile.d", "000_multi-supply.sh"))
+				contents, err := ioutil.ReadFile(filepath.Join(profileDir, "000_multi-supply.sh"))
 				Expect(err).To(BeNil())
 
 				Expect(string(contents)).To(ContainSubstring(`export PATH=$DEPS_DIR/01/bin:$DEPS_DIR/00/bin$([[ ! -z "${PATH:-}" ]] && echo ":$PATH")`))
@@ -564,12 +582,12 @@ var _ = Describe("Stager", func() {
 				err = s.SetLaunchEnvironment()
 				Expect(err).To(BeNil())
 
-				contents, err := ioutil.ReadFile(filepath.Join(buildDir, ".profile.d", "00_supplied-script.sh"))
+				contents, err := ioutil.ReadFile(filepath.Join(profileDir, "00_supplied-script.sh"))
 				Expect(err).To(BeNil())
 
 				Expect(string(contents)).To(Equal("first"))
 
-				contents, err = ioutil.ReadFile(filepath.Join(buildDir, ".profile.d", "01_supplied-script.sh"))
+				contents, err = ioutil.ReadFile(filepath.Join(profileDir, "01_supplied-script.sh"))
 				Expect(err).To(BeNil())
 
 				Expect(string(contents)).To(Equal("second"))
