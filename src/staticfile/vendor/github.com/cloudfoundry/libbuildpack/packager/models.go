@@ -4,7 +4,7 @@ import "github.com/Masterminds/semver"
 
 type Dependencies []struct {
 	URI     string   `yaml:"uri"`
-	MD5     string   `yaml:"md5"`
+	SHA256  string   `yaml:"sha256"`
 	Name    string   `yaml:"name"`
 	Version string   `yaml:"version"`
 	Stacks  []string `yaml:"cf_stacks"`

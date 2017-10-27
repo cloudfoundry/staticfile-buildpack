@@ -31,7 +31,7 @@ type DeprecationDate struct {
 type ManifestEntry struct {
 	Dependency Dependency `yaml:",inline"`
 	URI        string     `yaml:"uri"`
-	MD5        string     `yaml:"md5"`
+	SHA256     string     `yaml:"sha256"`
 	CFStacks   []string   `yaml:"cf_stacks"`
 }
 
@@ -310,7 +310,7 @@ func (m *Manifest) FetchDependency(dep Dependency, outputFile string) error {
 		return err
 	}
 
-	err = checkMD5(outputFile, entry.MD5)
+	err = checkSha256(outputFile, entry.SHA256)
 	if err != nil {
 		os.Remove(outputFile)
 		return err

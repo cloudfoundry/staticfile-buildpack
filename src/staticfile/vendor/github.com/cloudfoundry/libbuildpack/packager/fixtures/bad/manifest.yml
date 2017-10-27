@@ -4,7 +4,7 @@ pre_package: ./hi.sh
 dependencies:
 - name: ruby
   version: 1.2.3
-  md5: fffffff
+  sha256: fffffff
   uri: https://www.ietf.org/rfc/rfc2324.txt
   cf_stacks:
   - cflinuxfs2

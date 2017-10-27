@@ -7,7 +7,7 @@ default_versions:
 dependencies:
 - name: ruby
   version: 1.2.3
-  md5: 84fc21c1adb2f0441c357a943ac464bc
+  sha256: b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596
   uri: https://www.ietf.org/rfc/rfc2324.txt
   cf_stacks:
   - cflinuxfs2

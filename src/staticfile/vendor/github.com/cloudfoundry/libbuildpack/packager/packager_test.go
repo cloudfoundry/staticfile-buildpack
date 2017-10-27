@@ -129,7 +129,7 @@ var _ = Describe("Packager", func() {
 					Expect(err).ToNot(HaveOccurred())
 					manifestyml2 := string(manifestyml)
 					manifestyml2 = strings.Replace(manifestyml2, "https://www.ietf.org/rfc/rfc2324.txt", "file://"+tempfile, -1)
-					manifestyml2 = strings.Replace(manifestyml2, "84fc21c1adb2f0441c357a943ac464bc", "21048456b0162c2badc20be8d13fde6e", -1)
+					manifestyml2 = strings.Replace(manifestyml2, "b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596", "f909ee4c4bec3280bbbff6b41529479366ab10c602d8aed33e3a86f0a9c5db4e", -1)
 					Expect(ioutil.WriteFile(filepath.Join(tempdir, "manifest.yml"), []byte(manifestyml2), 0644)).To(Succeed())
 
 					buildpackDir = tempdir
@@ -151,7 +151,7 @@ var _ = Describe("Packager", func() {
 			It("includes dependencies", func() {
 				_, err := packager.Package(buildpackDir, cacheDir, version, cached)
 				Expect(err).ToNot(BeNil())
-				Expect(err.Error()).To(ContainSubstring("dependency md5 mismatch: expected md5 fffffff, actual md5 84fc21c1adb2f0441c357a943ac464bc"))
+				Expect(err.Error()).To(ContainSubstring("dependency sha256 mismatch: expected sha256 fffffff, actual sha256 b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596"))
 			})
 		})
 	})

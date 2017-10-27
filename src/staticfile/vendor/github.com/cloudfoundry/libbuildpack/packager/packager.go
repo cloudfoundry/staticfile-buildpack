@@ -2,6 +2,7 @@ package packager
 
 import (
 	"archive/zip"
+	"crypto/sha256"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -74,7 +75,7 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 				}
 			}
 
-			if err := checkMD5(filepath.Join(cacheDir, dest), d.MD5); err != nil {
+			if err := checkSha256(filepath.Join(cacheDir, dest), d.SHA256); err != nil {
 				return "", err
 			}
 
@@ -136,23 +137,18 @@ func downloadFromURI(uri, fileName string) error {
 	return err
 }
 
-func checkMD5(filePath, expectedMD5 string) error {
-	file, err := os.Open(filePath)
+func checkSha256(filePath, expectedSha256 string) error {
+	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
-	hash := md5.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return err
-	}
+	sum := sha256.Sum256(content)
 
-	hashInBytes := hash.Sum(nil)[:16]
-	actualMD5 := hex.EncodeToString(hashInBytes)
+	actualSha256 := hex.EncodeToString(sum[:])
 
-	if actualMD5 != expectedMD5 {
-		return fmt.Errorf("dependency md5 mismatch: expected md5 %s, actual md5 %s", expectedMD5, actualMD5)
+	if actualSha256 != expectedSha256 {
+		return fmt.Errorf("dependency sha256 mismatch: expected sha256 %s, actual sha256 %s", expectedSha256, actualSha256)
 	}
 	return nil
 }

@@ -361,7 +361,7 @@ var _ = Describe("Manifest", func() {
 		})
 
 		Context("uncached", func() {
-			Context("url exists and matches md5", func() {
+			Context("url exists and matches sha256", func() {
 				BeforeEach(func() {
 					tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
 					Expect(err).To(BeNil())
@@ -623,7 +623,7 @@ var _ = Describe("Manifest", func() {
 				})
 			})
 
-			Context("url exists but does not match md5", func() {
+			Context("url exists but does not match sha256", func() {
 				BeforeEach(func() {
 					httpmock.RegisterResponder("GET", "https://example.com/dependencies/thing-1-linux-x64.tgz",
 						httpmock.NewStringResponder(200, "other data"))
@@ -668,7 +668,7 @@ var _ = Describe("Manifest", func() {
 				Expect(err).To(BeNil())
 			})
 
-			Context("url exists cached on disk and matches md5", func() {
+			Context("url exists cached on disk and matches sha256", func() {
 				BeforeEach(func() {
 					libbuildpack.CopyFile("fixtures/thing.zip", filepath.Join(dependenciesDir, "https___example.com_dependencies_real_zip_file-3-linux-x64.zip"))
 				})
