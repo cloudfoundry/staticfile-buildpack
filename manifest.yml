@@ -7,7 +7,7 @@ dependencies:
 - name: nginx
   version: 1.13.6
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx/nginx-1.13.6-linux-x64-b624d604.tgz
-  md5: b624d604ff8aca9889b14cf76dcaa1a2
+  sha256: c65741fec130295782faa322d88bd00be74b90b7311de5338c1c26f93d67cf2e
   cf_stacks:
   - cflinuxfs2
 pre_package: scripts/build.sh
