@@ -1,3 +1,17 @@
+v1.4.19 Nov 06, 2017
+=====================
+
+* Verify dependency downloads using sha256 instead of md5
+  (https://www.pivotaltracker.com/story/show/151913767)
+
+* Store profile.d dir outside app directory on recent BAL
+  (https://www.pivotaltracker.com/story/show/151381713)
+
+* Move nginx directives inside location block
+  - Being outside caused an unintended interaction between "pushstate" and a doubly nested location block
+  - Adding pushstate_and_proxy_pass test
+  (https://www.pivotaltracker.com/story/show/152312644)
+
 v1.4.18 Oct 17, 2017
 =====================
 
