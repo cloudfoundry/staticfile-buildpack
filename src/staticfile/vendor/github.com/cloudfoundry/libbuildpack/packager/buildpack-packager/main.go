@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cloudfoundry/libbuildpack/packager"
 )
@@ -34,7 +35,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("error: Could not read VERSION file: %v", err)
 		}
-		version = string(v)
+		version = strings.TrimSpace(string(v))
 	}
 
 	zipFile, err := packager.Package(".", cacheDir, version, cached)
