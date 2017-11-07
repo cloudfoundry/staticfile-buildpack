@@ -9,7 +9,15 @@ import (
 	"github.com/elazarl/goproxy"
 )
 
+func NewTLSProxy() (*httptest.Server, error) {
+	return newProxy(true)
+}
+
 func NewProxy() (*httptest.Server, error) {
+	return newProxy(false)
+}
+
+func newProxy(tls bool) (*httptest.Server, error) {
 	addr, err := publicIP()
 	if err != nil {
 		return nil, err
@@ -29,7 +37,11 @@ func NewProxy() (*httptest.Server, error) {
 		return nil, err
 	}
 
-	ts.Start()
+	if tls {
+		ts.StartTLS()
+	} else {
+		ts.Start()
+	}
 	return ts, nil
 }
 
