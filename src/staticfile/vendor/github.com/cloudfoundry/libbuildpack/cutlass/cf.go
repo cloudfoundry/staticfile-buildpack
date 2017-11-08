@@ -349,6 +349,18 @@ func (a *App) Files(path string) ([]string, error) {
 	return strings.Split(string(output), "\n"), nil
 }
 
+func (a *App) DownloadDroplet(path string) error {
+	guid, err := a.AppGUID()
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("cf", "curl", "/v2/apps/"+guid+"/droplet/download", "--output", path)
+	cmd.Stderr = DefaultStdoutStderr
+	_, err = cmd.Output()
+	return err
+}
+
 func (a *App) Destroy() error {
 	if a.logCmd != nil && a.logCmd.Process != nil {
 		if err := a.logCmd.Process.Kill(); err != nil {
