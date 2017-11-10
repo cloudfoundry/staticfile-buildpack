@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -exuo pipefail
 
-ROOTDIR="$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )"
-BINDIR=$ROOTDIR/bin
+cd "$( dirname "${BASH_SOURCE[0]}" )/.."
+source .envrc
 
-export GOPATH=$ROOTDIR
-export GOOS=linux
-
-go build -ldflags="-s -w" -o $BINDIR/supply staticfile/supply/cli
-go build -ldflags="-s -w" -o $BINDIR/finalize staticfile/finalize/cli
+go build -ldflags="-s -w" -o bin/supply staticfile/supply/cli
+go build -ldflags="-s -w" -o bin/finalize staticfile/finalize/cli
