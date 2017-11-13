@@ -255,12 +255,14 @@ func (a *App) Push() error {
 		}
 	}
 
-	a.logCmd = exec.Command("cf", "logs", a.Name)
-	a.logCmd.Stderr = DefaultStdoutStderr
-	a.Stdout = bytes.NewBuffer(nil)
-	a.logCmd.Stdout = a.Stdout
-	if err := a.logCmd.Start(); err != nil {
-		return err
+	if a.logCmd == nil {
+		a.logCmd = exec.Command("cf", "logs", a.Name)
+		a.logCmd.Stderr = DefaultStdoutStderr
+		a.Stdout = bytes.NewBuffer(nil)
+		a.logCmd.Stdout = a.Stdout
+		if err := a.logCmd.Start(); err != nil {
+			return err
+		}
 	}
 
 	if len(a.Buildpacks) > 1 {
