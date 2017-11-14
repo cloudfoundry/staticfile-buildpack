@@ -2,8 +2,8 @@ package packager
 
 import (
 	"archive/zip"
-	"crypto/sha256"
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -66,11 +66,8 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 		for _, d := range manifest.Dependencies {
 			dest := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte(d.URI))), filepath.Base(d.URI))
 
-			if _, err := os.Stat(dest); err != nil {
-				if os.IsNotExist(err) {
-					err = downloadFromURI(d.URI, filepath.Join(cacheDir, dest))
-				}
-				if err != nil {
+			if _, err := os.Stat(filepath.Join(cacheDir, dest)); err != nil {
+				if err := downloadFromURI(d.URI, filepath.Join(cacheDir, dest)); err != nil {
 					return "", err
 				}
 			}
