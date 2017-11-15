@@ -85,6 +85,25 @@ func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
 	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, Cached)
 }
 
+func CopyCfHome() error {
+	cf_home := os.Getenv("CF_HOME")
+	if cf_home == "" {
+		cf_home = os.Getenv("HOME")
+	}
+	cf_home_new, err := ioutil.TempDir("", "cf-home-copy")
+	if err != nil {
+		return err
+	}
+	if err := os.Mkdir(filepath.Join(cf_home_new, ".cf"), 0755); err != nil {
+		return err
+	}
+	if err := libbuildpack.CopyDirectory(filepath.Join(cf_home, ".cf"), filepath.Join(cf_home_new, ".cf")); err != nil {
+		return err
+	}
+	return os.Setenv("CF_HOME", cf_home_new)
+
+}
+
 func SeedRandom() {
 	seed := int64(time.Now().Nanosecond() + os.Getpid())
 	rand.Seed(seed)
