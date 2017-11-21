@@ -456,6 +456,8 @@ var _ = Describe("Compile", func() {
 		})
 
 		Context("app dir has a nginx/conf directory", func() {
+			const WarningLine1 = "**WARNING** You have an nginx/conf directory, but have not set *root*, or have set it to '.'."
+			const WarningLine2 = "If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."
 			BeforeEach(func() {
 				os.MkdirAll(filepath.Join(buildDir, "nginx", "conf"), 0755)
 			})
@@ -465,18 +467,28 @@ var _ = Describe("Compile", func() {
 					staticfile.RootDir = ""
 				})
 				It("warns the user", func() {
-					Expect(buffer.String()).To(ContainSubstring("**WARNING** You have an nginx/conf directory, but have not set *root*."))
-					Expect(buffer.String()).To(ContainSubstring("If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."))
+					Expect(buffer.String()).To(ContainSubstring(WarningLine1))
+					Expect(buffer.String()).To(ContainSubstring(WarningLine2))
 				})
 			})
 
-			Context("root IS set", func() {
+			Context("root is set to .", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = "."
+				})
+				It("warns the user", func() {
+					Expect(buffer.String()).To(ContainSubstring(WarningLine1))
+					Expect(buffer.String()).To(ContainSubstring(WarningLine2))
+				})
+			})
+
+			Context("root IS set something other than .", func() {
 				BeforeEach(func() {
 					staticfile.RootDir = "somedir"
 				})
 				It("does not warn the user", func() {
-					Expect(buffer.String()).ToNot(ContainSubstring("**WARNING** You have an nginx/conf directory, but have not set *root*."))
-					Expect(buffer.String()).ToNot(ContainSubstring("If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."))
+					Expect(buffer.String()).ToNot(ContainSubstring(WarningLine1))
+					Expect(buffer.String()).ToNot(ContainSubstring(WarningLine2))
 				})
 			})
 		})

@@ -263,11 +263,11 @@ func (sf *Finalizer) Warnings() {
 		sf.Log.Warning("The location_include directive only works in conjunction with root.\nPlease specify root to use location_include")
 	}
 
-	if len(sf.Config.RootDir) == 0 {
+	if sf.Config.RootDir == "" || sf.Config.RootDir == "." {
 		found, _ := libbuildpack.FileExists(filepath.Join(sf.BuildDir, "nginx", "conf"))
 		if found {
 			sf.Log.Info("\n\n\n")
-			sf.Log.Warning("You have an nginx/conf directory, but have not set *root*.\nIf you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive.")
+			sf.Log.Warning("You have an nginx/conf directory, but have not set *root*, or have set it to '.'.\nIf you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive.")
 			sf.Log.Info("\n\n\n")
 		}
 	}

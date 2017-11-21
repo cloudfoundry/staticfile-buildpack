@@ -24,7 +24,7 @@ var _ = Describe("deploy has nginx/conf directory", func() {
 	})
 
 	It("warns user to set root", func() {
-		Expect(app.Stdout).To(ContainSubstring("You have an nginx/conf directory, but have not set *root*."))
+		Expect(app.Stdout).To(ContainSubstring("You have an nginx/conf directory, but have not set *root*"))
 		Expect(app.GetBody("/")).To(ContainSubstring("Test warnings"))
 	})
 })
