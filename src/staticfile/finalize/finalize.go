@@ -263,7 +263,7 @@ func (sf *Finalizer) Warnings() {
 		sf.Log.Warning("The location_include directive only works in conjunction with root.\nPlease specify root to use location_include")
 	}
 
-	if sf.Config.RootDir == "" || sf.Config.RootDir == "." {
+	if filepath.Clean(sf.Config.RootDir) == "." {
 		found, _ := libbuildpack.FileExists(filepath.Join(sf.BuildDir, "nginx", "conf"))
 		if found {
 			sf.Log.Info("\n\n\n")

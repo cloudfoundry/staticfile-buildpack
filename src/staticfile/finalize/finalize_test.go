@@ -482,6 +482,16 @@ var _ = Describe("Compile", func() {
 				})
 			})
 
+			Context("root is set to something equivent to .", func() {
+				BeforeEach(func() {
+					staticfile.RootDir = "./fred/.."
+				})
+				It("warns the user", func() {
+					Expect(buffer.String()).To(ContainSubstring(WarningLine1))
+					Expect(buffer.String()).To(ContainSubstring(WarningLine2))
+				})
+			})
+
 			Context("root IS set something other than .", func() {
 				BeforeEach(func() {
 					staticfile.RootDir = "somedir"
