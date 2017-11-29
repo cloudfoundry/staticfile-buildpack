@@ -1,3 +1,16 @@
+v1.4.20 Nov 29, 2017
+=====================
+
+* Warn about nginx/conf on root=="."
+  [#153059645]
+
+* Add nginx 1.13.7, remove nginx 1.13.6
+  (https://www.pivotaltracker.com/story/show/153060280)
+
+* Simplify build/test scripts to make tests easier to run
+  - Merge pull request #119 from rakrup/readlink_fix_for_mac
+  (https://www.pivotaltracker.com/story/show/151293706)
+
 v1.4.19 Nov 06, 2017
 =====================
 
