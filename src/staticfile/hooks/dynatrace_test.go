@@ -56,6 +56,8 @@ var _ = Describe("dynatraceHook", func() {
 			Log:     logger,
 		}
 
+		os.Setenv("DT_LOGSTREAM", "")
+
 		httpmock.Reset()
 
 		runInstaller = func(_ string, _, _ io.Writer, file string, _ string) {
@@ -71,6 +73,26 @@ var _ = Describe("dynatraceHook", func() {
 			Expect(err).To(BeNil())
 
 			err = ioutil.WriteFile(filepath.Join(buildDir, "dynatrace/oneagent/dynatrace-env.sh"), []byte("echo running dynatrace-env.sh"), 0644)
+			Expect(err).To(BeNil())
+
+			manifestJson := `
+			{
+				"version" : "1.130.0.20170914-153344",
+				"technologies" : {
+					"process" : {
+						"linux-x86-64" : [ {
+							"path" : "agent/conf/runtime/default/process/binary_linux-x86-64",
+							"md5" : "e086f9c70b53cd456988ff5c4d414f36",
+							"version" : "1.130.0.20170914-125024"
+						  }, {
+							"path" : "agent/lib64/liboneagentproc.so",
+							"md5" : "2bf4ba9e90e2589428f6f6f3a964cba2",
+							"version" : "1.130.0.20170914-125024",
+							"binarytype" : "primary"}]
+					}
+				}
+			}`
+			err = ioutil.WriteFile(filepath.Join(buildDir, "dynatrace/oneagent/manifest.json"), []byte(manifestJson), 0664)
 			Expect(err).To(BeNil())
 		}
 	})
@@ -139,17 +161,68 @@ var _ = Describe("dynatraceHook", func() {
 			})
 		})
 
+		Context("VCAP_SERVICES has incomplete dynatrace service", func() {
+			BeforeEach(func() {
+				environmentid := "123456"
+				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
+				os.Setenv("VCAP_SERVICES", `{
+					"0": [{"name":"dynatrace","credentials":{"apiurl":"https://example.com","environmentid":"`+environmentid+`"}}],
+				}`)
+			})
+
+			It("does nothing and succeeds", func() {
+				err = dynatrace.AfterCompile(stager)
+				Expect(err).To(BeNil())
+
+				Expect(buffer.String()).To(Equal(""))
+			})
+		})
+
 		Context("VCAP_SERVICES contains dynatrace service using apiurl", func() {
 			BeforeEach(func() {
+				environmentid := "123456"
 				apiToken := "ExcitingToken28"
 				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
 				os.Setenv("VCAP_SERVICES", `{
 					"0": [{"name":"mysql"}],
-					"1": [{"name":"dynatrace","credentials":{"apiurl":"https://example.com","apitoken":"`+apiToken+`"}}],
+					"1": [{"name":"dynatrace","credentials":{"apiurl":"https://example.com","apitoken":"`+apiToken+`","environmentid":"`+environmentid+`"}}],
 					"2": [{"name":"redis"}]
 				}`)
 
-				httpmock.RegisterResponder("GET", "https://example.com/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&bitness=64&Api-Token="+apiToken,
+				httpmock.RegisterResponder("GET", "https://example.com/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&include=process&bitness=64&Api-Token="+apiToken,
+					httpmock.NewStringResponder(200, "echo Install Dynatrace"))
+			})
+
+			It("installs dynatrace", func() {
+				mockCommand.EXPECT().Execute("", gomock.Any(), gomock.Any(), gomock.Any(), buildDir).Do(runInstaller)
+
+				err = dynatrace.AfterCompile(stager)
+				Expect(err).To(BeNil())
+
+				// Sets up profile.d
+				contents, err := ioutil.ReadFile(filepath.Join(depsDir, depsIdx, "profile.d", "dynatrace-env.sh"))
+				Expect(err).To(BeNil())
+
+				Expect(string(contents)).To(Equal("echo running dynatrace-env.sh\n" +
+					"export LD_PRELOAD=${HOME}/dynatrace/oneagent/agent/lib64/liboneagentproc.so\n" +
+					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}\n" + 
+					"export DT_LOGSTREAM=stdout"))
+			})
+		})
+
+		Context("VCAP_SERVICES contains dynatrace service using apiurl and has DT_LOGSTREAM set to stderr", func() {
+			BeforeEach(func() {
+				environmentid := "123456"
+				apiToken := "ExcitingToken28"
+				os.Setenv("DT_LOGSTREAM", "stderr")
+				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
+				os.Setenv("VCAP_SERVICES", `{
+					"0": [{"name":"mysql"}],
+					"1": [{"name":"dynatrace","credentials":{"apiurl":"https://example.com","apitoken":"`+apiToken+`","environmentid":"`+environmentid+`"}}],
+					"2": [{"name":"redis"}]
+				}`)
+
+				httpmock.RegisterResponder("GET", "https://example.com/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&include=process&bitness=64&Api-Token="+apiToken,
 					httpmock.NewStringResponder(200, "echo Install Dynatrace"))
 			})
 
@@ -169,6 +242,37 @@ var _ = Describe("dynatraceHook", func() {
 			})
 		})
 
+		Context("VCAP_SERVICES contains dynatrace service using apiurl and has DT_LOGSTREAM not set", func() {
+			BeforeEach(func() {
+				environmentid := "123456"
+				apiToken := "ExcitingToken28"
+				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
+				os.Setenv("VCAP_SERVICES", `{
+					"0": [{"name":"mysql"}],
+					"1": [{"name":"dynatrace","credentials":{"apiurl":"https://example.com","apitoken":"`+apiToken+`","environmentid":"`+environmentid+`"}}],
+					"2": [{"name":"redis"}]
+				}`)
+
+				httpmock.RegisterResponder("GET", "https://example.com/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&include=process&bitness=64&Api-Token="+apiToken,
+					httpmock.NewStringResponder(200, "echo Install Dynatrace"))
+			})
+
+			It("installs dynatrace", func() {
+				mockCommand.EXPECT().Execute("", gomock.Any(), gomock.Any(), gomock.Any(), buildDir).Do(runInstaller)
+
+				err = dynatrace.AfterCompile(stager)
+				Expect(err).To(BeNil())
+
+				// Sets up profile.d
+				contents, err := ioutil.ReadFile(filepath.Join(depsDir, depsIdx, "profile.d", "dynatrace-env.sh"))
+				Expect(err).To(BeNil())
+
+				Expect(string(contents)).To(Equal("echo running dynatrace-env.sh\n" +
+					"export LD_PRELOAD=${HOME}/dynatrace/oneagent/agent/lib64/liboneagentproc.so\n" +
+					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}\n" +
+					"export DT_LOGSTREAM=stdout"))
+			})
+		})
 		Context("VCAP_SERVICES contains dynatrace service using environmentid", func() {
 			BeforeEach(func() {
 				environmentid := "123456"
@@ -180,7 +284,7 @@ var _ = Describe("dynatraceHook", func() {
 					"2": [{"name":"redis"}]
 				}`)
 
-				httpmock.RegisterResponder("GET", "https://123456.live.dynatrace.com/api/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&bitness=64&Api-Token="+apiToken,
+				httpmock.RegisterResponder("GET", "https://123456.live.dynatrace.com/api/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&include=process&bitness=64&Api-Token="+apiToken,
 					httpmock.NewStringResponder(200, "echo Install Dynatrace"))
 			})
 
@@ -196,40 +300,50 @@ var _ = Describe("dynatraceHook", func() {
 
 				Expect(string(contents)).To(Equal("echo running dynatrace-env.sh\n" +
 					"export LD_PRELOAD=${HOME}/dynatrace/oneagent/agent/lib64/liboneagentproc.so\n" +
-					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}"))
+					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}\n" +
+					"export DT_LOGSTREAM=stdout"))
 			})
 		})
 
-		Context("VCAP_SERVICES contains dynatrace service without environmentid or apiurl", func() {
+		Context("VCAP_SERVICES contains second dynatrace service with credentials", func() {
 			BeforeEach(func() {
+				environmentid := "123456"
 				apiToken := "ExcitingToken28"
 				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
 				os.Setenv("VCAP_SERVICES", `{
-					"dyna": [{"name":"dynatrace","credentials":{"apitoken":"`+apiToken+`"}}]
+					"0": [{"name":"dynatrace","credentials":{"environmentid":"`+environmentid+`","apitoken":"`+apiToken+`"}}],
+					"1": [{"name":"dynatrace-dupe","credentials":{"environmentid":"`+environmentid+`","apitoken":"`+apiToken+`"}}]
 				}`)
 			})
 
-			It("returns an error", func() {
+			It("does nothing and succeeds", func() {
 				err = dynatrace.AfterCompile(stager)
-				Expect(err).NotTo(BeNil())
+				Expect(err).To(BeNil())
 
-				Expect(err.Error()).To(Equal("'environmentid' or 'apiurl' has to be specified in the service credentials!"))
+				Expect(buffer.String()).To(ContainSubstring("More than one matching service found!"))
 			})
 		})
 
-		Context("VCAP_SERVICES contains dynatrace service without apitoken", func() {
+		Context("VCAP_SERVICES contains skiperrors flag", func() {
 			BeforeEach(func() {
+				environmentid := "123456"
+				apiToken := "ExcitingToken28"
+				os.Setenv("BP_DEBUG", "true")
 				os.Setenv("VCAP_APPLICATION", `{"name":"JimBob"}`)
 				os.Setenv("VCAP_SERVICES", `{
-					"0": [{"name":"dynatrace","credentials":{"environmentid":"something", "apitoken":""}}]
+					"0": [{"name":"dynatrace","credentials":{"environmentid":"`+environmentid+`","apitoken":"`+apiToken+`","skiperrors":"true"}}]
 				}`)
+
+				httpmock.RegisterResponder("GET", "https://123456.live.dynatrace.com/api/v1/deployment/installer/agent/unix/paas-sh/latest?include=nginx&include=process&bitness=64&Api-Token="+apiToken,
+					httpmock.NewStringResponder(404, "echo agent not found"))
 			})
 
-			It("returns an error", func() {
+			It("does nothing and succeeds", func() {
 				err = dynatrace.AfterCompile(stager)
-				Expect(err).NotTo(BeNil())
+				Expect(err).To(BeNil())
 
-				Expect(err.Error()).To(Equal("'apitoken' has to be specified in the service credentials!"))
+				Expect(buffer.String()).To(ContainSubstring("Download returned with status 404"))
+				Expect(buffer.String()).To(ContainSubstring("Error during installer download, skipping installation"))
 			})
 		})
 	})

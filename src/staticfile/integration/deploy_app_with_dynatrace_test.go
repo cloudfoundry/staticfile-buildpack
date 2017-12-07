@@ -106,6 +106,7 @@ var _ = Describe("CF Statifile Buildpack", func() {
 			_, err = command.Output()
 			Expect(err).To(BeNil())
 
+			Expect(app.Stdout.String()).To(ContainSubstring("Download returned with status 404"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, skipping installation"))
 		})
 	})
@@ -142,7 +143,6 @@ var _ = Describe("CF Statifile Buildpack", func() {
 			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
 			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
 
-			//Expect(app.GetBody("/")).To(ContainSubstring("\"DT_HOST_ID\":\"" + app.Name + "_0\""))
 		})
 	})
 
@@ -171,5 +171,28 @@ var _ = Describe("CF Statifile Buildpack", func() {
 		})
 	})
 
+	Context("deploying a staticfile app with Dynatrace agent with failing agent download and checking retry", func() {
+		It("checks if retrying downloads works", func() {
+
+			CredentialsServiceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
+			command := exec.Command("cf", "cups", CredentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paasFAILING/manifest\",\"environmentid\":\"envid\"}'")
+			_, err := command.CombinedOutput()
+			Expect(err).To(BeNil())
+			createdServices = append(createdServices, CredentialsServiceName)
+
+			command = exec.Command("cf", "bind-service", app.Name, CredentialsServiceName)
+			_, err = command.CombinedOutput()
+			Expect(err).To(BeNil())
+
+			command = exec.Command("cf", "restage", app.Name)
+			_, err = command.Output()
+			Expect(err).To(BeNil())
+
+			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 4 seconds"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 5 seconds"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 7 seconds"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Download returned with status 404"))
+		})
+	})
 })
 
