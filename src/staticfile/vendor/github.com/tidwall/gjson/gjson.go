@@ -177,8 +177,8 @@ func (t Result) Time() time.Time {
 // If the result represents a non-existent value, then an empty array will be returned.
 // If the result is not a JSON array, the return value will be an array containing one result.
 func (t Result) Array() []Result {
-	if !t.Exists() {
-		return nil
+	if t.Type == Null {
+		return []Result{}
 	}
 	if t.Type != JSON {
 		return []Result{t}
@@ -192,7 +192,7 @@ func (t Result) IsObject() bool {
 	return t.Type == JSON && len(t.Raw) > 0 && t.Raw[0] == '{'
 }
 
-// IsObject returns true if the result value is a JSON array.
+// IsArray returns true if the result value is a JSON array.
 func (t Result) IsArray() bool {
 	return t.Type == JSON && len(t.Raw) > 0 && t.Raw[0] == '['
 }
@@ -511,7 +511,7 @@ func tonum(json string) (raw string, num float64) {
 
 func tolit(json string) (raw string) {
 	for i := 1; i < len(json); i++ {
-		if json[i] <= 'a' || json[i] >= 'z' {
+		if json[i] < 'a' || json[i] > 'z' {
 			return json[:i]
 		}
 	}
@@ -1880,7 +1880,7 @@ next_key:
 				} else {
 					// Since there was no matches we can just parse the value and
 					// ignore the result.
-					if i, _, ok = parseAny(json, i, false); !ok {
+					if i, _, ok = parseAny(json, i, true); !ok {
 						return i, false
 					}
 				}
@@ -2099,6 +2099,8 @@ var validate uintptr = 1
 
 // UnmarshalValidationEnabled provides the option to disable JSON validation
 // during the Unmarshal routine. Validation is enabled by default.
+//
+// Deprecated: Use encoder/json.Unmarshal instead
 func UnmarshalValidationEnabled(enabled bool) {
 	if enabled {
 		atomic.StoreUintptr(&validate, 1)
@@ -2113,6 +2115,8 @@ func UnmarshalValidationEnabled(enabled bool) {
 // gjson.Unmarshal will automatically attempt to convert JSON values to any Go
 // type. For example, the JSON string "100" or the JSON number 100 can be equally
 // assigned to Go string, int, byte, uint64, etc. This rule applies to all types.
+//
+// Deprecated: Use encoder/json.Unmarshal instead
 func Unmarshal(data []byte, v interface{}) error {
 	if atomic.LoadUintptr(&validate) == 1 {
 		_, ok := validpayload(data, 0)
