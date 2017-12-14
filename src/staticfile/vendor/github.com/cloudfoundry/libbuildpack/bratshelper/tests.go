@@ -316,3 +316,38 @@ func ForAllSupportedVersions(depName string, copyBrats func(string) *cutlass.App
 		}
 	})
 }
+
+func ForAllSupportedVersions2(depName1, depName2 string, compatible func(string, string) bool, itString string, copyBrats func(string, string) *cutlass.App, runTests func(string, string, *cutlass.App)) {
+	Describe("For all supported "+depName1+" and "+depName2+" versions", func() {
+		bpDir, err := cutlass.FindRoot()
+		if err != nil {
+			panic(err)
+		}
+		manifest, err := libbuildpack.NewManifest(bpDir, nil, time.Now())
+		if err != nil {
+			panic(err)
+		}
+		versions1 := manifest.AllDependencyVersions(depName1)
+		versions2 := manifest.AllDependencyVersions(depName2)
+
+		var app *cutlass.App
+		AfterEach(func() {
+			defaultCleanup(app)
+		})
+
+		for _, v1 := range versions1 {
+			version1 := v1
+			for _, v2 := range versions2 {
+				version2 := v2
+				if compatible(v1, v2) {
+					It(fmt.Sprintf(itString, version1, version2), func() {
+						app = copyBrats(version1, version2)
+						app.Buildpacks = []string{Data.Cached}
+
+						runTests(version1, version2, app)
+					})
+				}
+			}
+		}
+	})
+}

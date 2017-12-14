@@ -218,6 +218,10 @@ func (m *Manifest) InstallDependency(dep Dependency, outputDir string) error {
 		return ExtractZip(tmpFile, outputDir)
 	}
 
+	if strings.HasSuffix(entry.URI, ".tar.xz") {
+		return ExtractTarXz(tmpFile, outputDir)
+	}
+
 	return ExtractTarGz(tmpFile, outputDir)
 }
 
