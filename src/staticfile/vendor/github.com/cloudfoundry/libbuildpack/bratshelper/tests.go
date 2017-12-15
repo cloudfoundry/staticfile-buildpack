@@ -10,11 +10,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	. "github.com/onsi/ginkgo"
@@ -140,22 +138,15 @@ func StagingWithBuildpackThatSetsEOL(depName string, copyBrats func(string) *cut
 	})
 }
 
-func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *cutlass.App) {
+func StagingWithADepThatIsNotTheLatestConstrained(depName string, versionConstraint string, copyBrats func(string) *cutlass.App) {
 	Describe("staging with a version of "+depName+" that is not the latest patch release in the manifest", func() {
 		var app *cutlass.App
 		BeforeEach(func() {
 			manifest, err := libbuildpack.NewManifest(Data.BpDir, nil, time.Now())
 			Expect(err).ToNot(HaveOccurred())
-			raw := manifest.AllDependencyVersions(depName)
-			vs := make([]*semver.Version, len(raw))
-			for i, r := range raw {
-				vs[i], err = semver.NewVersion(r)
-				Expect(err).ToNot(HaveOccurred())
-			}
-			sort.Sort(semver.Collection(vs))
-			version := vs[0].Original()
-
-			app = copyBrats(version)
+			versions, err := libbuildpack.FindMatchingVersions(versionConstraint, manifest.AllDependencyVersions(depName))
+			Expect(err).ToNot(HaveOccurred())
+			app = copyBrats(versions[0])
 			app.Buildpacks = []string{Data.Cached}
 			PushApp(app)
 		})
@@ -167,6 +158,10 @@ func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *c
 			Expect(app.Stdout.String()).To(MatchRegexp("WARNING.*A newer version of " + depName + " is available in this buildpack"))
 		})
 	})
+}
+
+func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *cutlass.App) {
+	StagingWithADepThatIsNotTheLatestConstrained(depName, "x", copyBrats)
 }
 
 func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, copyBrats func(string) *cutlass.App) {

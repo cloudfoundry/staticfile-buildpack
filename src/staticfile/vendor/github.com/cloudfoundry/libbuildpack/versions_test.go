@@ -59,4 +59,53 @@ var _ = Describe("versions", func() {
 			Expect(err.Error()).To(Equal(fmt.Sprintf("no match found for 1.4.x in %v", versions)))
 		})
 	})
+	Describe("FindMatchingVersions", func() {
+		var versions []string
+
+		BeforeEach(func() {
+			versions = []string{"1.2.3", "1.2.4", "1.2.2", "1.3.3", "1.3.4", "1.3.2", "2.0.0"}
+		})
+
+		It("Returns every version for x, sorted", func() {
+			vers, err := bp.FindMatchingVersions("x", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.2", "1.2.3", "1.2.4", "1.3.2", "1.3.3", "1.3.4", "2.0.0"}))
+		})
+
+		It("returns all versions in a minor line, sorted", func() {
+			vers, err := bp.FindMatchingVersions("1.x", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.2", "1.2.3", "1.2.4", "1.3.2", "1.3.3", "1.3.4"}))
+		})
+
+		It("returns all versions in a patch line", func() {
+			vers, err := bp.FindMatchingVersions("1.2.x", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.2", "1.2.3", "1.2.4"}))
+		})
+
+		It("returns all versions less than the above", func() {
+			vers, err := bp.FindMatchingVersions(">=1.2.0, <1.2.4", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.2", "1.2.3"}))
+		})
+
+		It("returns all versions less than the above (without comma)", func() {
+			vers, err := bp.FindMatchingVersions(">=1.2.0 <1.2.4", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.2", "1.2.3"}))
+		})
+
+		It("returns all versions less or equal than the above (without comma)", func() {
+			vers, err := bp.FindMatchingVersions(">1.2.2 <=1.2.4", versions)
+			Expect(err).To(BeNil())
+			Expect(vers).To(Equal([]string{"1.2.3", "1.2.4"}))
+		})
+
+		It("returns an error if nothing matches", func() {
+			_, err := bp.FindMatchingVersions("1.4.x", versions)
+			Expect(err).ToNot(BeNil())
+			Expect(err.Error()).To(Equal(fmt.Sprintf("no match found for 1.4.x in %v", versions)))
+		})
+	})
 })
