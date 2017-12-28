@@ -205,7 +205,7 @@ var _ = Describe("dynatraceHook", func() {
 
 				Expect(string(contents)).To(Equal("echo running dynatrace-env.sh\n" +
 					"export LD_PRELOAD=${HOME}/dynatrace/oneagent/agent/lib64/liboneagentproc.so\n" +
-					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}\n" + 
+					"export DT_HOST_ID=JimBob_${CF_INSTANCE_INDEX}\n" +
 					"export DT_LOGSTREAM=stdout"))
 			})
 		})

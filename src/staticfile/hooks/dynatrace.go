@@ -5,12 +5,12 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"math"
 
 	"github.com/cloudfoundry/libbuildpack"
 )
@@ -157,8 +157,8 @@ func (h DynatraceHook) dtCredentials() map[string]string {
 	for _, services := range vcapServices {
 		for _, service := range services {
 			if strings.Contains(service.Name, "dynatrace") &&
-					service.Credentials["environmentid"] != "" &&
-					service.Credentials["apitoken"] != "" {
+				service.Credentials["environmentid"] != "" &&
+				service.Credentials["apitoken"] != "" {
 				detectedServices = append(detectedServices, service)
 			}
 		}
@@ -225,9 +225,9 @@ func (h DynatraceHook) agentPath(installDir string) (string, error) {
 	manifestPath := filepath.Join(installDir, "manifest.json")
 
 	type Binary struct {
-		Path string `json:"path"`
-		Md5 string `json:"md5"`
-		Version string `json:"version"`
+		Path       string `json:"path"`
+		Md5        string `json:"md5"`
+		Version    string `json:"version"`
 		Binarytype string `json:"binarytype,omitempty"`
 	}
 
@@ -235,14 +235,14 @@ func (h DynatraceHook) agentPath(installDir string) (string, error) {
 	type Technologies map[string]Architecture
 
 	type Manifest struct {
-		Tech Technologies`json:"technologies"`
-		Ver string `json:"version"`
+		Tech Technologies `json:"technologies"`
+		Ver  string       `json:"version"`
 	}
 
 	var manifest Manifest
 
 	_, err := os.Stat(manifestPath)
-	if  !os.IsNotExist(err) {
+	if !os.IsNotExist(err) {
 		raw, err := ioutil.ReadFile(manifestPath)
 		if err != nil {
 			return "", err
@@ -255,7 +255,7 @@ func (h DynatraceHook) agentPath(installDir string) (string, error) {
 
 		var bin_type string
 		for _, binary := range manifest.Tech["process"]["linux-x86-64"] {
-			if binary.Binarytype ==	"primary" {
+			if binary.Binarytype == "primary" {
 				return binary.Path, nil
 			} else {
 				bin_type = binary.Binarytype
