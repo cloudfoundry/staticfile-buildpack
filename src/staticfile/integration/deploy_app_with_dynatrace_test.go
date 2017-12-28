@@ -1,8 +1,8 @@
 package integration_test
 
 import (
-	"path/filepath"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
@@ -186,7 +186,7 @@ var _ = Describe("CF Statifile Buildpack", func() {
 
 			command = exec.Command("cf", "restage", app.Name)
 			_, err = command.Output()
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(BeNil())
 
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 4 seconds"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 5 seconds"))
@@ -195,4 +195,3 @@ var _ = Describe("CF Statifile Buildpack", func() {
 		})
 	})
 })
-
