@@ -52,8 +52,9 @@ var _ = Describe("dynatraceHook", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(mockCtrl)
 		dynatrace = hooks.DynatraceHook{
-			Command: mockCommand,
-			Log:     logger,
+			Command:         mockCommand,
+			Log:             logger,
+			DownloadRetries: 0.0,
 		}
 
 		os.Setenv("DT_LOGSTREAM", "")

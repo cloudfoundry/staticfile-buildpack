@@ -21,8 +21,9 @@ type Command interface {
 
 type DynatraceHook struct {
 	libbuildpack.DefaultHook
-	Log     *libbuildpack.Logger
-	Command Command
+	Log             *libbuildpack.Logger
+	Command         Command
+	DownloadRetries float64
 }
 
 func init() {
@@ -30,8 +31,9 @@ func init() {
 	command := &libbuildpack.Command{}
 
 	libbuildpack.AddHook(DynatraceHook{
-		Log:     logger,
-		Command: command,
+		Log:             logger,
+		Command:         command,
+		DownloadRetries: 3.0,
 	})
 }
 
@@ -207,12 +209,12 @@ func (h DynatraceHook) downloadFile(url, path string) error {
 
 		if resp.StatusCode < 400 && err == nil {
 			break
-		} else if (resp.StatusCode >= 400 || err != nil) && retries < 3 {
+		} else if retries < h.DownloadRetries {
 			waitTime := time.Duration(baseWaitTime + math.Pow(2, retries))
 			h.Log.Warning("Error during installer download, retrying in %d seconds", waitTime)
 			time.Sleep(waitTime * time.Second)
 			continue
-		} else if (resp.StatusCode >= 400 || err != nil) && retries >= 3 {
+		} else {
 			responseError := "Download returned with status " + resp.Status
 			h.Log.Debug(responseError)
 			return errors.New(responseError)
