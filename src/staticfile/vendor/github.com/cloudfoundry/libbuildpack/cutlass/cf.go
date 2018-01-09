@@ -293,9 +293,13 @@ func (a *App) GetUrl(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	schema, found := os.LookupEnv("CUTLASS_SCHEMA")
+	if !found {
+		schema = "http"
+	}
 	host := gjson.Get(string(data), "routes.0.host").String()
 	domain := gjson.Get(string(data), "routes.0.domain.name").String()
-	return fmt.Sprintf("http://%s.%s%s", host, domain, path), nil
+	return fmt.Sprintf("%s://%s.%s%s", schema, host, domain, path), nil
 }
 
 func (a *App) Get(path string, headers map[string]string) (string, map[string][]string, error) {
