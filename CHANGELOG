@@ -1,3 +1,13 @@
+v1.4.21 Jan 09, 2018
+=====================
+
+* Add nginx 1.13.8, remove nginx 1.13.7
+  (https://www.pivotaltracker.com/story/show/153910485)
+
+* Improvements to Dynatrace extension
+  - Merge pull request #129 from arthfl
+  (https://www.pivotaltracker.com/story/show/153813557)
+
 v1.4.20 Nov 29, 2017
 =====================
 
