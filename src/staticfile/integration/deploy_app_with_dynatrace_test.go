@@ -185,13 +185,47 @@ var _ = Describe("CF Statifile Buildpack", func() {
 			Expect(err).To(BeNil())
 
 			command = exec.Command("cf", "restage", app.Name)
-			_, err = command.Output()
-			Expect(err).ToNot(BeNil())
+			_, err = command.CombinedOutput()
 
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 4 seconds"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 5 seconds"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 7 seconds"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Download returned with status 404"))
+
+			Expect(app.Stdout.String()).To(ContainSubstring("Failed to compile droplet"))
+		})
+	})
+
+	Context("deploying a NodeJS app with Dynatrace agent with single credentials service and a redis service", func() {
+		It("checks if Dynatrace injection was successful", func() {
+			serviceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
+			command := exec.Command("cf", "cups", serviceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			_, err := command.CombinedOutput()
+			Expect(err).To(BeNil())
+			createdServices = append(createdServices, serviceName)
+			command = exec.Command("cf", "bind-service", app.Name, serviceName)
+			_, err = command.CombinedOutput()
+			Expect(err).To(BeNil())
+
+			redisServiceName := "redis-" + cutlass.RandStringRunes(20) + "-service"
+			command = exec.Command("cf", "cups", redisServiceName, "-p", "'{\"name\":\"redis\", \"credentials\":{\"db_type\":\"redis\", \"instance_administration_api\":{\"deployment_id\":\"12345asdf\", \"instance_id\":\"12345asdf\", \"root\":\"https://doesnotexi.st\"}}}'")
+			_, err = command.CombinedOutput()
+			Expect(err).To(BeNil())
+			createdServices = append(createdServices, serviceName)
+			command = exec.Command("cf", "bind-service", app.Name, redisServiceName)
+			_, err = command.CombinedOutput()
+			Expect(err).To(BeNil())
+
+			command = exec.Command("cf", "restage", app.Name)
+			_, err = command.Output()
+			Expect(err).To(BeNil())
+
+			Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace PaaS agent."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace PaaS agent installer"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Copy dynatrace-env.sh"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
 		})
 	})
 })
