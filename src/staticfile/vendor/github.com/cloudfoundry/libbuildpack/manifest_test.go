@@ -149,6 +149,17 @@ var _ = Describe("Manifest", func() {
 				Expect(versions).To(Equal([]string{"1", "2"}))
 			})
 		})
+
+		Context("CF_STACK = empty string", func() {
+			BeforeEach(func() {
+				manifestDir = "fixtures/manifest/stacks"
+				os.Setenv("CF_STACK", "cflinuxfs2")
+			})
+			It("lists all dependencies matching name", func() {
+				versions := manifest.AllDependencyVersions("thing")
+				Expect(versions).To(Equal([]string{"1", "2"}))
+			})
+		})
 	})
 
 	Describe("IsCached", func() {

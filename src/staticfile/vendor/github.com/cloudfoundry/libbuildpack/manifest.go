@@ -325,6 +325,9 @@ func (m *Manifest) FetchDependency(dep Dependency, outputFile string) error {
 
 func (m *Manifest) entrySupportsCurrentStack(entry *ManifestEntry) bool {
 	stack := os.Getenv("CF_STACK")
+	if stack == "" {
+		return true
+	}
 
 	for _, s := range entry.CFStacks {
 		if s == stack {
