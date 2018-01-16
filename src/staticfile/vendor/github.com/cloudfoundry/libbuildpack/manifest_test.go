@@ -18,6 +18,7 @@ import (
 
 var _ = Describe("Manifest", func() {
 	var (
+		oldCfStack  string
 		manifest    *libbuildpack.Manifest
 		manifestDir string
 		err         error
@@ -28,6 +29,9 @@ var _ = Describe("Manifest", func() {
 	)
 
 	BeforeEach(func() {
+		oldCfStack = os.Getenv("CF_STACK")
+		os.Setenv("CF_STACK", "cflinuxfs2")
+
 		manifestDir = "fixtures/manifest/standard"
 		currentTime = time.Now()
 		httpmock.Reset()
@@ -35,6 +39,7 @@ var _ = Describe("Manifest", func() {
 		buffer = new(bytes.Buffer)
 		logger = libbuildpack.NewLogger(ansicleaner.New(buffer))
 	})
+	AfterEach(func() { err = os.Setenv("CF_STACK", oldCfStack); Expect(err).To(BeNil()) })
 
 	JustBeforeEach(func() {
 		manifest, err = libbuildpack.NewManifest(manifestDir, logger, currentTime)
@@ -48,13 +53,6 @@ var _ = Describe("Manifest", func() {
 	})
 
 	Describe("CheckStackSupport", func() {
-		var (
-			oldCfStack string
-		)
-
-		BeforeEach(func() { oldCfStack = os.Getenv("CF_STACK") })
-		AfterEach(func() { err = os.Setenv("CF_STACK", oldCfStack); Expect(err).To(BeNil()) })
-
 		Context("Stack is supported", func() {
 			BeforeEach(func() {
 				manifestDir = "fixtures/manifest/stacks"
@@ -127,9 +125,29 @@ var _ = Describe("Manifest", func() {
 	Describe("AllDependencyVersions", func() {
 		It("returns all the versions of the dependency", func() {
 			versions := manifest.AllDependencyVersions("dotnet-framework")
-			Expect(err).To(BeNil())
-
 			Expect(versions).To(Equal([]string{"1.0.0", "1.0.1", "1.0.3", "1.1.0"}))
+		})
+
+		Context("CF_STACK = xenial", func() {
+			BeforeEach(func() {
+				manifestDir = "fixtures/manifest/stacks"
+				os.Setenv("CF_STACK", "xenial")
+			})
+			It("limits to dependencies matching CF_STACK", func() {
+				versions := manifest.AllDependencyVersions("thing")
+				Expect(versions).To(Equal([]string{"1"}))
+			})
+		})
+
+		Context("CF_STACK = cflinuxfs2", func() {
+			BeforeEach(func() {
+				manifestDir = "fixtures/manifest/stacks"
+				os.Setenv("CF_STACK", "cflinuxfs2")
+			})
+			It("limits to dependencies matching CF_STACK", func() {
+				versions := manifest.AllDependencyVersions("thing")
+				Expect(versions).To(Equal([]string{"1", "2"}))
+			})
 		})
 	})
 
