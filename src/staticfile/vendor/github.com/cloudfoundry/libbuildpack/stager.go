@@ -52,6 +52,10 @@ func (s *Stager) Logger() *Logger {
 	return s.log
 }
 
+func (s *Stager) DepsDir() string {
+	return s.depsDir
+}
+
 func (s *Stager) DepDir() string {
 	return filepath.Join(s.depsDir, s.depsIdx)
 }

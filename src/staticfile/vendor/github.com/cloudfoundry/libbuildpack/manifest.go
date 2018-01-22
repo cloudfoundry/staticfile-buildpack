@@ -69,6 +69,58 @@ func NewManifest(bpDir string, logger *Logger, currentTime time.Time) (*Manifest
 
 	return &m, nil
 }
+func (m *Manifest) replaceDefaultVersion(oDep Dependency) {
+	replaced := false
+	for idx, mDep := range m.DefaultVersions {
+		if mDep.Name == oDep.Name {
+			replaced = true
+			m.DefaultVersions[idx] = oDep
+		}
+	}
+	if !replaced {
+		m.DefaultVersions = append(m.DefaultVersions, oDep)
+	}
+}
+func (m *Manifest) replaceManifestEntry(oEntry ManifestEntry) {
+	oDep := oEntry.Dependency
+	replaced := false
+	for idx, mEntry := range m.ManifestEntries {
+		mDep := mEntry.Dependency
+		if mDep.Name == oDep.Name && mDep.Version == oDep.Version {
+			replaced = true
+			m.ManifestEntries[idx] = mEntry
+		}
+	}
+	if !replaced {
+		m.ManifestEntries = append(m.ManifestEntries, oEntry)
+	}
+}
+
+func (m *Manifest) ApplyOverride(depsDir string) error {
+	files, err := filepath.Glob(filepath.Join(depsDir, "*", "override.yml"))
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		var overrideYml map[string]Manifest
+		y := &YAML{}
+		if err := y.Load(file, &overrideYml); err != nil {
+			return err
+		}
+
+		if o, found := overrideYml[m.Language()]; found {
+			for _, oDep := range o.DefaultVersions {
+				m.replaceDefaultVersion(oDep)
+			}
+			for _, oEntry := range o.ManifestEntries {
+				m.replaceManifestEntry(oEntry)
+			}
+		}
+	}
+
+	return nil
+}
 
 func (m *Manifest) RootDir() string {
 	return m.manifestRootDir
