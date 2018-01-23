@@ -39,16 +39,17 @@ type cfInstance struct {
 }
 
 type App struct {
-	Name       string
-	Path       string
-	Stack      string
-	Buildpacks []string
-	Memory     string
-	Disk       string
-	Stdout     *bytes.Buffer
-	appGUID    string
-	env        map[string]string
-	logCmd     *exec.Cmd
+	Name         string
+	Path         string
+	Stack        string
+	Buildpacks   []string
+	Memory       string
+	Disk         string
+	StartCommand string
+	Stdout       *bytes.Buffer
+	appGUID      string
+	env          map[string]string
+	logCmd       *exec.Cmd
 }
 
 func New(fixture string) *App {
@@ -79,6 +80,30 @@ func ApiVersion() (string, error) {
 		return "", err
 	}
 	return info.ApiVersion, nil
+}
+
+func Stacks() ([]string, error) {
+	cmd := exec.Command("cf", "curl", "/v2/stacks")
+	cmd.Stderr = DefaultStdoutStderr
+	bytes, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+	var info struct {
+		Resources []struct {
+			Entity struct {
+				Name string `json:"name"`
+			} `json:"entity"`
+		} `json:"resources"`
+	}
+	if err := json.Unmarshal(bytes, &info); err != nil {
+		return nil, err
+	}
+	var out []string
+	for _, r := range info.Resources {
+		out = append(out, r.Entity.Name)
+	}
+	return out, nil
 }
 
 func DeleteOrphanedRoutes() error {
@@ -238,6 +263,9 @@ func (a *App) Push() error {
 	}
 	if a.Disk != "" {
 		args = append(args, "-k", a.Disk)
+	}
+	if a.StartCommand != "" {
+		args = append(args, "-c", a.StartCommand)
 	}
 	command := exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr

@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "e915de2390c8dcc4f3a05dd747c7635454335e26"
+  revision = "2dbb559b0d44def366cb1e41bea0e879d66e37e3"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -83,8 +83,8 @@
 [[projects]]
   name = "github.com/tidwall/gjson"
   packages = ["."]
-  revision = "e62d62a3e1e9f324346170bbc04333341f803dfb"
-  version = "v1.0.5"
+  revision = "87033efcaec6215741137e8ca61952c53ef2685d"
+  version = "v1.0.6"
 
 [[projects]]
   branch = "master"

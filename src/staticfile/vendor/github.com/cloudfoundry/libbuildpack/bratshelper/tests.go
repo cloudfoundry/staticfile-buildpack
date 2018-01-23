@@ -47,7 +47,9 @@ func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 			PushApp(app)
 			Expect(app.Stdout.String()).To(ContainSubstring("-----> Download go "))
 
-			Expect(app.Stdout.String()).To(ContainSubstring("Installing " + depName))
+			if depName != "" {
+				Expect(app.Stdout.String()).To(ContainSubstring("Installing " + depName))
+			}
 			Expect(app.GetBody("/")).To(ContainSubstring("Hello World!"))
 		})
 	})
@@ -220,11 +222,16 @@ func DeployAppWithExecutableProfileScript(depName string, copyBrats func(string)
 	Describe("deploying an app that has an executable .profile script", func() {
 		var app *cutlass.App
 		BeforeEach(func() {
-			manifest, err := libbuildpack.NewManifest(Data.BpDir, nil, time.Now())
-			dep, err := manifest.DefaultVersion(depName)
-			Expect(err).ToNot(HaveOccurred())
+			if depName != "" {
+				manifest, err := libbuildpack.NewManifest(Data.BpDir, nil, time.Now())
+				Expect(err).ToNot(HaveOccurred())
+				dep, err := manifest.DefaultVersion(depName)
+				Expect(err).ToNot(HaveOccurred())
 
-			app = copyBrats(dep.Version)
+				app = copyBrats(dep.Version)
+			} else {
+				app = copyBrats("")
+			}
 			AddDotProfileScriptToApp(app.Path)
 			app.Buildpacks = []string{Data.Cached}
 			PushApp(app)
