@@ -25,6 +25,7 @@ type Staticfile struct {
 	HSTSPreload           bool   `yaml:"http_strict_transport_security_preload"`
 	ForceHTTPS            bool   `yaml:"force_https"`
 	BasicAuth             bool
+	StatusCodes           map[string]string `yaml:"status_codes"`
 }
 
 type YAML interface {
@@ -37,6 +38,19 @@ type Finalizer struct {
 	Log      *libbuildpack.Logger
 	Config   Staticfile
 	YAML     YAML
+}
+type StaticfileTemp struct {
+	RootDir               string            `yaml:"root,omitempty"`
+	HostDotFiles          string            `yaml:"host_dot_files,omitempty"`
+	LocationInclude       string            `yaml:"location_include"`
+	DirectoryIndex        string            `yaml:"directory"`
+	SSI                   string            `yaml:"ssi"`
+	PushState             string            `yaml:"pushstate"`
+	HSTS                  string            `yaml:"http_strict_transport_security"`
+	HSTSIncludeSubDomains string            `yaml:"http_strict_transport_security_include_subdomains"`
+	HSTSPreload           string            `yaml:"http_strict_transport_security_preload"`
+	ForceHTTPS            string            `yaml:"force_https"`
+	StatusCodes           map[string]string `yaml:"status_codes"`
 }
 
 var skipCopyFile = map[string]bool{
@@ -108,7 +122,7 @@ func (sf *Finalizer) WriteStartupFiles() error {
 }
 
 func (sf *Finalizer) LoadStaticfile() error {
-	var hash = make(map[string]string)
+	var hash StaticfileTemp
 	conf := &sf.Config
 
 	err := sf.YAML.Load(filepath.Join(sf.BuildDir, "Staticfile"), &hash)
@@ -116,57 +130,58 @@ func (sf *Finalizer) LoadStaticfile() error {
 		return err
 	}
 
-	for key, value := range hash {
-		isEnabled := (value == "enabled" || value == "true")
-		switch key {
-		case "root":
-			conf.RootDir = value
-		case "host_dot_files":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling hosting of dotfiles")
-				conf.HostDotFiles = true
-			}
-		case "location_include":
-			conf.LocationInclude = value
-			if conf.LocationInclude != "" {
-				sf.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
-			}
-		case "directory":
-			if value != "" {
-				sf.Log.BeginStep("Enabling directory index for folders without index.html files")
-				conf.DirectoryIndex = true
-			}
-		case "ssi":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling SSI")
-				conf.SSI = true
-			}
-		case "pushstate":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling pushstate")
-				conf.PushState = true
-			}
-		case "http_strict_transport_security":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS")
-				conf.HSTS = true
-			}
-		case "http_strict_transport_security_include_subdomains":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS includeSubDomains")
-				conf.HSTSIncludeSubDomains = true
-			}
-		case "http_strict_transport_security_preload":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling HSTS Preload")
-				conf.HSTSPreload = true
-			}
-		case "force_https":
-			if isEnabled {
-				sf.Log.BeginStep("Enabling HTTPS redirect")
-				conf.ForceHTTPS = true
-			}
-		}
+	isEnabled := func(value string) bool {
+		return (value == "enabled" || value == "true")
+	}
+
+	if hash.RootDir != "" {
+		conf.RootDir = hash.RootDir
+	}
+
+	if isEnabled(hash.HostDotFiles) {
+		sf.Log.BeginStep("Enabling hosting of dotfiles")
+		conf.HostDotFiles = true
+	}
+
+	conf.LocationInclude = hash.LocationInclude
+	if conf.LocationInclude != "" {
+		sf.Log.BeginStep("Enabling location include file %s", conf.LocationInclude)
+	}
+
+	if hash.DirectoryIndex != "" {
+		sf.Log.BeginStep("Enabling directory index for folders without index.html files")
+		conf.DirectoryIndex = true
+	}
+
+	if isEnabled(hash.SSI) {
+		sf.Log.BeginStep("Enabling SSI")
+		conf.SSI = true
+	}
+
+	if isEnabled(hash.PushState) {
+		sf.Log.BeginStep("Enabling pushstate")
+		conf.PushState = true
+	}
+
+	if isEnabled(hash.HSTS) {
+		sf.Log.BeginStep("Enabling HSTS")
+		conf.HSTS = true
+	}
+	if isEnabled(hash.HSTSIncludeSubDomains) {
+		sf.Log.BeginStep("Enabling HSTS includeSubDomains")
+		conf.HSTSIncludeSubDomains = true
+	}
+	if isEnabled(hash.HSTSPreload) {
+		sf.Log.BeginStep("Enabling HSTS Preload")
+		conf.HSTSPreload = true
+	}
+	if isEnabled(hash.ForceHTTPS) {
+		sf.Log.BeginStep("Enabling HTTPS redirect")
+		conf.ForceHTTPS = true
+	}
+	if len(hash.StatusCodes) > 0 {
+		sf.Log.BeginStep("Enabling custom pages for status_codes")
+		conf.StatusCodes = sf.getStatusCodes(hash.StatusCodes)
 	}
 
 	if !conf.HSTS && (conf.HSTSIncludeSubDomains || conf.HSTSPreload) {
@@ -183,6 +198,20 @@ func (sf *Finalizer) LoadStaticfile() error {
 	}
 
 	return nil
+}
+
+func (sf *Finalizer) getStatusCodes(codes map[string]string) map[string]string {
+	var versions map[string]string
+	versions = make(map[string]string)
+	for key, value := range codes {
+		if strings.Contains(key, "4xx") {
+			key = "400 401 402 403 404 405 406 407 408 409 410 411 412 413 414 415 416 417 418 421 422 423 424 426 428 429 431 451"
+		} else if strings.Contains(key, "5xx") {
+			key = "500 501 502 503 504 505 506 507 508 510 511"
+		}
+		versions[key] = value
+	}
+	return versions
 }
 
 func (sf *Finalizer) GetAppRootDir() (string, error) {

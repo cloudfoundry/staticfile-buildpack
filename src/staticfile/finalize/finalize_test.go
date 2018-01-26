@@ -155,8 +155,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets root", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["root"] = "root_test"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).RootDir = "root_test"
 					})
 				})
 				It("sets RootDir", func() {
@@ -166,8 +166,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets host_dot_files", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["host_dot_files"] = "true"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).HostDotFiles = "true"
 					})
 				})
 				It("sets HostDotFiles", func() {
@@ -180,8 +180,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets location_include", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["location_include"] = "a/b/c"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).LocationInclude = "a/b/c"
 					})
 				})
 				It("sets location_include", func() {
@@ -194,8 +194,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets directory", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["directory"] = "any_string"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).DirectoryIndex = "any_string"
 					})
 				})
 				It("sets location_include", func() {
@@ -208,8 +208,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets ssi", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["ssi"] = "enabled"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).SSI = "enabled"
 					})
 				})
 				It("sets ssi", func() {
@@ -222,8 +222,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets pushstate", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["pushstate"] = "enabled"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).PushState = "enabled"
 					})
 				})
 				It("sets pushstate", func() {
@@ -236,8 +236,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets http_strict_transport_security", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["http_strict_transport_security"] = "true"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).HSTS = "true"
 					})
 				})
 				It("sets http_strict_transport_security", func() {
@@ -250,8 +250,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets http_strict_transport_security_include_subdomains", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["http_strict_transport_security_include_subdomains"] = "true"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).HSTSIncludeSubDomains = "true"
 					})
 				})
 				It("sets http_strict_transport_security_include_subdomains", func() {
@@ -265,8 +265,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets http_strict_transport_security_preload", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["http_strict_transport_security_preload"] = "true"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).HSTSPreload = "true"
 					})
 				})
 				It("sets http_strict_transport_security_preload", func() {
@@ -280,8 +280,8 @@ var _ = Describe("Compile", func() {
 
 			Context("and sets force_https", func() {
 				BeforeEach(func() {
-					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *map[string]string) {
-						(*hash)["force_https"] = "true"
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).ForceHTTPS = "true"
 					})
 				})
 				It("sets force_https", func() {
@@ -289,6 +289,45 @@ var _ = Describe("Compile", func() {
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(Equal("-----> Enabling HTTPS redirect\n"))
+				})
+			})
+
+			Context("and sets status_codes", func() {
+				var statusCodes map[string]string
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).StatusCodes = statusCodes
+					})
+				})
+				Context("no matchers", func() {
+					BeforeEach(func() {
+						statusCodes = map[string]string{"404": "path/to/404.html"}
+					})
+					It("sets status_codes", func() {
+						Expect(finalizer.Config.StatusCodes).To(Equal(map[string]string{"404": "path/to/404.html"}))
+					})
+					It("Logs", func() {
+						Expect(buffer.String()).To(Equal("-----> Enabling custom pages for status_codes\n"))
+					})
+				})
+				Context("uses matchers", func() {
+					Context("status code of 4xx", func() {
+						BeforeEach(func() {
+							statusCodes = map[string]string{"4xx": "path/to/4xx.html"}
+						})
+						It("is converted to the possible list", func() {
+							Expect(finalizer.Config.StatusCodes).To(Equal(map[string]string{"400 401 402 403 404 405 406 407 408 409 410 411 412 413 414 415 416 417 418 421 422 423 424 426 428 429 431 451": "path/to/4xx.html"}))
+						})
+					})
+					Context("status code of 5xx", func() {
+						BeforeEach(func() {
+							statusCodes = map[string]string{"5xx": "path/to/5xx.html"}
+						})
+						It("is converted to the possible list", func() {
+							Expect(finalizer.Config.StatusCodes).To(Equal(map[string]string{"500 501 502 503 504 505 506 507 508 510 511": "path/to/5xx.html"}))
+						})
+					})
+
 				})
 			})
 		})

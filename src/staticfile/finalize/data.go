@@ -121,6 +121,10 @@ http {
       {{if ne .LocationInclude ""}}
         include {{.LocationInclude}};
       {{end}}
+
+			{{ range $code, $value := .StatusCodes }}
+			  error_page {{ $code }} {{ $value }};
+		  {{ end }}
     }
 
     {{if not .HostDotFiles}}
