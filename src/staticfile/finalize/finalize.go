@@ -305,6 +305,9 @@ func (sf *Finalizer) ConfigureNginx() error {
 		_, err = os.Stat(customConfFile)
 		if err == nil {
 			err = os.Rename(customConfFile, confDest)
+			if file == "nginx.conf" {
+				sf.Log.Warning("overriding nginx.conf is deprecated and highly discouraged, as it breaks the functionality of the Staticfile and Staticfile.auth configuration directives. Please use the NGINX buildpack available at: https://github.com/cloudfoundry/nginx-buildpack")
+			}
 		} else {
 			err = ioutil.WriteFile(confDest, []byte(contents), 0644)
 		}

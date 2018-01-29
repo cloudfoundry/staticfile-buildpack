@@ -529,6 +529,10 @@ var _ = Describe("Compile", func() {
 			It("removes the copy in the public directory", func() {
 				Expect(filepath.Join(buildDir, "public", "nginx.conf")).ToNot(BeARegularFile())
 			})
+
+			It("warns the user", func() {
+				Expect(buffer.String()).To(ContainSubstring("overriding nginx.conf is deprecated and highly discouraged, as it breaks the functionality of the Staticfile and Staticfile.auth configuration directives. Please use the NGINX buildpack available at: https://github.com/cloudfoundry/nginx-buildpack"))
+			})
 		})
 
 		Context("custom nginx.conf does NOT exist", func() {
