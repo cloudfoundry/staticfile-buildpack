@@ -187,12 +187,12 @@ var _ = Describe("CF Statifile Buildpack", func() {
 			command = exec.Command("cf", "restage", app.Name)
 			_, err = command.CombinedOutput()
 
-			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 4 seconds"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 5 seconds"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Error during installer download, retrying in 7 seconds"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Download returned with status 404"))
+			Eventually(app.Stdout.String).Should(ContainSubstring("Error during installer download, retrying in 4 seconds"))
+			Eventually(app.Stdout.String).Should(ContainSubstring("Error during installer download, retrying in 5 seconds"))
+			Eventually(app.Stdout.String).Should(ContainSubstring("Error during installer download, retrying in 7 seconds"))
+			Eventually(app.Stdout.String).Should(ContainSubstring("Download returned with status 404"))
 
-			Expect(app.Stdout.String()).To(ContainSubstring("Failed to compile droplet"))
+			Eventually(app.Stdout.String).Should(ContainSubstring("Failed to compile droplet"))
 		})
 	})
 
