@@ -1,0 +1,101 @@
+---
+language: sample
+dependency_deprecation_dates:
+- name: thing
+  version_line: 6.2.x
+  date: 2018-04-01
+- name: thing
+  version_line: 4.x
+  date: 2017-03-01
+  link: http://example.com/eol-policy
+- name: thing
+  version_line: 5.x
+  date: 2017-04-01
+- name: nonsemver
+  version_line: abc-1.2.3-def-4.5.6
+  date: 2018-04-01
+dependencies:
+- name: other_thing
+  version: 4.5.6
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/other_thing-4.5.6-linux-x64.tgz
+  file: dependencies/e56aeaf494f6099c7268511c23852ba5/other_thing-4.5.6-linux-x64.tgz
+  sha256: fdf72806b9bc1a1bc78be1bfc21978d03591dea5042304211b81235dbf87bd77
+- name: thing
+  version: 1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-1-linux-x64.tgz
+  sha256: fdf72806b9bc1a1bc78be1bfc21978d03591dea5042304211b81235dbf87bd77
+  file: dependencies/0fa03f02b4708e80d1975940e09b2cb9/thing-1-linux-x64.tgz
+- name: thing
+  version: 2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-2-linux-x64.tgz
+  sha256: 191e76317fb5ba7f118a74ff9fbba0616f6ea5a2e0c5eaaff83e2d43eb5ef81c
+  file: dependencies/c4fef5682adf1c19c7f9b76fde9d0ecb/thing-2-linux-x64.tgz
+- name: real_tar_file
+  version: 3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/real_tar_file-3-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/4ccda170fac663974196a8d668841913/real_tar_file-3-linux-x64.tgz
+- name: real_zip_file
+  version: 3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/real_zip_file-3-linux-x64.zip
+  sha256: b742b6d71d03f13c43ecdeb429ef19e79aaa0727544522ab14710935887be2b0
+  file: dependencies/f666296d630cce4c94c62afcc6680b44/real_zip_file-3-linux-x64.zip
+- name: thing
+  version: 6.2.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.2-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/941695e02ad9e1c18e94ab4cd96c404f/thing-6.2.2-linux-x64.tgz
+- name: thing
+  version: 6.2.3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.3-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/9accc716207e4610dc6e80f56bb29226/thing-6.2.3-linux-x64.tgz
+- name: thing
+  version: 6.2.1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-6.2.1-linux-x64.tgz
+  sha256: 191e76317fb5ba7f118a74ff9fbba0616f6ea5a2e0c5eaaff83e2d43eb5ef81c
+  file: dependencies/61a814af98bba9d1321db815e1affe6d/thing-6.2.1-linux-x64.tgz
+- name: thing
+  version: 4.6.1
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-4.6.1-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/a648c500b4bc0cfa558ba6ac2fe22ccb/thing-4.6.1-linux-x64.tgz
+- name: thing
+  version: 5.2.3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-5.2.3-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/2adf3f711ab6c6a06ace58cd1db185d2/thing-5.2.3-linux-x64.tgz
+- name: nonsemver
+  version: abc-1.2.3-def-4.5.6
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/nonsemver-abc-1.2.3-def-4.5.6-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  file: dependencies/c5d66e234b0787cf2ddff75039ae0b22/nonsemver-abc-1.2.3-def-4.5.6-linux-x64.tgz
+- name: godep
+  version: v79
+  uri: https://buildpacks.cloudfoundry.org/dependencies/godep/godep-v79-linux-x64-9e37ce0f.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+  cf_stacks:
+  - cflinuxfs2
+  file: dependencies/45a95193113276fa9608ae86763bb2ea/godep-v79-linux-x64-9e37ce0f.tgz

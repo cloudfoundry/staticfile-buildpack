@@ -261,7 +261,6 @@ ruby:
 		var tmpdir, outputFile string
 
 		BeforeEach(func() {
-			manifestDir = "fixtures/manifest/fetch"
 			tmpdir, err = ioutil.TempDir("", "downloads")
 			Expect(err).To(BeNil())
 			outputFile = filepath.Join(tmpdir, "out.tgz")
@@ -269,6 +268,9 @@ ruby:
 		AfterEach(func() { err = os.RemoveAll(tmpdir); Expect(err).To(BeNil()) })
 
 		Context("uncached", func() {
+			BeforeEach(func() {
+				manifestDir = "fixtures/manifest/fetch"
+			})
 			Context("url exists and matches md5", func() {
 				BeforeEach(func() {
 					httpmock.RegisterResponder("GET", "https://example.com/dependencies/thing-1-linux-x64.tgz",
@@ -332,7 +334,6 @@ ruby:
 					Expect(outputFile).ToNot(BeAnExistingFile())
 				})
 			})
-
 		})
 
 		Context("cached", func() {
@@ -346,32 +347,13 @@ ruby:
 				dependenciesDir = filepath.Join(manifestDir, "dependencies")
 				os.MkdirAll(dependenciesDir, 0755)
 
-				data, err := ioutil.ReadFile("fixtures/manifest/fetch/manifest.yml")
+				data, err := ioutil.ReadFile("fixtures/manifest/fetch_cached/manifest.yml")
 				Expect(err).To(BeNil())
 
 				err = ioutil.WriteFile(filepath.Join(manifestDir, "manifest.yml"), data, 0644)
 				Expect(err).To(BeNil())
 
 				outputFile = filepath.Join(tmpdir, "out.tgz")
-			})
-
-			Context("url exists cached on disk under old format and matches md5", func() {
-				BeforeEach(func() {
-					ioutil.WriteFile(filepath.Join(dependenciesDir, "https___example.com_dependencies_thing-2-linux-x64.tgz"), []byte("awesome binary data"), 0644)
-				})
-				It("copies the cached file to outputFile", func() {
-					err = manifest.FetchDependency(libbuildpack.Dependency{Name: "thing", Version: "2"}, outputFile)
-
-					Expect(err).To(BeNil())
-					Expect(ioutil.ReadFile(outputFile)).To(Equal([]byte("awesome binary data")))
-				})
-				It("makes intermediate directories", func() {
-					outputFile = filepath.Join(tmpdir, "notexist", "out.tgz")
-					err = manifest.FetchDependency(libbuildpack.Dependency{Name: "thing", Version: "2"}, outputFile)
-
-					Expect(err).To(BeNil())
-					Expect(ioutil.ReadFile(outputFile)).To(Equal([]byte("awesome binary data")))
-				})
 			})
 
 			Context("url exists cached on disk under new format and matches md5", func() {
@@ -391,22 +373,6 @@ ruby:
 
 					Expect(err).To(BeNil())
 					Expect(ioutil.ReadFile(outputFile)).To(Equal([]byte("awesome binary data")))
-				})
-			})
-
-			Context("url exists cached on disk under old format and does not match md5", func() {
-				BeforeEach(func() {
-					ioutil.WriteFile(filepath.Join(dependenciesDir, "https___example.com_dependencies_thing-2-linux-x64.tgz"), []byte("different binary data"), 0644)
-				})
-				It("raises error", func() {
-					err = manifest.FetchDependency(libbuildpack.Dependency{Name: "thing", Version: "2"}, outputFile)
-
-					Expect(err).ToNot(BeNil())
-				})
-				It("outputfile does not exist", func() {
-					err = manifest.FetchDependency(libbuildpack.Dependency{Name: "thing", Version: "2"}, outputFile)
-
-					Expect(outputFile).ToNot(BeAnExistingFile())
 				})
 			})
 
@@ -441,7 +407,6 @@ ruby:
 		var outputDir string
 
 		BeforeEach(func() {
-			manifestDir = "fixtures/manifest/fetch"
 			outputDir, err = ioutil.TempDir("", "downloads")
 			Expect(err).To(BeNil())
 		})
@@ -452,6 +417,9 @@ ruby:
 		})
 
 		Context("uncached", func() {
+			BeforeEach(func() {
+				manifestDir = "fixtures/manifest/fetch"
+			})
 			Context("url exists and matches sha256", func() {
 				BeforeEach(func() {
 					tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
@@ -749,7 +717,7 @@ ruby:
 				dependenciesDir = filepath.Join(manifestDir, "dependencies")
 				os.MkdirAll(dependenciesDir, 0755)
 
-				data, err := ioutil.ReadFile("fixtures/manifest/fetch/manifest.yml")
+				data, err := ioutil.ReadFile("fixtures/manifest/fetch_cached/manifest.yml")
 				Expect(err).To(BeNil())
 
 				err = ioutil.WriteFile(filepath.Join(manifestDir, "manifest.yml"), data, 0644)
@@ -761,7 +729,7 @@ ruby:
 
 			Context("url exists cached on disk and matches sha256", func() {
 				BeforeEach(func() {
-					libbuildpack.CopyFile("fixtures/thing.zip", filepath.Join(dependenciesDir, "https___example.com_dependencies_real_zip_file-3-linux-x64.zip"))
+					libbuildpack.CopyFile("fixtures/thing.zip", filepath.Join(dependenciesDir, "f666296d630cce4c94c62afcc6680b44", "real_zip_file-3-linux-x64.zip"))
 				})
 
 				It("logs the name and version of the dependency", func() {

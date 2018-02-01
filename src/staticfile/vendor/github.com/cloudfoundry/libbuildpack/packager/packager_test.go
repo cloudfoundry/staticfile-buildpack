@@ -10,6 +10,7 @@ import (
 	"time"
 
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
+	yaml "gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/packager"
@@ -74,6 +75,15 @@ var _ = Describe("Packager", func() {
 				_, err := ZipContents(zipFile, "dependencies/d39cae561ec1f485d1a4a58304e87105/rfc2324.txt")
 				Expect(err.Error()).To(HavePrefix("dependencies/d39cae561ec1f485d1a4a58304e87105/rfc2324.txt not found in"))
 			})
+
+			It("does not set file on entries", func() {
+				manifestYml, err := ZipContents(zipFile, "manifest.yml")
+				Expect(err).To(BeNil())
+				var m packager.Manifest
+				Expect(yaml.Unmarshal([]byte(manifestYml), &m)).To(Succeed())
+				Expect(m.Dependencies).ToNot(BeEmpty())
+				Expect(m.Dependencies[0].File).To(Equal(""))
+			})
 		})
 
 		Context("cached", func() {
@@ -109,6 +119,15 @@ var _ = Describe("Packager", func() {
 
 			It("includes dependencies", func() {
 				Expect(ZipContents(zipFile, "dependencies/d39cae561ec1f485d1a4a58304e87105/rfc2324.txt")).To(ContainSubstring("Hyper Text Coffee Pot Control Protocol"))
+			})
+
+			It("sets file on entries", func() {
+				manifestYml, err := ZipContents(zipFile, "manifest.yml")
+				Expect(err).To(BeNil())
+				var m packager.Manifest
+				Expect(yaml.Unmarshal([]byte(manifestYml), &m)).To(Succeed())
+				Expect(m.Dependencies).ToNot(BeEmpty())
+				Expect(m.Dependencies[0].File).To(Equal("dependencies/d39cae561ec1f485d1a4a58304e87105/rfc2324.txt"))
 			})
 
 			Context("dependency uses file://", func() {

@@ -15,6 +15,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/cloudfoundry/libbuildpack"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -63,20 +64,24 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 		if err := os.MkdirAll(cacheDir, 0755); err != nil {
 			log.Fatalf("error: %v", err)
 		}
-		for _, d := range manifest.Dependencies {
-			dest := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte(d.URI))), filepath.Base(d.URI))
+		for idx, d := range manifest.Dependencies {
+			file := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte(d.URI))), filepath.Base(d.URI))
+			manifest.Dependencies[idx].File = file
 
-			if _, err := os.Stat(filepath.Join(cacheDir, dest)); err != nil {
-				if err := downloadFromURI(d.URI, filepath.Join(cacheDir, dest)); err != nil {
+			if _, err := os.Stat(filepath.Join(cacheDir, file)); err != nil {
+				if err := downloadFromURI(d.URI, filepath.Join(cacheDir, file)); err != nil {
 					return "", err
 				}
 			}
 
-			if err := checkSha256(filepath.Join(cacheDir, dest), d.SHA256); err != nil {
+			if err := checkSha256(filepath.Join(cacheDir, file), d.SHA256); err != nil {
 				return "", err
 			}
 
-			files = append(files, File{dest, filepath.Join(cacheDir, dest)})
+			files = append(files, File{file, filepath.Join(cacheDir, file)})
+		}
+		if err := libbuildpack.NewYAML().Write(filepath.Join(dir, "manifest.yml"), manifest); err != nil {
+			return "", err
 		}
 	}
 

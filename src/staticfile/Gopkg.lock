@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "2dbb559b0d44def366cb1e41bea0e879d66e37e3"
+  revision = "b0d243078c6829162a23b7a58b4dd5b01f9f6628"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -62,6 +62,7 @@
   revision = "747514b53ddd06d5d37d096c1cb313cfe620d7d4"
 
 [[projects]]
+  branch = "master"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -77,8 +78,7 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "003f63b7f4cff3fc95357005358af2de0f5fe152"
-  version = "v1.3.0"
+  revision = "4fc17627b66f18840f3604eec277fe1af7f6d4a5"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -101,13 +101,13 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec"
+  revision = "309822c5b9b9f80db67f016069a12628d94fad34"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "af50095a40f9041b3b38960738837185c26e9419"
+  revision = "8f27ce8a604014414f8dfffc25cbcde83a3f2216"
 
 [[projects]]
   branch = "master"
