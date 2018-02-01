@@ -172,28 +172,4 @@ var _ = Describe("deploy a staticfile app", func() {
 			})
 		})
 	})
-
-	PContext("unpackaged buildpack eg. from github", func() {
-		// localVersion := fmt.Sprintf("%s.%s", buildpackVersion, time.Now().Format("20060102150405"))
-		// let(:buildpack) { "staticfile-unpackaged-buildpack-#{rand(1000)}" }
-		// let(:app) { Machete.deploy_app('staticfile_app', buildpack: buildpack, skip_verify_version: true) }
-		// before do
-		//   buildpack_file = "/tmp/#{buildpack}.zip"
-		//   Open3.capture2e('zip','-r',buildpack_file,'bin/','src/', 'scripts/', 'manifest.yml','VERSION')[1].success? or raise 'Could not create unpackaged buildpack zip file'
-		//   Open3.capture2e('cf', 'create-buildpack', buildpack, buildpack_file, '100', '--enable')[1].success? or raise 'Could not upload buildpack'
-		//   FileUtils.rm buildpack_file
-		// end
-		// after do
-		//   Open3.capture2e('cf', 'delete-buildpack', '-f', buildpack)
-		// end
-
-		It("runs", func() {
-			// expect(app).to be_running
-			// expect(app).to have_logged(/Running go build supply/)
-			// expect(app).to have_logged(/Running go build finalize/)
-
-			// browser.visit_path('/')
-			// expect(browser).to have_body('This is an example app for Cloud Foundry that is only static HTML/JS/CSS assets.')
-		})
-	})
 })
