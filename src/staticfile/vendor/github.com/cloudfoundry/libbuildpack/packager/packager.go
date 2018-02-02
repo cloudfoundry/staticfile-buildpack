@@ -21,6 +21,52 @@ import (
 
 var CacheDir = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
 
+func CompileExtensionPackage(bpDir, version string, cached bool) (string, error) {
+	bpDir, err := filepath.Abs(bpDir)
+	if err != nil {
+		return "", err
+	}
+	dir, err := copyDirectory(bpDir)
+	if err != nil {
+		return "", err
+	}
+
+	err = ioutil.WriteFile(filepath.Join(dir, "VERSION"), []byte(version), 0644)
+	if err != nil {
+		return "", err
+	}
+
+	isCached := "--uncached"
+	if cached {
+		isCached = "--cached"
+	}
+	cmd := exec.Command("bundle", "exec", "buildpack-packager", isCached)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Env = append(os.Environ(), "BUNDLE_GEMFILE=cf.Gemfile")
+	cmd.Dir = dir
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+
+	var manifest struct {
+		Language string `yaml:"language"`
+	}
+	if err := libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest); err != nil {
+		return "", err
+	}
+
+	zipFile := fmt.Sprintf("%s_buildpack-v%s.zip", manifest.Language, version)
+	if cached {
+		zipFile = fmt.Sprintf("%s_buildpack-cached-v%s.zip", manifest.Language, version)
+	}
+	if err := libbuildpack.CopyFile(filepath.Join(dir, zipFile), filepath.Join(bpDir, zipFile)); err != nil {
+		return "", err
+	}
+
+	return filepath.Join(dir, zipFile), nil
+}
+
 func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
 	if err != nil {
@@ -231,8 +277,11 @@ func copyDirectory(srcDir string) (string, error) {
 			return err
 		}
 		path, err = filepath.Rel(srcDir, path)
+		if err != nil {
+			return err
+		}
 
-		if filepath.Base(path) == ".git" {
+		if path == ".git" || path == "tests" {
 			return filepath.SkipDir
 		}
 

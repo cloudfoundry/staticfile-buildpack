@@ -54,15 +54,16 @@ type App struct {
 
 func New(fixture string) *App {
 	return &App{
-		Name:       filepath.Base(fixture) + "-" + RandStringRunes(20),
-		Path:       fixture,
-		Stack:      "",
-		Buildpacks: []string{},
-		Memory:     DefaultMemory,
-		Disk:       DefaultDisk,
-		appGUID:    "",
-		env:        map[string]string{},
-		logCmd:     nil,
+		Name:         filepath.Base(fixture) + "-" + RandStringRunes(20),
+		Path:         fixture,
+		Stack:        "",
+		Buildpacks:   []string{},
+		Memory:       DefaultMemory,
+		Disk:         DefaultDisk,
+		StartCommand: "",
+		appGUID:      "",
+		env:          map[string]string{},
+		logCmd:       nil,
 	}
 }
 
@@ -247,7 +248,7 @@ func (a *App) InstanceStates() ([]string, error) {
 	return states, nil
 }
 
-func (a *App) Push() error {
+func (a *App) PushNoStart() error {
 	args := []string{"push", a.Name, "--no-start", "-p", a.Path}
 	if a.Stack != "" {
 		args = append(args, "-s", a.Stack)
@@ -263,6 +264,9 @@ func (a *App) Push() error {
 	}
 	if a.Disk != "" {
 		args = append(args, "-k", a.Disk)
+	}
+	if a.StartCommand != "" {
+		args = append(args, "-c", a.StartCommand)
 	}
 	if a.StartCommand != "" {
 		args = append(args, "-c", a.StartCommand)
@@ -293,6 +297,15 @@ func (a *App) Push() error {
 		}
 	}
 
+	return nil
+}
+
+func (a *App) Push() error {
+	if err := a.PushNoStart(); err != nil {
+		return err
+	}
+
+	var args []string
 	if len(a.Buildpacks) > 1 {
 		args = []string{"v3-push", a.Name, "-p", a.Path}
 		for _, buildpack := range a.Buildpacks {
@@ -301,7 +314,7 @@ func (a *App) Push() error {
 	} else {
 		args = []string{"start", a.Name}
 	}
-	command = exec.Command("cf", args...)
+	command := exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr
 	command.Stderr = DefaultStdoutStderr
 	if err := command.Run(); err != nil {

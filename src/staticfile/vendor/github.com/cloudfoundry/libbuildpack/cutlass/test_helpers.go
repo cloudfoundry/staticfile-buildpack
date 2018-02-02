@@ -45,9 +45,19 @@ func PackageUniquelyVersionedBuildpackExtra(name, version string, cached bool) (
 		return VersionedBuildpackPackage{}, err
 	}
 
-	file, err := packager.Package(bpDir, packager.CacheDir, version, cached)
+	var file string
+	if compileExtension, err := isCompileExtensionBuildpack(bpDir); err != nil {
+		return VersionedBuildpackPackage{}, err
+	} else if compileExtension {
+		file, err = packager.CompileExtensionPackage(bpDir, version, cached)
+		if err != nil {
+			return VersionedBuildpackPackage{}, err
+		}
+	} else {
+		file, err = packager.Package(bpDir, packager.CacheDir, version, cached)
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
+	}
 	}
 
 	err = CreateOrUpdateBuildpack(name, file)
@@ -59,6 +69,17 @@ func PackageUniquelyVersionedBuildpackExtra(name, version string, cached bool) (
 		Version: version,
 		File:    file,
 	}, nil
+}
+
+func isCompileExtensionBuildpack(bpDir string) (bool, error) {
+	var manifest struct {
+		IncludeFiles []string `yaml:"include_files"`
+	}
+	if err := libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest); err != nil {
+		return false, err
+	}
+
+	return len(manifest.IncludeFiles) == 0, nil
 }
 
 func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
