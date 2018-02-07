@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "e5816df5bd7d75bd0b1ee079748994b881280438"
+  revision = "1dc6f10af452cfd52b235965f9850571079a904b"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -78,7 +78,7 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "4fc17627b66f18840f3604eec277fe1af7f6d4a5"
+  revision = "a9c79f175573664afefe4fe0f3827c66263abcbb"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -101,7 +101,7 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "b417086c80e91bfa321ef761574721644b8b9f61"
+  revision = "2fb46b16b8dda405028c50f7c7f0f9dd1fa6bfb1"
 
 [[projects]]
   branch = "master"
