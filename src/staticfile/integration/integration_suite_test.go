@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/blang/semver"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -74,4 +75,22 @@ func PushAppAndConfirm(app *cutlass.App) {
 	Expect(app.Push()).To(Succeed())
 	Eventually(app.InstanceStates).Should(Equal([]string{"RUNNING"}))
 	Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
+}
+
+func ApiGreaterThan(version string) bool {
+	apiVersionString, err := cutlass.ApiVersion()
+	Expect(err).To(BeNil())
+	apiVersion, err := semver.Make(apiVersionString)
+	Expect(err).To(BeNil())
+	reqVersion, err := semver.ParseRange(">= " + version)
+	Expect(err).To(BeNil())
+	return reqVersion(apiVersion)
+}
+
+func ApiHasTask() bool {
+	return ApiGreaterThan("2.75.0")
+}
+
+func ApiHasMultiBuildpack() bool {
+	return ApiGreaterThan("2.90.0")
 }

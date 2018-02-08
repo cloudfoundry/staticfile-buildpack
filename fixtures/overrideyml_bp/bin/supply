@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+DEPS_DIR=$3
+DEPS_IDX=$4
+
+export BUILDPACK_DIR=`dirname $(readlink -f ${BASH_SOURCE%/*})`
+
+echo "-----> OverrideYML Buildpack"
+
+echo "       Copy $BUILDPACK_DIR/override.yml to $DEPS_DIR/$DEPS_IDX/override.yml"
+sed "s#BUILDPACK_DIR#$BUILDPACK_DIR#g" "$BUILDPACK_DIR/override.yml" > "$DEPS_DIR/$DEPS_IDX/override.yml"

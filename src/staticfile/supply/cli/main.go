@@ -25,6 +25,12 @@ func main() {
 	}
 
 	stager := libbuildpack.NewStager(os.Args[1:], logger, manifest)
+
+	if err = manifest.ApplyOverride(stager.DepsDir()); err != nil {
+		logger.Error("Unable to apply override.yml files: %s", err)
+		os.Exit(17)
+	}
+
 	if err := stager.CheckBuildpackValid(); err != nil {
 		os.Exit(11)
 	}
