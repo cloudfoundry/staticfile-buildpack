@@ -1,3 +1,24 @@
+v1.4.22 Feb 09, 2018
+=====================
+
+* Enable manifest override yml
+  (https://www.pivotaltracker.com/story/show/153614649)
+
+* Enabling custom 404 pages
+  (https://www.pivotaltracker.com/story/show/151158550)
+
+* Add missing fixture
+  (https://www.pivotaltracker.com/story/show/150296977)
+
+* Warn staticfile buildpack users when override nginx.conf
+  (https://www.pivotaltracker.com/story/show/150296977)
+
+* Improve information about running integration tests
+  (https://www.pivotaltracker.com/story/show/154216032)
+
+* fixed bug with json handling in credentials in dynatrace hook
+  (https://www.pivotaltracker.com/story/show/154240737)
+
 v1.4.21 Jan 09, 2018
 =====================
 
