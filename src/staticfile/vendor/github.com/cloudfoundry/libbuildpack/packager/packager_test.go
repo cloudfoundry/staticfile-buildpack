@@ -35,6 +35,22 @@ var _ = Describe("Packager", func() {
 		httpmock.Reset()
 	})
 
+	Describe("Scaffold", func() {
+		It("creates a named directory", func() {
+			exists, err := libbuildpack.FileExists("bpdir")
+			Expect(err).To(BeNil())
+			Expect(exists).To(Equal(false))
+			err = packager.Scaffold("bpdir")
+			Expect(err).To(BeNil())
+			exists, err = libbuildpack.FileExists("bpdir")
+			Expect(err).To(BeNil())
+			Expect(exists).To(Equal(true))
+		})
+		AfterEach(func() {
+			os.RemoveAll("bpdir")
+		})
+	})
+
 	Describe("Package", func() {
 		var zipFile string
 		var cached bool

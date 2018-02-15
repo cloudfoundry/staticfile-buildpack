@@ -67,6 +67,10 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 	return filepath.Join(dir, zipFile), nil
 }
 
+func Scaffold(bpDir string) error {
+	return os.MkdirAll(bpDir, 0755)
+}
+
 func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
 	if err != nil {
