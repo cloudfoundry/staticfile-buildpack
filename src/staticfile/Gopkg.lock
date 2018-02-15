@@ -38,6 +38,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/google/subcommands"
+  packages = ["."]
+  revision = "ce3d4cfc062faac7115d44e5befec8b5a08c3faa"
+
+[[projects]]
+  branch = "master"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -148,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1926827b4e1b5287f22445d2bc25a23b2db284e0d661038ec3ea05bdee330fdb"
+  inputs-digest = "2c93c90a41a7c19414d41c1dc92c2d56501f9394250161f3acd835b3ed6632f0"
   solver-name = "gps-cdcl"
   solver-version = 1
