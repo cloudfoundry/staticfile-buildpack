@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/packager"
 	"github.com/google/subcommands"
 )
@@ -120,6 +121,13 @@ func (i *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) 
 			return subcommands.ExitFailure
 		}
 		i.dir = absoluteDefaultDir
+	}
+
+	if exists, err := libbuildpack.FileExists(i.dir); err != nil {
+		return subcommands.ExitFailure
+	} else if exists {
+		log.Printf("error: directory %s already exists", i.name)
+		return subcommands.ExitUsageError
 	}
 
 	if err := packager.Scaffold(i.dir, i.name); err != nil {
