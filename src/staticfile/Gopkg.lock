@@ -16,8 +16,14 @@
 [[projects]]
   branch = "master"
   name = "github.com/cloudfoundry/libbuildpack"
-  packages = [".","ansicleaner","bratshelper","cutlass","packager"]
-  revision = "f6abef86c75b0d34a7bf639d985a89d2f48e4de4"
+  packages = [
+    ".",
+    "ansicleaner",
+    "bratshelper",
+    "cutlass",
+    "packager"
+  ]
+  revision = "44c79a01d5fb2b8168d69c445bf6bb9f973062dd"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -39,14 +45,46 @@
 [[projects]]
   branch = "master"
   name = "github.com/onsi/ginkgo"
-  packages = [".","config","internal/codelocation","internal/containernode","internal/failer","internal/leafnodes","internal/remote","internal/spec","internal/spec_iterator","internal/specrunner","internal/suite","internal/testingtproxy","internal/writer","reporters","reporters/stenographer","reporters/stenographer/support/go-colorable","reporters/stenographer/support/go-isatty","types"]
-  revision = "ae6829de29c3af4e009138c7bae3be0f67175ef8"
+  packages = [
+    ".",
+    "config",
+    "internal/codelocation",
+    "internal/containernode",
+    "internal/failer",
+    "internal/leafnodes",
+    "internal/remote",
+    "internal/spec",
+    "internal/spec_iterator",
+    "internal/specrunner",
+    "internal/suite",
+    "internal/testingtproxy",
+    "internal/writer",
+    "reporters",
+    "reporters/stenographer",
+    "reporters/stenographer/support/go-colorable",
+    "reporters/stenographer/support/go-isatty",
+    "types"
+  ]
+  revision = "9008c7b79f9636c46a0a945141020124702f0ecf"
 
 [[projects]]
   branch = "master"
   name = "github.com/onsi/gomega"
-  packages = [".","format","internal/assertion","internal/asyncassertion","internal/oraclematcher","internal/testingtsupport","matchers","matchers/support/goraph/bipartitegraph","matchers/support/goraph/edge","matchers/support/goraph/node","matchers/support/goraph/util","types"]
-  revision = "7c333ae4191282b0f034a8e1dcb2dcb62b4cf723"
+  packages = [
+    ".",
+    "format",
+    "internal/assertion",
+    "internal/asyncassertion",
+    "internal/oraclematcher",
+    "internal/testingtsupport",
+    "matchers",
+    "matchers/support/goraph/bipartitegraph",
+    "matchers/support/goraph/edge",
+    "matchers/support/goraph/node",
+    "matchers/support/goraph/util",
+    "types"
+  ]
+  revision = "fcebc62b30a95351cb5e56d8a97b6e67cbb85353"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -63,8 +101,13 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["context","html","html/atom","html/charset"]
-  revision = "f5dfe339be1d06f81b22525fe34671ee7d2c8904"
+  packages = [
+    "context",
+    "html",
+    "html/atom",
+    "html/charset"
+  ]
+  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
 
 [[projects]]
   branch = "master"
@@ -75,8 +118,26 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = ["encoding","encoding/charmap","encoding/htmlindex","encoding/internal","encoding/internal/identifier","encoding/japanese","encoding/korean","encoding/simplifiedchinese","encoding/traditionalchinese","encoding/unicode","internal/gen","internal/tag","internal/utf8internal","language","runes","transform","unicode/cldr"]
-  revision = "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1"
+  packages = [
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
+    "internal/gen",
+    "internal/tag",
+    "internal/utf8internal",
+    "language",
+    "runes",
+    "transform",
+    "unicode/cldr"
+  ]
+  revision = "9e2b64d659da1afe07ce1c9c1dfefc09d188f21e"
 
 [[projects]]
   branch = "v1"

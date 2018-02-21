@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# bin/release <build-dir>
+echo -e "---\ndefault_process_types:\n  web: '>&2 echo Please specify a default start command for this buildpack && exit 1'"

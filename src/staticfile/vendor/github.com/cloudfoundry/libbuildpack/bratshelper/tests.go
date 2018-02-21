@@ -145,9 +145,9 @@ func StagingWithADepThatIsNotTheLatestConstrained(depName string, versionConstra
 		var app *cutlass.App
 		BeforeEach(func() {
 			manifest, err := libbuildpack.NewManifest(Data.BpDir, nil, time.Now())
-			Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred(), "Making new manifest from %s: error is %v", Data.BpDir, err)
 			versions, err := libbuildpack.FindMatchingVersions(versionConstraint, manifest.AllDependencyVersions(depName))
-			Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred(), "Finding matching version: error is %v", err)
 			app = copyBrats(versions[0])
 			app.Buildpacks = []string{Data.Cached}
 			PushApp(app)

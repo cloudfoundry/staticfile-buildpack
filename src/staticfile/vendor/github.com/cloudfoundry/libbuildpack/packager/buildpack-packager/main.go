@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/cloudfoundry/libbuildpack/packager"
@@ -84,14 +85,60 @@ func (b *buildCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 	fmt.Printf("%s buildpack created and saved as %s with a size of %dMB\n", buildpackType, zipFile, stat.Size()/1024/1024)
 	return subcommands.ExitSuccess
 }
+
+type initCmd struct {
+	name string
+	dir  string
+}
+
+func (*initCmd) Name() string { return "init" }
+func (*initCmd) Synopsis() string {
+	return "Creates a folder with the basic structure of a new buildpack"
+}
+func (i *initCmd) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&i.name, "name", "", "Name of the buildpack. Required.")
+	f.StringVar(&i.dir, "path", "", "Path to folder to create. Defaults to the name + '-buildpack' in the current directory.")
+}
+func (*initCmd) Usage() string {
+	return `init:
+	Create a new directory that is structured as a buildpack.
+`
+}
+func (i *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if i.name == "" {
+		log.Printf("error: no name entered for new buildpack")
+		return subcommands.ExitUsageError
+	}
+
+	// assume user doesn't want -buildpack in the language name
+	i.name = strings.TrimSuffix(i.name, "-buildpack")
+
+	if i.dir == "" {
+		absoluteDefaultDir, err := filepath.Abs(i.name + "-buildpack")
+		if err != nil {
+			log.Printf("error: couldn't get absolute path to default directory: %v", err)
+			return subcommands.ExitFailure
+		}
+		i.dir = absoluteDefaultDir
+	}
+
+	if err := packager.Scaffold(i.dir, i.name); err != nil {
+		log.Printf("Error creating new buildpack scaffolding: %v", err)
+		return subcommands.ExitFailure
+	}
+
+	return subcommands.ExitSuccess
+}
+
 func main() {
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(subcommands.FlagsCommand(), "")
 	subcommands.Register(subcommands.CommandsCommand(), "")
 	subcommands.Register(&summaryCmd{}, "Custom")
 	subcommands.Register(&buildCmd{}, "Custom")
+	subcommands.Register(&initCmd{}, "Custom")
 
 	flag.Parse()
-	ctx := context.Background() // TODO what is this even??
+	ctx := context.Background()
 	os.Exit(int(subcommands.Execute(ctx)))
 }

@@ -36,19 +36,69 @@ var _ = Describe("Packager", func() {
 	})
 
 	Describe("Scaffold", func() {
-		It("creates a named directory", func() {
+		BeforeEach(func() {
 			exists, err := libbuildpack.FileExists("bpdir")
 			Expect(err).To(BeNil())
 			Expect(exists).To(Equal(false))
-			err = packager.Scaffold("bpdir")
+
+			// run the code under test
+			err = packager.Scaffold("bpdir", "mylanguage")
 			Expect(err).To(BeNil())
-			exists, err = libbuildpack.FileExists("bpdir")
-			Expect(err).To(BeNil())
-			Expect(exists).To(Equal(true))
 		})
 		AfterEach(func() {
 			os.RemoveAll("bpdir")
 		})
+
+		checkfileexists := func(path string) func() {
+			return func() {
+				exists, err := libbuildpack.FileExists(path)
+				Expect(err).To(BeNil())
+				Expect(exists).To(Equal(true))
+			}
+		}
+
+		// top-level directories
+		It("creates a named directory", checkfileexists("bpdir"))
+		It("creates a bin directory", checkfileexists("bpdir/bin"))
+		It("creates a scripts directory", checkfileexists("bpdir/scripts"))
+		It("creates a src directory", checkfileexists("bpdir/src"))
+		It("creates a fixtures directory", checkfileexists("bpdir/fixtures"))
+
+		// top-level files
+		It("creates a .envrc file", checkfileexists("bpdir/.envrc"))
+		It("creates a .envrc file", checkfileexists("bpdir/.gitignore"))
+		It("creates a manifest.yml file", checkfileexists("bpdir/manifest.yml"))
+		It("creates a VERSION file", checkfileexists("bpdir/VERSION"))
+		It("creates a README file", checkfileexists("bpdir/README.md"))
+
+		// bin directory files
+		It("creates a detect script", checkfileexists("bpdir/bin/detect"))
+		It("creates a compile script", checkfileexists("bpdir/bin/compile"))
+		It("creates a supply script", checkfileexists("bpdir/bin/supply"))
+		It("creates a finalize script", checkfileexists("bpdir/bin/finalize"))
+		It("creates a release script", checkfileexists("bpdir/bin/release"))
+
+		// scripts directory files
+		It("creates a brats test script", checkfileexists("bpdir/scripts/brats.sh"))
+		It("creates a build script", checkfileexists("bpdir/scripts/build.sh"))
+		It("creates a install_go script", checkfileexists("bpdir/scripts/install_go.sh"))
+		It("creates a install_tools script", checkfileexists("bpdir/scripts/install_tools.sh"))
+		It("creates a integration test script", checkfileexists("bpdir/scripts/integration.sh"))
+		It("creates a unit test script", checkfileexists("bpdir/scripts/unit.sh"))
+
+		It("creates a Gopkg.toml", checkfileexists("bpdir/src/mylanguage/Gopkg.toml"))
+
+		// src/supply files
+		It("creates a supply src directory", checkfileexists("bpdir/src/mylanguage/supply"))
+		It("creates a supply src file", checkfileexists("bpdir/src/mylanguage/supply/supply.go"))
+		It("creates a supply test file", checkfileexists("bpdir/src/mylanguage/supply/supply_test.go"))
+		It("creates a supply cli src file", checkfileexists("bpdir/src/mylanguage/supply/cli/main.go"))
+
+		// src/finalize files
+		It("creates a finalize src directory", checkfileexists("bpdir/src/mylanguage/finalize"))
+		It("creates a finalize src file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
+		It("creates a finalize test file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
+		It("creates a finalize cli src file", checkfileexists("bpdir/src/mylanguage/finalize/cli/main.go"))
 	})
 
 	Describe("Package", func() {
