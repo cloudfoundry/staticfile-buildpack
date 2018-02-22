@@ -110,7 +110,7 @@ var _ = Describe("Packager", func() {
 				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 				Expect(err).ToNot(HaveOccurred())
 
-				Eventually(session, 10*time.Second).Should(gexec.Exit(0))
+				Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
 				Expect(string(session.Out.Contents())).To(ContainSubstring("Supply Suite"))
 				Expect(string(session.Out.Contents())).To(ContainSubstring("Finalize Suite"))
 			})
