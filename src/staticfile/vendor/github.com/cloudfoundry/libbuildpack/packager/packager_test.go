@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"github.com/cloudfoundry/libbuildpack/packager"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("Packager", func() {
@@ -36,69 +38,83 @@ var _ = Describe("Packager", func() {
 	})
 
 	Describe("Scaffold", func() {
+		var baseDir string
 		BeforeEach(func() {
-			exists, err := libbuildpack.FileExists("bpdir")
+			var err error
+			baseDir, err = ioutil.TempDir("", "scaffold-basedir")
 			Expect(err).To(BeNil())
-			Expect(exists).To(Equal(false))
 
 			// run the code under test
-			err = packager.Scaffold("bpdir", "mylanguage")
+			err = packager.Scaffold(filepath.Join(baseDir, "bpdir"), "mylanguage")
 			Expect(err).To(BeNil())
 		})
 		AfterEach(func() {
-			os.RemoveAll("bpdir")
+			os.RemoveAll(baseDir)
 		})
 
 		checkfileexists := func(path string) func() {
 			return func() {
-				exists, err := libbuildpack.FileExists(path)
+				exists, err := libbuildpack.FileExists(filepath.Join(baseDir, path))
 				Expect(err).To(BeNil())
 				Expect(exists).To(Equal(true))
 			}
 		}
 
-		// top-level directories
-		It("creates a named directory", checkfileexists("bpdir"))
-		It("creates a bin directory", checkfileexists("bpdir/bin"))
-		It("creates a scripts directory", checkfileexists("bpdir/scripts"))
-		It("creates a src directory", checkfileexists("bpdir/src"))
-		It("creates a fixtures directory", checkfileexists("bpdir/fixtures"))
+		It("Creates all of the files", func() {
+			// top-level directories
+			By("creates a named directory", checkfileexists("bpdir"))
+			By("creates a bin directory", checkfileexists("bpdir/bin"))
+			By("creates a scripts directory", checkfileexists("bpdir/scripts"))
+			By("creates a src directory", checkfileexists("bpdir/src"))
+			By("creates a fixtures directory", checkfileexists("bpdir/fixtures"))
 
-		// top-level files
-		It("creates a .envrc file", checkfileexists("bpdir/.envrc"))
-		It("creates a .envrc file", checkfileexists("bpdir/.gitignore"))
-		It("creates a manifest.yml file", checkfileexists("bpdir/manifest.yml"))
-		It("creates a VERSION file", checkfileexists("bpdir/VERSION"))
-		It("creates a README file", checkfileexists("bpdir/README.md"))
+			// top-level files
+			By("creates a .envrc file", checkfileexists("bpdir/.envrc"))
+			By("creates a .envrc file", checkfileexists("bpdir/.gitignore"))
+			By("creates a manifest.yml file", checkfileexists("bpdir/manifest.yml"))
+			By("creates a VERSION file", checkfileexists("bpdir/VERSION"))
+			By("creates a README file", checkfileexists("bpdir/README.md"))
 
-		// bin directory files
-		It("creates a detect script", checkfileexists("bpdir/bin/detect"))
-		It("creates a compile script", checkfileexists("bpdir/bin/compile"))
-		It("creates a supply script", checkfileexists("bpdir/bin/supply"))
-		It("creates a finalize script", checkfileexists("bpdir/bin/finalize"))
-		It("creates a release script", checkfileexists("bpdir/bin/release"))
+			// bin directory files
+			By("creates a detect script", checkfileexists("bpdir/bin/detect"))
+			By("creates a compile script", checkfileexists("bpdir/bin/compile"))
+			By("creates a supply script", checkfileexists("bpdir/bin/supply"))
+			By("creates a finalize script", checkfileexists("bpdir/bin/finalize"))
+			By("creates a release script", checkfileexists("bpdir/bin/release"))
 
-		// scripts directory files
-		It("creates a brats test script", checkfileexists("bpdir/scripts/brats.sh"))
-		It("creates a build script", checkfileexists("bpdir/scripts/build.sh"))
-		It("creates a install_go script", checkfileexists("bpdir/scripts/install_go.sh"))
-		It("creates a install_tools script", checkfileexists("bpdir/scripts/install_tools.sh"))
-		It("creates a integration test script", checkfileexists("bpdir/scripts/integration.sh"))
-		It("creates a unit test script", checkfileexists("bpdir/scripts/unit.sh"))
+			// scripts directory files
+			By("creates a brats test script", checkfileexists("bpdir/scripts/brats.sh"))
+			By("creates a build script", checkfileexists("bpdir/scripts/build.sh"))
+			By("creates a install_go script", checkfileexists("bpdir/scripts/install_go.sh"))
+			By("creates a install_tools script", checkfileexists("bpdir/scripts/install_tools.sh"))
+			By("creates a integration test script", checkfileexists("bpdir/scripts/integration.sh"))
+			By("creates a unit test script", checkfileexists("bpdir/scripts/unit.sh"))
 
-		It("creates a Gopkg.toml", checkfileexists("bpdir/src/mylanguage/Gopkg.toml"))
+			By("creates a Gopkg.toml", checkfileexists("bpdir/src/mylanguage/Gopkg.toml"))
 
-		// src/supply files
-		It("creates a supply src directory", checkfileexists("bpdir/src/mylanguage/supply"))
-		It("creates a supply src file", checkfileexists("bpdir/src/mylanguage/supply/supply.go"))
-		It("creates a supply test file", checkfileexists("bpdir/src/mylanguage/supply/supply_test.go"))
-		It("creates a supply cli src file", checkfileexists("bpdir/src/mylanguage/supply/cli/main.go"))
+			// src/supply files
+			By("creates a supply src directory", checkfileexists("bpdir/src/mylanguage/supply"))
+			By("creates a supply src file", checkfileexists("bpdir/src/mylanguage/supply/supply.go"))
+			By("creates a supply test file", checkfileexists("bpdir/src/mylanguage/supply/supply_test.go"))
+			By("creates a supply cli src file", checkfileexists("bpdir/src/mylanguage/supply/cli/main.go"))
 
-		// src/finalize files
-		It("creates a finalize src directory", checkfileexists("bpdir/src/mylanguage/finalize"))
-		It("creates a finalize src file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
-		It("creates a finalize test file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
-		It("creates a finalize cli src file", checkfileexists("bpdir/src/mylanguage/finalize/cli/main.go"))
+			// src/finalize files
+			By("creates a finalize src directory", checkfileexists("bpdir/src/mylanguage/finalize"))
+			By("creates a finalize src file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
+			By("creates a finalize test file", checkfileexists("bpdir/src/mylanguage/finalize/finalize.go"))
+			By("creates a finalize cli src file", checkfileexists("bpdir/src/mylanguage/finalize/cli/main.go"))
+
+			By("creating unit tests that pass", func() {
+				command := exec.Command("./scripts/unit.sh")
+				command.Dir = filepath.Join(baseDir, "bpdir")
+				session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+				Expect(err).ToNot(HaveOccurred())
+
+				Eventually(session, 10*time.Second).Should(gexec.Exit(0))
+				Expect(string(session.Out.Contents())).To(ContainSubstring("Supply Suite"))
+				Expect(string(session.Out.Contents())).To(ContainSubstring("Finalize Suite"))
+			})
+		})
 	})
 
 	Describe("Package", func() {

@@ -23,6 +23,7 @@ import (
 )
 
 var CacheDir = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
+var Stdout, Stderr io.Writer = os.Stdout, os.Stderr
 
 func CompileExtensionPackage(bpDir, version string, cached bool) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
@@ -44,8 +45,8 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 		isCached = "--cached"
 	}
 	cmd := exec.Command("bundle", "exec", "buildpack-packager", isCached)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = Stdout
+	cmd.Stderr = Stderr
 	cmd.Env = append(os.Environ(), "BUNDLE_GEMFILE=cf.Gemfile")
 	cmd.Dir = dir
 	if err := cmd.Run(); err != nil {
@@ -136,7 +137,7 @@ func Scaffold(bpDir string, languageName string) error {
 		"LANGUAGE": language,
 	}
 
-	fmt.Println("Creating directory and files")
+	fmt.Fprintln(Stdout, "Creating directory and files")
 	if err := OurRestoreAssets(bpDir, "", funcMap); err != nil {
 		return err
 	}
@@ -146,10 +147,10 @@ func Scaffold(bpDir string, languageName string) error {
 	}
 
 	// Install dep and download dependencies (gomega, ginkgo, libbuildpack, etc)
-	fmt.Println("Installing dep")
+	fmt.Fprintln(Stdout, "Installing dep")
 	cmd := exec.Command("go", "get", "-u", "github.com/golang/dep/cmd/dep")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = Stdout
+	cmd.Stderr = Stderr
 	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", bpDir))
 	cmd.Dir = bpDir
 	if err := cmd.Run(); err != nil {
@@ -158,9 +159,15 @@ func Scaffold(bpDir string, languageName string) error {
 	if err := os.Rename(filepath.Join(bpDir, "src", "github.com"), filepath.Join(bpDir, "src", languageName, "vendor", "github.com")); err != nil {
 		return err
 	}
-	fmt.Println("Running dep ensure")
-	c := libbuildpack.Command{}
-	c.Execute(filepath.Join(bpDir, "src", languageName), os.Stdout, os.Stderr, "dep", "ensure")
+	fmt.Fprintln(Stdout, "Running dep ensure")
+	cmd = exec.Command(filepath.Join(bpDir, ".bin", "dep"), "ensure")
+	cmd.Stdout = Stdout
+	cmd.Stderr = Stderr
+	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", bpDir))
+	cmd.Dir = filepath.Join(bpDir, "src", languageName)
+	if err := cmd.Run(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -194,7 +201,7 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 		cmd.Dir = dir
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			fmt.Println(string(out))
+			fmt.Fprintln(Stdout, string(out))
 			return "", err
 		}
 	}

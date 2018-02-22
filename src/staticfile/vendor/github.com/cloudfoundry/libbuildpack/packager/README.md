@@ -6,3 +6,11 @@ Both the scaffold directory that this file is created from and the file itself b
 Make changes directly to the scaffold directory and its files, not bindata.go.
 
 For more on go-bindata: https://github.com/jteeuwen/go-bindata
+
+## Running tests
+
+You will want to skip tests in the scaffold directory.
+
+```
+ginkgo -r -skipPackage=brats,integration
+```

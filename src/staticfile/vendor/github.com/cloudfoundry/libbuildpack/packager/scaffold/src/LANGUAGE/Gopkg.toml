@@ -8,10 +8,6 @@ name = "github.com/cloudfoundry/libbuildpack"
 branch = "init-155219487"
 
 [[constraint]]
-name = "github.com/golang/mock"
-branch = "master"
-
-[[constraint]]
 name = "github.com/onsi/ginkgo"
 branch = "master"
 

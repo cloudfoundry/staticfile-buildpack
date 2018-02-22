@@ -118,7 +118,7 @@ func Envrc() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: ".envrc", size: 66, mode: os.FileMode(436), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: ".envrc", size: 66, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -138,7 +138,7 @@ func Gitignore() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: ".gitignore", size: 33, mode: os.FileMode(436), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: ".gitignore", size: 33, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -158,7 +158,7 @@ func readmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "README.md", size: 1522, mode: os.FileMode(436), modTime: time.Unix(1519142749, 0)}
+	info := bindataFileInfo{name: "README.md", size: 1522, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -178,7 +178,7 @@ func version() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "VERSION", size: 5, mode: os.FileMode(436), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "VERSION", size: 5, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -198,7 +198,7 @@ func binCompile() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/compile", size: 0, mode: os.FileMode(509), modTime: time.Unix(1519140838, 0)}
+	info := bindataFileInfo{name: "bin/compile", size: 0, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -218,7 +218,7 @@ func binDetect() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/detect", size: 6, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "bin/detect", size: 6, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -238,7 +238,7 @@ func binFinalize() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/finalize", size: 512, mode: os.FileMode(509), modTime: time.Unix(1518728913, 0)}
+	info := bindataFileInfo{name: "bin/finalize", size: 512, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -258,7 +258,7 @@ func binRelease() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/release", size: 171, mode: os.FileMode(509), modTime: time.Unix(1519225088, 0)}
+	info := bindataFileInfo{name: "bin/release", size: 171, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -278,7 +278,7 @@ func binSupply() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bin/supply", size: 458, mode: os.FileMode(509), modTime: time.Unix(1518728900, 0)}
+	info := bindataFileInfo{name: "bin/supply", size: 458, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -298,7 +298,7 @@ func fixturesGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "fixtures/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "fixtures/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -318,7 +318,7 @@ func fixturesBratsGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "fixtures/brats/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1519227273, 0)}
+	info := bindataFileInfo{name: "fixtures/brats/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -338,7 +338,7 @@ func fixturesSimple_testSome_fileTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "fixtures/simple_test/some_file.txt", size: 53, mode: os.FileMode(493), modTime: time.Unix(1519152110, 0)}
+	info := bindataFileInfo{name: "fixtures/simple_test/some_file.txt", size: 53, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -358,7 +358,7 @@ func manifestYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "manifest.yml", size: 257, mode: os.FileMode(436), modTime: time.Unix(1519157572, 0)}
+	info := bindataFileInfo{name: "manifest.yml", size: 257, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -378,7 +378,7 @@ func scriptsBratsSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/brats.sh", size: 318, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "scripts/brats.sh", size: 318, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -398,7 +398,7 @@ func scriptsBuildSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/build.sh", size: 250, mode: os.FileMode(509), modTime: time.Unix(1518728879, 0)}
+	info := bindataFileInfo{name: "scripts/build.sh", size: 250, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -418,7 +418,7 @@ func scriptsInstall_goSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/install_go.sh", size: 745, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "scripts/install_go.sh", size: 745, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -438,7 +438,7 @@ func scriptsInstall_toolsSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/install_tools.sh", size: 324, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "scripts/install_tools.sh", size: 324, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -458,7 +458,7 @@ func scriptsIntegrationSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/integration.sh", size: 477, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "scripts/integration.sh", size: 477, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -478,12 +478,12 @@ func scriptsUnitSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "scripts/unit.sh", size: 186, mode: os.FileMode(509), modTime: time.Unix(1518728536, 0)}
+	info := bindataFileInfo{name: "scripts/unit.sh", size: 186, mode: os.FileMode(509), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _srcLanguageGopkgToml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xa4\xd0\xc1\x6e\x22\x31\x0c\x06\xe0\x7b\x9e\x22\x1a\xce\x3b\x61\x18\x06\xd8\x95\x38\xef\xbd\x57\xc4\xc1\x71\x3c\xc1\x22\x89\xa7\x49\x06\x95\x3e\x7d\x85\x5a\xa9\x45\x6a\x25\xa4\x9e\xfd\xff\x9f\x65\x2f\xf4\x13\x8d\x94\x75\x15\x7d\xaa\x75\x2a\xff\x8c\xf1\x5c\x4f\xb3\x6d\x51\xa2\xf1\x12\x20\x79\xe3\x68\x32\x36\x88\x35\x11\x4a\xa5\x6c\x9c\x60\x31\xff\x65\x3a\xfb\xb6\x4a\x0c\x6d\x74\x6a\xa1\x47\xc9\xda\x51\x05\x0e\xe4\xf4\xe7\x50\x3b\xc1\x39\x52\xaa\x50\x59\x52\xab\x54\xa6\xe7\x99\x33\x39\xbd\xd7\x87\xe6\x6e\x97\xf8\x40\xa6\xcc\x16\x25\x46\x48\xae\x34\x47\xa5\x0e\x07\x94\x54\x6a\x06\x4e\xf5\x78\x54\x09\x22\xe9\xbd\xfe\xda\xc3\x20\xb3\x1b\x65\x4e\x2e\x5f\x4d\x60\x6b\x67\x0e\x6e\x02\x3c\x37\xca\x66\x48\x78\xba\xe5\x39\x71\xfd\xd3\x0d\xc3\xaa\xfb\xbb\xde\x6d\x9b\x47\xdc\x8f\xdb\xa3\xdc\x4b\xef\x2f\x78\x48\x90\x54\xd8\x78\x4e\x67\x2f\xbf\x12\x24\x92\x87\x1f\x04\xb9\x50\xce\xec\xe8\xfb\x3e\x05\x78\x85\x1c\x8c\x97\x29\xcb\xcb\xb5\x51\x99\x2e\x5c\x58\xd2\x2d\x07\x80\x16\x76\xfd\xd8\x6f\x60\x18\x00\xfb\x0e\xad\xdd\x76\xb8\xdc\x0c\xeb\x2d\xf4\xab\x1d\x2e\xd1\x75\x9b\xe5\xba\x51\x6f\x01\x00\x00\xff\xff\x76\x97\x0e\x52\x25\x02\x00\x00")
+var _srcLanguageGopkgToml = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x94\xd0\x41\x4f\x02\x31\x10\x05\xe0\x7b\x7f\x45\xb3\x9c\xdd\xb2\x2c\x0b\x68\xc2\xd9\xbb\x57\xc2\x61\x3a\x9d\x2d\x13\xda\xce\xda\x76\x89\xf8\xeb\x0d\xf1\x20\x26\x9a\xe8\x79\xde\xfb\x26\x79\x0b\xfd\x42\x23\x65\x5d\x45\x9f\x6a\x9d\xca\x93\x31\x9e\xeb\x69\xb6\x2d\x4a\x34\x5e\x02\x24\x6f\x1c\x4d\xc6\x06\xb1\x26\x42\xa9\x94\x8d\x13\x2c\xe6\x59\xa6\xb3\x6f\xab\xc4\xd0\x46\xa7\x16\x7a\x94\xac\x1d\x55\xe0\x40\x4e\x7f\x1d\xb5\x13\x9c\x23\xa5\x0a\x95\x25\xb5\x4a\x65\x7a\x9d\x39\x93\xd3\x7b\x7d\x68\xbe\xfd\x12\x1f\xc8\x94\xd9\xa2\xc4\x08\xc9\x95\xe6\xa8\xd4\xe1\x80\x92\x4a\xcd\xc0\xa9\x1e\x8f\x2a\x41\x24\xbd\xd7\xf7\x3d\x0c\x32\xbb\x51\xe6\xe4\xf2\xd5\x04\xb6\x76\xe6\xe0\x26\xc0\x73\xa3\x6c\x86\x84\xa7\x5b\x9e\x13\xd7\x87\x6e\x18\x56\xdd\xe3\x7a\xb7\x6d\xfe\xe2\x4a\x2a\x6c\x3c\xa7\xb3\x97\x7b\xe9\x73\x82\x7f\x08\x12\xc9\xc3\x2f\x82\x5c\x28\x67\x76\xf4\x73\x9f\x02\xbc\x43\x0e\xc6\xcb\x94\xe5\xed\xda\xa8\x4c\x17\x2e\x2c\xe9\x96\x03\x40\x0b\xbb\x7e\xec\x37\x30\x0c\x80\x7d\x87\xd6\x6e\x3b\x5c\x6e\x86\xf5\x16\xfa\xd5\x0e\x97\xe8\xba\xcd\x72\xdd\xa8\x8f\x00\x00\x00\xff\xff\x68\xfb\x80\xdd\xe3\x01\x00\x00")
 
 func srcLanguageGopkgTomlBytes() ([]byte, error) {
 	return bindataRead(
@@ -498,7 +498,7 @@ func srcLanguageGopkgToml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/Gopkg.toml", size: 549, mode: os.FileMode(436), modTime: time.Unix(1519154091, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/Gopkg.toml", size: 483, mode: os.FileMode(436), modTime: time.Unix(1519314455, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -518,7 +518,7 @@ func srcLanguageBratsBrats_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/brats/brats_suite_test.go", size: 1706, mode: os.FileMode(436), modTime: time.Unix(1518729627, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/brats/brats_suite_test.go", size: 1706, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -538,7 +538,7 @@ func srcLanguageBratsBrats_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/brats/brats_test.go", size: 1033, mode: os.FileMode(436), modTime: time.Unix(1519227336, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/brats/brats_test.go", size: 1033, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -558,7 +558,7 @@ func srcLanguageFinalizeCliCli_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/finalize/cli/cli_suite_test.go", size: 192, mode: os.FileMode(436), modTime: time.Unix(1518729288, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/finalize/cli/cli_suite_test.go", size: 192, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -578,7 +578,7 @@ func srcLanguageFinalizeCliMainGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/finalize/cli/main.go", size: 31, mode: os.FileMode(436), modTime: time.Unix(1519153483, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/finalize/cli/main.go", size: 31, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -598,7 +598,7 @@ func srcLanguageFinalizeFinalizeGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize.go", size: 17, mode: os.FileMode(436), modTime: time.Unix(1518729019, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize.go", size: 17, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -618,7 +618,7 @@ func srcLanguageFinalizeFinalize_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize_suite_test.go", size: 197, mode: os.FileMode(436), modTime: time.Unix(1518729213, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize_suite_test.go", size: 197, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -638,7 +638,7 @@ func srcLanguageFinalizeFinalize_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize_test.go", size: 117, mode: os.FileMode(436), modTime: time.Unix(1518729092, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/finalize/finalize_test.go", size: 117, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -658,7 +658,7 @@ func srcLanguageHooksHooks_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/hooks/hooks_suite_test.go", size: 188, mode: os.FileMode(436), modTime: time.Unix(1518729931, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/hooks/hooks_suite_test.go", size: 188, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -678,7 +678,7 @@ func srcLanguageIntegrationIntegration_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/integration/integration_suite_test.go", size: 4138, mode: os.FileMode(436), modTime: time.Unix(1518730134, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/integration/integration_suite_test.go", size: 4138, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -698,7 +698,7 @@ func srcLanguageIntegrationSimple_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/integration/simple_test.go", size: 760, mode: os.FileMode(436), modTime: time.Unix(1519227373, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/integration/simple_test.go", size: 760, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -718,7 +718,7 @@ func srcLanguageSupplyCliCli_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/supply/cli/cli_suite_test.go", size: 190, mode: os.FileMode(436), modTime: time.Unix(1518729323, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/supply/cli/cli_suite_test.go", size: 190, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -738,7 +738,7 @@ func srcLanguageSupplyCliMainGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/supply/cli/main.go", size: 31, mode: os.FileMode(436), modTime: time.Unix(1519153294, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/supply/cli/main.go", size: 31, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -758,7 +758,7 @@ func srcLanguageSupplySupplyGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply.go", size: 15, mode: os.FileMode(436), modTime: time.Unix(1518729034, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply.go", size: 15, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -778,7 +778,7 @@ func srcLanguageSupplySupply_suite_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply_suite_test.go", size: 191, mode: os.FileMode(436), modTime: time.Unix(1518729177, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply_suite_test.go", size: 191, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -798,7 +798,7 @@ func srcLanguageSupplySupply_testGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply_test.go", size: 111, mode: os.FileMode(436), modTime: time.Unix(1518729136, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/supply/supply_test.go", size: 111, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -818,7 +818,7 @@ func srcLanguageVendorGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "src/LANGUAGE/vendor/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1518730108, 0)}
+	info := bindataFileInfo{name: "src/LANGUAGE/vendor/.gitkeep", size: 0, mode: os.FileMode(436), modTime: time.Unix(1519312935, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

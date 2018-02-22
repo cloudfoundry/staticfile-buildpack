@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/cloudfoundry/libbuildpack/packager"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -16,6 +17,11 @@ func TestPackager(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Packager Suite")
 }
+
+var _ = BeforeSuite(func() {
+	packager.Stdout = GinkgoWriter
+	packager.Stderr = GinkgoWriter
+})
 
 func ZipContents(zipFile, file string) (string, error) {
 	r, err := zip.OpenReader(zipFile)
