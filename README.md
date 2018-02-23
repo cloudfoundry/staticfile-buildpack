@@ -28,7 +28,7 @@ To build this buildpack, run the following commands from the buildpack's directo
 1. Build the buildpack
 
     ```bash
-    buildpack-packager [ --cached | --uncached ]
+    buildpack-packager build [ --cached=(true|false) ]
     ```
 
 1. Use in Cloud Foundry
