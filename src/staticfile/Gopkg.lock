@@ -44,6 +44,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/google/subcommands"
+  packages = ["."]
+  revision = "ce3d4cfc062faac7115d44e5befec8b5a08c3faa"
+
+[[projects]]
+  branch = "master"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
