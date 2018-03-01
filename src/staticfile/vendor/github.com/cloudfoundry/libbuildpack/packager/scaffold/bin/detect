@@ -1,1 +1,9 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+#
+# TODO: Write code here to detect if an app should use this buildpack.  Exit 0 if an appropriate app is detected.
+# Exit 1 otherwise.
+#
+# See more: _______
+#
 exit 1

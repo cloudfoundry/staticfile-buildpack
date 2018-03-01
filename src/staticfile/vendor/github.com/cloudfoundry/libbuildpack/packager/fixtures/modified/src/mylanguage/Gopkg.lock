@@ -14,27 +14,20 @@
   version = "v3.5.1"
 
 [[projects]]
-  branch = "master"
+  branch = "init-155219487"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
-    "ansicleaner",
     "bratshelper",
     "cutlass",
     "packager"
   ]
-  revision = "25679e7c4d2f301925ae21808e846e3041e05ea3"
+  revision = "44c79a01d5fb2b8168d69c445bf6bb9f973062dd"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
   packages = ["."]
   revision = "aacba83f36a55ac31cbb71c06547a328c0cd1604"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/golang/mock"
-  packages = ["gomock"]
-  revision = "58cd061d09382b6011f84c1291ebe50ef2e25bab"
 
 [[projects]]
   branch = "master"
@@ -84,7 +77,7 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "49e4233a3b46c26dddd43cf84547cf31c92d0f2b"
+  revision = "fcebc62b30a95351cb5e56d8a97b6e67cbb85353"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -102,7 +95,6 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = [
-    "context",
     "html",
     "html/atom",
     "html/charset"
@@ -113,7 +105,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "c1138c84af3a9927aee1a1b8b7ce06c9b7ea52bc"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -140,20 +132,14 @@
   version = "v0.3.0"
 
 [[projects]]
-  branch = "v1"
-  name = "gopkg.in/jarcoal/httpmock.v1"
-  packages = ["."]
-  revision = "cf52904a3cf0f78f199ecade6a6df8e245d5b25a"
-
-[[projects]]
+  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
-  version = "v2.1.1"
+  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2c93c90a41a7c19414d41c1dc92c2d56501f9394250161f3acd835b3ed6632f0"
+  inputs-digest = "0690e470589dba300abed5199bf49a87a54ba4f7a1d3096d04e402c34209073f"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -106,6 +106,8 @@ func (*initCmd) Usage() string {
 `
 }
 func (i *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	fmt.Println("Init", i.name, i.dir)
+
 	if i.name == "" {
 		log.Printf("error: no name entered for new buildpack")
 		return subcommands.ExitUsageError
@@ -115,18 +117,19 @@ func (i *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) 
 	i.name = strings.TrimSuffix(i.name, "-buildpack")
 
 	if i.dir == "" {
-		absoluteDefaultDir, err := filepath.Abs(i.name + "-buildpack")
-		if err != nil {
-			log.Printf("error: couldn't get absolute path to default directory: %v", err)
-			return subcommands.ExitFailure
-		}
-		i.dir = absoluteDefaultDir
+		i.dir = i.name + "-buildpack"
+	}
+	var err error
+	i.dir, err = filepath.Abs(i.dir)
+	if err != nil {
+		log.Printf("error: couldn't get absolute path to default directory: %v", err)
+		return subcommands.ExitFailure
 	}
 
 	if exists, err := libbuildpack.FileExists(i.dir); err != nil {
 		return subcommands.ExitFailure
 	} else if exists {
-		log.Printf("error: directory %s already exists", i.name)
+		log.Printf("error: directory %s already exists", i.dir)
 		return subcommands.ExitUsageError
 	}
 
@@ -138,6 +141,46 @@ func (i *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) 
 	return subcommands.ExitSuccess
 }
 
+type upgradeCmd struct {
+	dir   string
+	force bool
+}
+
+func (*upgradeCmd) Name() string { return "upgrade" }
+func (*upgradeCmd) Synopsis() string {
+	return "Upgrades a buildpack scaffolded by buildpack-packager init"
+}
+func (u *upgradeCmd) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&u.dir, "path", ".", "Path to folder to create. Defaults to the current directory.")
+	f.BoolVar(&u.force, "force", false, "Regenerate files even if they have been modified")
+}
+func (*upgradeCmd) Usage() string {
+	return `upgrade:
+	Update an existing buildpack with changes made to scaffolding code.
+`
+}
+func (u *upgradeCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	var err error
+	u.dir, err = filepath.Abs(u.dir)
+	if err != nil {
+		log.Printf("error: couldn't get absolute path to default directory: %v", err)
+		return subcommands.ExitFailure
+	}
+
+	if exists, err := libbuildpack.FileExists(u.dir); err != nil {
+		return subcommands.ExitFailure
+	} else if !exists {
+		log.Printf("error: directory %s does not exist", u.dir)
+		return subcommands.ExitUsageError
+	}
+
+	if err := packager.Upgrade(u.dir, u.force); err != nil {
+		log.Printf("Error upgrading buildpack: %v", err)
+		return subcommands.ExitFailure
+	}
+
+	return subcommands.ExitSuccess
+}
 func main() {
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(subcommands.FlagsCommand(), "")
@@ -145,6 +188,7 @@ func main() {
 	subcommands.Register(&summaryCmd{}, "Custom")
 	subcommands.Register(&buildCmd{}, "Custom")
 	subcommands.Register(&initCmd{}, "Custom")
+	subcommands.Register(&upgradeCmd{}, "Custom")
 
 	flag.Parse()
 	ctx := context.Background()

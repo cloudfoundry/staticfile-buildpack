@@ -16,10 +16,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"text/template"
 
 	"github.com/cloudfoundry/libbuildpack"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var CacheDir = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
@@ -56,6 +54,7 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 	var manifest struct {
 		Language string `yaml:"language"`
 	}
+
 	if err := libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest); err != nil {
 		return "", err
 	}
@@ -69,107 +68,6 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 	}
 
 	return filepath.Join(dir, zipFile), nil
-}
-
-// START AUTO-GENERATED CODE (from bindata.go)
-// RestoreAsset restores an asset under the given directory
-func OurRestoreAsset(dir, name string, funcMap template.FuncMap) error {
-	data, err := Asset(name)
-	if err != nil {
-		return err
-	}
-	info, err := AssetInfo(name)
-	if err != nil {
-		return err
-	}
-	err = os.MkdirAll(_filePath(dir, filepath.Dir(name)), os.FileMode(0755))
-	if err != nil {
-		return err
-	}
-
-	// START NON-AUTO-GENERATED CODE
-	t, err := template.New("").Funcs(funcMap).Parse(string(data))
-	if err != nil {
-		return err
-	}
-	f, err := os.OpenFile(_filePath(dir, name), os.O_RDWR|os.O_CREATE, info.Mode())
-	if err != nil {
-		return err
-	}
-	if err := t.Execute(f, nil); err != nil {
-		return err
-	}
-	f.Close()
-	// END NON-AUTO-GENERATED CODE
-
-	err = os.Chtimes(_filePath(dir, name), info.ModTime(), info.ModTime())
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// RestoreAssets restores an asset under the given directory recursively
-func OurRestoreAssets(dir, name string, funcMap template.FuncMap) error {
-	children, err := AssetDir(name)
-	// File
-	if err != nil {
-		return OurRestoreAsset(dir, name, funcMap)
-	}
-	// Dir
-	for _, child := range children {
-		err = OurRestoreAssets(dir, filepath.Join(name, child), funcMap)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// END AUTO-GENERATED CODE (from bindata.go)
-
-func Scaffold(bpDir string, languageName string) error {
-	language := func() string {
-		return languageName
-	}
-
-	funcMap := template.FuncMap{
-		"LANGUAGE": language,
-	}
-
-	fmt.Fprintln(Stdout, "Creating directory and files")
-	if err := OurRestoreAssets(bpDir, "", funcMap); err != nil {
-		return err
-	}
-
-	if err := os.Rename(filepath.Join(bpDir, "src", "LANGUAGE"), filepath.Join(bpDir, "src", languageName)); err != nil {
-		return err
-	}
-
-	// Install dep and download dependencies (gomega, ginkgo, libbuildpack, etc)
-	fmt.Fprintln(Stdout, "Installing dep")
-	cmd := exec.Command("go", "get", "-u", "github.com/golang/dep/cmd/dep")
-	cmd.Stdout = Stdout
-	cmd.Stderr = Stderr
-	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", bpDir))
-	cmd.Dir = bpDir
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-	if err := os.Rename(filepath.Join(bpDir, "src", "github.com"), filepath.Join(bpDir, "src", languageName, "vendor", "github.com")); err != nil {
-		return err
-	}
-	fmt.Fprintln(Stdout, "Running dep ensure")
-	cmd = exec.Command(filepath.Join(bpDir, ".bin", "dep"), "ensure")
-	cmd.Stdout = Stdout
-	cmd.Stderr = Stderr
-	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", bpDir))
-	cmd.Dir = filepath.Join(bpDir, "src", languageName)
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
@@ -187,12 +85,8 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 		return "", err
 	}
 
-	manifest := Manifest{}
-	data, err := ioutil.ReadFile(filepath.Join(dir, "manifest.yml"))
+	manifest, err := readManifest(dir)
 	if err != nil {
-		return "", err
-	}
-	if err := yaml.Unmarshal(data, &manifest); err != nil {
 		return "", err
 	}
 
