@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "25679e7c4d2f301925ae21808e846e3041e05ea3"
+  revision = "c7b5e2f60c19f3279de3b4c066edda2c932ea874"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -40,7 +40,7 @@
   branch = "master"
   name = "github.com/google/subcommands"
   packages = ["."]
-  revision = "ce3d4cfc062faac7115d44e5befec8b5a08c3faa"
+  revision = "a3682377147edf596d303faabd89f81977b3f678"
 
 [[projects]]
   branch = "master"
@@ -84,7 +84,7 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "49e4233a3b46c26dddd43cf84547cf31c92d0f2b"
+  revision = "de89e61d40b75aa971a9fc3eae7f4fefabd6e0ee"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -107,13 +107,13 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "cbe0f9307d0156177f9dd5dc85da1a31abc5f2fb"
+  revision = "d25186b37f34ebdbbea8f488ef055638dfab272d"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -143,7 +143,7 @@
   branch = "v1"
   name = "gopkg.in/jarcoal/httpmock.v1"
   packages = ["."]
-  revision = "cf52904a3cf0f78f199ecade6a6df8e245d5b25a"
+  revision = "61bcb58a07522fbdf76a4cb03c57f5a52683d636"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"

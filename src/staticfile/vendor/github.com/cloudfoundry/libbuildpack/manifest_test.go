@@ -311,7 +311,10 @@ ruby:
 				}
 			}
 		})
-		AfterEach(func() { err = os.RemoveAll(tmpdir); Expect(err).To(BeNil()) })
+		AfterEach(func() {
+			Expect(os.RemoveAll(tmpdir)).To(Succeed())
+			Expect(os.RemoveAll(appCacheDir)).To(Succeed())
+		})
 
 		type CachedTestInputs struct {
 			pathToCachedFile string
@@ -490,7 +493,6 @@ ruby:
 			JustBeforeEach(func() {
 				Expect(manifest.SetAppCacheDir(appCacheDir)).To(Succeed())
 			})
-			AfterEach(func() { err = os.RemoveAll(appCacheDir); Expect(err).To(BeNil()) })
 
 			Context("when there is no cached file", func() {
 				checkOnSuccess := func() {
@@ -521,17 +523,13 @@ ruby:
 					extraFilePaths = []string{}
 
 					// create file in app cache dir
-					extraFile := filepath.Join(appCacheDir, "decoyFile")
+					extraFile := filepath.Join(appCacheDir, "dependencies", "abcdef0123456789", "decoyFile")
+					Expect(os.MkdirAll(filepath.Dir(extraFile), 0755)).To(Succeed())
 					Expect(ioutil.WriteFile(extraFile, []byte("decoy content"), 0644)).To(Succeed())
 					extraFilePaths = append(extraFilePaths, extraFile)
 
-					// create folder in app cache dir
-					extraDir, err := ioutil.TempDir(appCacheDir, "decoyFolder")
-					Expect(err).To(BeNil())
-					extraFilePaths = append(extraFilePaths, extraDir)
-
 					// create file for real dependency in manifest
-					extraOtherDepFile := filepath.Join(appCacheDir, "662eacac1df6ae7eee9ccd1ac1eb1d0d8777c403e5375fd64d14907f875f50c0", "some-dependency-name-5.tgz")
+					extraOtherDepFile := filepath.Join(appCacheDir, "dependencies", "662eacac1df6ae7eee9ccd1ac1eb1d0d8777c403e5375fd64d14907f875f50c0", "some-dependency-name-5.tgz")
 					os.MkdirAll(filepath.Dir(extraOtherDepFile), 0755)
 					Expect(ioutil.WriteFile(extraOtherDepFile, []byte("some super legit dependency content"), 0644)).To(Succeed())
 					extraFilePaths = append(extraFilePaths, extraOtherDepFile)
