@@ -25,7 +25,10 @@ func main() {
 	}
 
 	stager := libbuildpack.NewStager(os.Args[1:], logger, manifest)
-
+	if err = manifest.SetAppCacheDir(stager.CacheDir()); err != nil {
+		logger.Error("Unable to setup appcache: %s", err)
+		os.Exit(18)
+	}
 	if err = manifest.ApplyOverride(stager.DepsDir()); err != nil {
 		logger.Error("Unable to apply override.yml files: %s", err)
 		os.Exit(17)
@@ -61,5 +64,9 @@ func main() {
 	if err := stager.WriteConfigYml(nil); err != nil {
 		logger.Error("Error writing config.yml: %s", err.Error())
 		os.Exit(15)
+	}
+	if err = manifest.CleanupAppCache(); err != nil {
+		logger.Error("Unable to apply override.yml files: %s", err)
+		os.Exit(19)
 	}
 }
