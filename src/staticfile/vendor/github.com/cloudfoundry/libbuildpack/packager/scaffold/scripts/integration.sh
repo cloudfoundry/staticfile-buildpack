@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Runs the integration tests
 set -euo pipefail
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.."

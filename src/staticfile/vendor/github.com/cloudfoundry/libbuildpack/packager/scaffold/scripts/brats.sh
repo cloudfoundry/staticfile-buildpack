@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Test that the compiled binaries of the buildpacks are working as expected
+
 set -euo pipefail
 
 cd "$( dirname "${BASH_SOURCE[0]}" )/.."

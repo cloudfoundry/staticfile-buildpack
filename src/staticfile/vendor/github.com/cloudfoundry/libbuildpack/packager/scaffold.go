@@ -50,13 +50,21 @@ func generateAssets(bpDir, languageName string, force bool) error {
 
 func setupDep(bpDir, languageName string) error {
 	fmt.Fprintln(Stdout, "Installing dep")
+	tmpDir, err := ioutil.TempDir("", "gopath")
+	if err != nil {
+		return err
+	}
 	cmd := exec.Command("go", "get", "-u", "github.com/golang/dep/cmd/dep")
 	cmd.Stdout = Stdout
 	cmd.Stderr = Stderr
-	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", bpDir))
-	cmd.Dir = bpDir
+	cmd.Env = append(os.Environ(), fmt.Sprintf("GOBIN=%s/.bin", bpDir), fmt.Sprintf("GOPATH=%s", tmpDir))
+	cmd.Dir = filepath.Join(bpDir, "src", languageName)
+	// cmd.Dir = bpDir
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("go get -u github.com/golang/dep/cmd/dep: %s", err)
+	}
+	if err := os.RemoveAll(tmpDir); err != nil {
+		return err
 	}
 
 	fmt.Fprintln(Stdout, "Running dep ensure")

@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script provides dependencies for an app
+
+
 set -euo pipefail
 
 BUILD_DIR=$1
