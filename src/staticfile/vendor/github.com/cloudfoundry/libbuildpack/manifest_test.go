@@ -629,6 +629,44 @@ ruby:
 		})
 	})
 
+	Describe("CleanupAppCache", func() {
+		var (
+			appCacheDir string
+		)
+
+		BeforeEach(func() {
+			appCacheDir, err = ioutil.TempDir("", "appCache")
+			Expect(err).To(BeNil())
+		})
+		JustBeforeEach(func() {
+			Expect(manifest.SetAppCacheDir(appCacheDir)).To(Succeed())
+		})
+
+		Context("no dependencies were cached", func() {
+			BeforeEach(func() {
+				Expect(filepath.Join(appCacheDir, "dependencies")).ToNot(BeADirectory())
+			})
+			It("does nothing and succeeds", func() {
+				Expect(manifest.CleanupAppCache()).To(Succeed())
+			})
+		})
+
+		Context("dependencies were cached", func() {
+			BeforeEach(func() {
+				Expect(os.Mkdir(filepath.Join(appCacheDir, "dependencies"), 0755)).To(Succeed())
+				Expect(os.Mkdir(filepath.Join(appCacheDir, "dependencies", "abcd"), 0755)).To(Succeed())
+				Expect(ioutil.WriteFile(filepath.Join(appCacheDir, "dependencies", "abcd", "file.tgz"), []byte("contents"), 0644)).To(Succeed())
+			})
+			It("deletes old files", func() {
+				Expect(filepath.Join(appCacheDir, "dependencies", "abcd", "file.tgz")).To(BeARegularFile())
+
+				Expect(manifest.CleanupAppCache()).To(Succeed())
+
+				Expect(filepath.Join(appCacheDir, "dependencies", "abcd", "file.tgz")).ToNot(BeARegularFile())
+			})
+		})
+	})
+
 	Describe("InstallDependency", func() {
 		var outputDir string
 

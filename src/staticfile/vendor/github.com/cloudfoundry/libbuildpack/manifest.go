@@ -430,7 +430,7 @@ func (m *Manifest) CleanupAppCache() error {
 	pathsToDelete := []string{}
 
 	if err := filepath.Walk(m.appCacheDir, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
+		if info == nil || info.IsDir() {
 			return nil
 		}
 		if err != nil {
