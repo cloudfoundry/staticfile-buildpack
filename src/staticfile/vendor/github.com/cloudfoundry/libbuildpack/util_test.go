@@ -264,14 +264,31 @@ var _ = Describe("Util", func() {
 		})
 
 		It("copies source to destination", func() {
-			err = libbuildpack.CopyDirectory("fixtures", destDir)
+			srcDir := filepath.Join("fixtures", "copydir")
+			err = libbuildpack.CopyDirectory(srcDir, destDir)
 			Expect(err).To(BeNil())
 
-			Expect(filepath.Join("fixtures", "source.txt")).To(BeAnExistingFile())
-			Expect(filepath.Join("fixtures", "manifest", "standard", "manifest.yml")).To(BeAnExistingFile())
+			Expect(filepath.Join(srcDir, "source.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(srcDir, "standard", "manifest.yml")).To(BeAnExistingFile())
 
 			Expect(filepath.Join(destDir, "source.txt")).To(BeAnExistingFile())
-			Expect(filepath.Join(destDir, "manifest", "standard", "manifest.yml")).To(BeAnExistingFile())
+			Expect(filepath.Join(destDir, "standard", "manifest.yml")).To(BeAnExistingFile())
+		})
+
+		It("handles symlink to directory", func() {
+			srcDir := filepath.Join("fixtures", "copydir_symlinks")
+			err = libbuildpack.CopyDirectory(srcDir, destDir)
+			Expect(err).To(BeNil())
+
+			Expect(filepath.Join(srcDir, "source.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(srcDir, "sym_source.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(srcDir, "standard", "manifest.yml")).To(BeAnExistingFile())
+			Expect(filepath.Join(srcDir, "sym_standard", "manifest.yml")).To(BeAnExistingFile())
+
+			Expect(filepath.Join(destDir, "source.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(destDir, "sym_source.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(destDir, "standard", "manifest.yml")).To(BeAnExistingFile())
+			Expect(filepath.Join(destDir, "sym_standard", "manifest.yml")).To(BeAnExistingFile())
 		})
 	})
 
