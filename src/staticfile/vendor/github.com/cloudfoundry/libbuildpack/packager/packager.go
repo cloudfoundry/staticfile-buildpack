@@ -285,7 +285,16 @@ func copyDirectory(srcDir string) (string, error) {
 		}
 
 		dest := filepath.Join(destDir, path)
-		if info.IsDir() {
+		if m := info.Mode(); m&os.ModeSymlink != 0 {
+			srcPath := filepath.Join(srcDir, path)
+			target, err := os.Readlink(srcPath)
+			if err != nil {
+				return fmt.Errorf("Error while reading symlink '%s': %v", srcPath, err)
+			}
+			if err := os.Symlink(target, dest); err != nil {
+				return fmt.Errorf("Error while creating '%s' as symlink to '%s': %v", dest, target, err)
+			}
+		} else if info.IsDir() {
 			err = os.MkdirAll(dest, info.Mode())
 			if err != nil {
 				return err

@@ -1,0 +1,20 @@
+---
+language: ruby
+pre_package: ./hi.sh
+default_versions:
+- name: ruby
+  version: 2.4.1
+dependencies:
+- name: ruby
+  version: 1.2.3
+  sha256: b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596
+  uri: https://www.ietf.org/rfc/rfc2324.txt
+  cf_stacks:
+  - cflinuxfs2
+include_files:
+- manifest.yml
+- VERSION
+- bin/filename
+- hi.txt
+- random_dir
+- sym_dir

@@ -162,6 +162,47 @@ var _ = Describe("Packager", func() {
 			})
 		})
 
+		Context("when buildpack includes symlink to directory", func() {
+			BeforeEach(func() {
+				cached = true
+				buildpackDir = "./fixtures/symlink_dir"
+			})
+			JustBeforeEach(func() {
+				var err error
+				zipFile, err = packager.Package(buildpackDir, cacheDir, version, cached)
+				Expect(err).To(BeNil())
+			})
+			It("gets zipfile name", func() {
+				Expect(zipFile).ToNot(BeEmpty())
+			})
+			It("generates a zipfile with name", func() {
+				var cachedStr string
+				if cached {
+					cachedStr = "-cached"
+				}
+				dir, err := filepath.Abs(buildpackDir)
+				Expect(err).To(BeNil())
+				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack%s-v%s.zip", cachedStr, version))))
+			})
+
+			It("includes files listed in manifest.yml", func() {
+				Expect(ZipContents(zipFile, "bin/filename")).To(Equal("awesome content"))
+			})
+
+			It("overrides VERSION", func() {
+				Expect(ZipContents(zipFile, "VERSION")).To(Equal(version))
+			})
+
+			It("runs pre-package script", func() {
+				Expect(ZipContents(zipFile, "hi.txt")).To(Equal("hi mom\n"))
+			})
+
+			It("does not include files not in list", func() {
+				_, err := ZipContents(zipFile, "ignoredfile")
+				Expect(err.Error()).To(HavePrefix("ignoredfile not found in"))
+			})
+		})
+
 		Context("cached dependency has wrong md5", func() {
 			BeforeEach(func() {
 				cached = true
