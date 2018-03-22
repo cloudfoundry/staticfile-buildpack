@@ -24,7 +24,7 @@ var _ = Describe("deploy a staticfile app", func() {
 	})
 
 	It("proxies", func() {
-		Expect(app.GetBody("/intl/en/policies")).To(ContainSubstring("Google Product Privacy Guide"))
+		Expect(app.GetBody("/intl/en/policies")).To(ContainSubstring("Welcome to the Google Privacy Policy"))
 
 		By("hides the nginx.conf file", func() {
 			Expect(app.GetBody("/nginx.conf")).To(ContainSubstring("<title>404 Not Found</title>"))
