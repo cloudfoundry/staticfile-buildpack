@@ -80,15 +80,25 @@ http {
     root <%= ENV["APP_ROOT"] %>/public;
 
    {{if .ForceHTTPS}}
+	 set $updated_host $host;
+	 if ($http_x_forwarded_host != "") {
+       set $updated_host $http_x_forwarded_host;
+     } 
+
      if ($http_x_forwarded_proto != "https") {
-       return 301 https://$host$request_uri;
-     }
+	   return 301 https://$updated_host$request_uri;
+	 }
    {{else}}
-   <% if ENV["FORCE_HTTPS"] %>
+	<% if ENV["FORCE_HTTPS"] %>
+	 set $updated_host $host;
+	 if ($http_x_forwarded_host != "") {
+       set $updated_host $http_x_forwarded_host;
+     } 
+
      if ($http_x_forwarded_proto != "https") {
-       return 301 https://$host$request_uri;
-     }
-   <% end %>
+	   return 301 https://$updated_host$request_uri;
+	 }
+	<% end %>
    {{end}}
 
 
