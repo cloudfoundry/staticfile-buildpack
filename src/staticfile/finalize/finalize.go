@@ -61,6 +61,7 @@ var skipCopyFile = map[string]bool{
 	".profile.d":      true,
 	"stackato.yml":    true,
 	".cloudfoundry":   true,
+	"nginx":           true,
 }
 
 func Run(sf *Finalizer) error {
