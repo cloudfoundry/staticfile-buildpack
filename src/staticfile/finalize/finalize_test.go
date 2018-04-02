@@ -880,7 +880,7 @@ var _ = Describe("Compile", func() {
 				Expect(err).To(BeNil())
 			}
 
-			buildDirDirectories = []string{".profile.d", ".cloudfoundry"}
+			buildDirDirectories = []string{".profile.d", ".cloudfoundry", "nginx"}
 			for _, dir := range buildDirDirectories {
 				err = os.MkdirAll(filepath.Join(buildDir, dir), 0755)
 				Expect(err).To(BeNil())
@@ -945,6 +945,7 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "stackato.yml")).To(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, ".profile.d")).To(BeADirectory())
 					Expect(filepath.Join(buildDir, ".cloudfoundry")).To(BeADirectory())
+					Expect(filepath.Join(buildDir, "nginx")).To(BeADirectory())
 
 					Expect(filepath.Join(buildDir, "public", "Staticfile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "Staticfile.auth")).ToNot(BeAnExistingFile())
@@ -953,6 +954,7 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "public", "stackato.yml")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", ".profile.d")).ToNot(BeADirectory())
 					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
+					Expect(filepath.Join(buildDir, "public", "nginx")).ToNot(BeADirectory())
 				})
 
 				Context("and <buildDir>/public exists", func() {
@@ -989,6 +991,7 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "stackato.yml")).To(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, ".profile.d")).To(BeADirectory())
 					Expect(filepath.Join(buildDir, ".cloudfoundry")).To(BeADirectory())
+					Expect(filepath.Join(buildDir, "nginx")).To(BeADirectory())
 
 					Expect(filepath.Join(buildDir, "public", "Staticfile")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", "Staticfile.auth")).ToNot(BeAnExistingFile())
@@ -997,6 +1000,7 @@ var _ = Describe("Compile", func() {
 					Expect(filepath.Join(buildDir, "public", "stackato.yml")).ToNot(BeAnExistingFile())
 					Expect(filepath.Join(buildDir, "public", ".profile.d")).ToNot(BeADirectory())
 					Expect(filepath.Join(buildDir, "public", ".cloudfoundry")).ToNot(BeADirectory())
+					Expect(filepath.Join(buildDir, "public", "nginx")).ToNot(BeADirectory())
 				})
 			})
 		})
