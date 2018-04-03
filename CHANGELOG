@@ -1,3 +1,10 @@
+v1.4.25 Apr 03, 2018
+=====================
+
+* Add nginx 1.13.10, remove nginx 1.13.9
+  (https://www.pivotaltracker.com/story/show/156133474)
+  (https://www.pivotaltracker.com/story/show/156134095)
+
 v1.4.24 Mar 09, 2018
 =====================
 
