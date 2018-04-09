@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -347,7 +346,7 @@ func (m *Manifest) warnEndOfLife(dep Dependency) error {
 
 func fetchCachedBuildpackDependency(entry *ManifestEntry, outputFile, manifestRootDir string, manifestLog *Logger) error {
 	source := entry.File
-	if !path.IsAbs(source) {
+	if !filepath.IsAbs(source) {
 		source = filepath.Join(manifestRootDir, source)
 	}
 	manifestLog.Info("Copy [%s]", source)
