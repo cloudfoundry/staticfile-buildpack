@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/Masterminds/semver"
   packages = ["."]
-  revision = "8d82589cda2d7b5b9167396841975c4535c9bec6"
-  version = "v1.4.1"
+  revision = "c7af12943936e8c39859482e61f0574c2fd7fc75"
+  version = "v1.4.2"
 
 [[projects]]
   name = "github.com/blang/semver"
@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "0dad11d013030ab5dab2799d4127f89c09592d08"
+  revision = "5da75c3ac0b5b0a6dfd18f13e6bdfe1fe9fa5817"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
