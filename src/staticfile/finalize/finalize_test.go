@@ -595,15 +595,25 @@ var _ = Describe("Compile", func() {
         }
 			`)
 			forceHTTPSConf := stripStartWsp(`
-        if ($http_x_forwarded_proto != "https") {
-          return 301 https://$host$request_uri;
-        }
+				set $updated_host $host;
+				if ($http_x_forwarded_host != "") {
+       				set $updated_host $http_x_forwarded_host;
+				} 
+
+				if ($http_x_forwarded_proto != "https") {
+					return 301 https://$updated_host$request_uri;
+				}
 			`)
 			forceHTTPSErb := stripStartWsp(`
 				<% if ENV["FORCE_HTTPS"] %>
-					if ($http_x_forwarded_proto != "https") {
-						return 301 https://$host$request_uri;
-					}
+				set $updated_host $host;
+				if ($http_x_forwarded_host != "") {
+					set $updated_host $http_x_forwarded_host;
+				} 
+			
+				if ($http_x_forwarded_proto != "https") {
+					return 301 https://$updated_host$request_uri;
+				}
 				<% end %>
 			`)
 			basicAuthConf := stripStartWsp(`
