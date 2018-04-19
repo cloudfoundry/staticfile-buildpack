@@ -7,6 +7,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"fmt"
 )
 
 var _ = Describe("deploy a staticfile app", func() {
@@ -34,6 +35,14 @@ var _ = Describe("deploy a staticfile app", func() {
 			Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
 			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix("https://"))))
 		})
+
+		It("injects x-forwarded-host into Location on redirect", func() {
+			var upstreamHostName = "upstreamHostName.com"
+			_, headers, err := app.Get("/", map[string]string{"NoFollow": "true", "X-Forwarded-Host": upstreamHostName})
+			Expect(err).To(BeNil())
+			Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
+			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix(fmt.Sprintf("https://%s", upstreamHostName)))))
+		})
 	})
 
 	Context("Using Staticfile", func() {
@@ -45,5 +54,14 @@ var _ = Describe("deploy a staticfile app", func() {
 			Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
 			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix("https://"))))
 		})
+
+		It("injects x-forwarded-host into Location on redirect", func() {
+			var upstreamHostName = "upstreamHostName.com"
+			_, headers, err := app.Get("/", map[string]string{"NoFollow": "true", "X-Forwarded-Host": upstreamHostName})
+			Expect(err).To(BeNil())
+			Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
+			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix(fmt.Sprintf("https://%s", upstreamHostName)))))
+		})
+
 	})
 })
