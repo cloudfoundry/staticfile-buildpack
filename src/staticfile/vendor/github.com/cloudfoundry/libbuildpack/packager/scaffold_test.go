@@ -120,8 +120,6 @@ var _ = Describe("Scaffold", func() {
 			Expect(err).To(BeNil())
 
 			Expect(libbuildpack.CopyDirectory("fixtures/modified", baseDir)).To(Succeed())
-
-			// run the code under test
 		})
 		AfterEach(func() {
 			os.RemoveAll(baseDir)

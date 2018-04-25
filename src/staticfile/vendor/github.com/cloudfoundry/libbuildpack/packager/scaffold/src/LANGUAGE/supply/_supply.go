@@ -31,7 +31,7 @@ type Command interface {
 type Supplier struct {
 	Manifest Manifest
 	Stager   Stager
-	Command  libbuildpack.Command
+	Command  Command
 	Log      *libbuildpack.Logger
 }
 

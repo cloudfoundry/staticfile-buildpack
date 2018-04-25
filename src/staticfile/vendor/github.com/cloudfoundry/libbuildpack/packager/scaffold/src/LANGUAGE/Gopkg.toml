@@ -5,7 +5,7 @@ required = ["github.com/google/subcommands"]
 
 [[constraint]]
 name = "github.com/cloudfoundry/libbuildpack"
-branch = "init-155219487"
+branch = "master"
 
 [[constraint]]
 name = "github.com/onsi/ginkgo"

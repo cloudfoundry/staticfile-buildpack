@@ -10,7 +10,7 @@ Uses gopkg to read from `v1` branch:
 
 You can also use vendoring for the v1 branch if you feel so inclined.
 
-Currently supports Go 1.7 but also works with 1.6 for now. 
+Currently supports Go 1.7 - 1.10. 
 
 ### Simple Example:
 ```go
@@ -111,6 +111,55 @@ var _ = Describe("Articles", func() {
 			httpmock.NewStringResponder(200, `[{"id": 1, "name": "My Great Article"}]`))
 
 		// do stuff that makes a request to articles.json
+	})
+})
+```
+
+### [Ginkgo](https://onsi.github.io/ginkgo/) + [Resty](https://github.com/go-resty/resty) Example:
+```go
+// article_suite_test.go
+
+import (
+	// ...
+	"github.com/jarcoal/httpmock"
+	"github.com/go-resty/resty"
+)
+// ...
+var _ = BeforeSuite(func() {
+	// block all HTTP requests
+	httpmock.ActivateNonDefault(resty.DefaultClient.GetClient())
+})
+
+var _ = BeforeEach(func() {
+	// remove any mocks
+	httpmock.Reset()
+})
+
+var _ = AfterSuite(func() {
+	httpmock.DeactivateAndReset()
+})
+
+
+// article_test.go
+
+import (
+	// ...
+	"github.com/jarcoal/httpmock"
+	"github.com/go-resty/resty"
+)
+
+var _ = Describe("Articles", func() {
+	It("returns a list of articles", func() {
+		fixture := `{"status":{"message": "Your message", "code": 200}}`
+		responder, err := httpmock.NewJsonResponder(200, fixture)
+		fakeUrl := "https://api.mybiz.com/articles.json"
+		httpmock.RegisterResponder("GET", fakeUrl, responder)
+
+		// fetch the article into struct
+		articleObject := &models.Article{}
+		_, err := resty.R().SetResult(articleObject).Get(fakeUrl)
+		
+		// do stuff with the article object ...
 	})
 })
 ```

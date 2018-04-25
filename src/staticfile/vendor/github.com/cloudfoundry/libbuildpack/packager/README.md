@@ -1,3 +1,10 @@
+## Installing the packager
+
+```
+go get github.com/cloudfoundry/libbuildpack
+cd ~/go/src/github.com/cloudfoundry/libbuildpack/packager/buildpack-packager && go install
+```
+
 ## How to regenerate bindata.go
 Run `go generate` when you add, remove, or change the files in the `scaffold` directory.
 
@@ -9,8 +16,6 @@ For more on go-bindata: https://github.com/jteeuwen/go-bindata
 
 ## Running tests
 
-You will want to skip tests in the scaffold directory.
-
 ```
-ginkgo -r -skipPackage=brats,integration
+ginkgo -r
 ```

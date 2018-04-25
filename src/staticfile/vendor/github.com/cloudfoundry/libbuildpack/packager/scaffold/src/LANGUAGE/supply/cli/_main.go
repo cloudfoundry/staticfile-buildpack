@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "LANGUAGE/hooks"
-	"LANGUAGE/supply"
+	_ "{{LANGUAGE}}/hooks"
+	"{{LANGUAGE}}/supply"
 	"os"
 	"path/filepath"
 	"time"

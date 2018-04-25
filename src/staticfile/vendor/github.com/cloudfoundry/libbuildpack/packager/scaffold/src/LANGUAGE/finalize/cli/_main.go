@@ -1,8 +1,8 @@
 package main
 
 import (
-	"LANGUAGE/finalize"
-	_ "LANGUAGE/hooks"
+	"{{LANGUAGE}}/finalize"
+	_ "{{LANGUAGE}}/hooks"
 	"os"
 	"time"
 
