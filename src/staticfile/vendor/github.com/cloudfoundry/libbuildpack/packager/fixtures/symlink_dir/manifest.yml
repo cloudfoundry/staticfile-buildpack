@@ -3,7 +3,7 @@ language: ruby
 pre_package: ./hi.sh
 default_versions:
 - name: ruby
-  version: 2.4.1
+  version: 1.2.3
 dependencies:
 - name: ruby
   version: 1.2.3

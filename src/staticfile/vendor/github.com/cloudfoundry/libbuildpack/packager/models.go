@@ -2,7 +2,7 @@ package packager
 
 import "github.com/Masterminds/semver"
 
-type Dependencies []struct {
+type Dependency struct {
 	URI     string   `yaml:"uri"`
 	File    string   `yaml:"file"`
 	SHA256  string   `yaml:"sha256"`
@@ -11,8 +11,12 @@ type Dependencies []struct {
 	Stacks  []string `yaml:"cf_stacks"`
 	Modules []string `yaml:"modules"`
 }
+
+type Dependencies []Dependency
+
 type Manifest struct {
 	Language     string       `yaml:"language"`
+	Stack        string       `yaml:"stack"`
 	IncludeFiles []string     `yaml:"include_files"`
 	PrePackage   string       `yaml:"pre_package"`
 	Dependencies Dependencies `yaml:"dependencies"`
@@ -41,4 +45,29 @@ func (d Dependencies) Less(i, j int) bool {
 		}
 	}
 	return false
+}
+
+func (m *Manifest) hasStack(stack string) bool {
+	for _, e := range m.Dependencies {
+		for _, s := range e.Stacks {
+			if s == stack {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (m *Manifest) versionsOfDependencyWithStack(depName, stack string) []string {
+	versions := []string{}
+	for _, e := range m.Dependencies {
+		if e.Name == depName {
+			for _, s := range e.Stacks {
+				if s == stack {
+					versions = append(versions, e.Version)
+				}
+			}
+		}
+	}
+	return versions
 }

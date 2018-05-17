@@ -1,0 +1,20 @@
+---
+language: ruby
+default_versions:
+- name: ruby
+  version: 1.2.3
+dependencies:
+- name: ruby
+  version: 1.2.3
+  sha256: b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596
+  uri: https://www.ietf.org/rfc/rfc2324.txt
+  cf_stacks:
+  - cflinuxfs2
+- name: ruby
+  version: 2.3.4
+  sha256: 646b43b5d718913d6211e2c18b2b3b667cf6eaa76a2493e55b1de5ca04c2578e
+  uri: https://www.ietf.org/rfc/rfc2549.txt
+  cf_stacks:
+  - cflinuxfs3
+include_files:
+- manifest.yml

@@ -39,14 +39,16 @@ func (s *summaryCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{
 
 type buildCmd struct {
 	cached   bool
+	anyStack bool
 	version  string
 	cacheDir string
+	stack    string
 }
 
 func (*buildCmd) Name() string     { return "build" }
 func (*buildCmd) Synopsis() string { return "Create a buildpack zipfile from the current directory" }
 func (*buildCmd) Usage() string {
-	return `build [-cached] [-version <version>] [-cachedir <path to cachedir>]:
+	return `build -stack <stack>|-any-stack [-cached] [-version <version>] [-cachedir <path to cachedir>]:
   When run in a directory that is structured as a buildpack, creates a zip file.
 
 `
@@ -55,8 +57,19 @@ func (b *buildCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&b.version, "version", "", "version to build as")
 	f.BoolVar(&b.cached, "cached", false, "include dependencies")
 	f.StringVar(&b.cacheDir, "cachedir", packager.CacheDir, "cache dir")
+
+	f.StringVar(&b.stack, "stack", "", "stack to package buildpack for")
+	f.BoolVar(&b.anyStack, "any-stack", false, "package buildpack for any stack")
 }
 func (b *buildCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if b.stack == "" && !b.anyStack {
+		log.Printf("error: must either specify a stack or pass -any-stack")
+		return subcommands.ExitFailure
+	}
+	if b.stack != "" && b.anyStack {
+		log.Printf("error: cannot specify a stack AND pass -any-stack")
+		return subcommands.ExitFailure
+	}
 	if b.version == "" {
 		v, err := ioutil.ReadFile("VERSION")
 		if err != nil {
@@ -66,7 +79,7 @@ func (b *buildCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{})
 		b.version = strings.TrimSpace(string(v))
 	}
 
-	zipFile, err := packager.Package(".", b.cacheDir, b.version, b.cached)
+	zipFile, err := packager.Package(".", b.cacheDir, b.version, b.stack, b.cached)
 	if err != nil {
 		log.Printf("error while creating zipfile: %v", err)
 		return subcommands.ExitFailure

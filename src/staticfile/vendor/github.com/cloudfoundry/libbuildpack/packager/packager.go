@@ -70,8 +70,68 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 	return filepath.Join(dir, zipFile), nil
 }
 
-func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
+func validateStack(stack, bpDir string) error {
+	if stack == "" {
+		return nil
+	}
+
+	manifest, err := readManifest(bpDir)
+	if err != nil {
+		return err
+	}
+
+	if manifest.Stack != "" {
+		return fmt.Errorf("Cannot package from already packaged buildpack manifest")
+	}
+
+
+	if !manifest.hasStack(stack) {
+		return fmt.Errorf("Stack `%s` not found in manifest", stack)
+	}
+
+	for _, d := range manifest.Defaults {
+		if _, err := libbuildpack.FindMatchingVersion(d.Version, manifest.versionsOfDependencyWithStack(d.Name, stack)); err != nil {
+			return fmt.Errorf("No matching default dependency `%s` for stack `%s`", d.Name, stack)
+		}
+	}
+
+	return nil
+}
+
+func updateDependencyMap(dependencyMap interface{}, file File) error {
+	dep, ok := dependencyMap.(map[interface{}]interface{})
+	if !ok {
+		return fmt.Errorf("Could not cast deps[idx] to map[interface{}]interface{}")
+	}
+	dep["file"] = file.Name
+	return nil
+}
+
+func downloadDependency(dependency Dependency, cacheDir string) (File, error) {
+	file := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte(dependency.URI))), filepath.Base(dependency.URI))
+	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+		log.Fatalf("error: %v", err)
+	}
+
+	if _, err := os.Stat(filepath.Join(cacheDir, file)); err != nil {
+		if err := downloadFromURI(dependency.URI, filepath.Join(cacheDir, file)); err != nil {
+			return File{}, err
+		}
+	}
+
+	if err := checkSha256(filepath.Join(cacheDir, file), dependency.SHA256); err != nil {
+		return File{}, err
+	}
+
+	return File{file, filepath.Join(cacheDir, file)}, nil
+}
+
+func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
+	if err != nil {
+		return "", err
+	}
+	err = validateStack(stack, bpDir)
 	if err != nil {
 		return "", err
 	}
@@ -105,35 +165,42 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 		files = append(files, File{name, filepath.Join(dir, name)})
 	}
 
-	if cached {
-		var m map[string]interface{}
-		if err := libbuildpack.NewYAML().Load(filepath.Join(dir, "manifest.yml"), &m); err != nil {
-			return "", err
-		}
-		if err := os.MkdirAll(cacheDir, 0755); err != nil {
-			log.Fatalf("error: %v", err)
-		}
-		for idx, d := range manifest.Dependencies {
-			file := filepath.Join("dependencies", fmt.Sprintf("%x", md5.Sum([]byte(d.URI))), filepath.Base(d.URI))
-			if err := setFileOnDep(m, idx, file); err != nil {
-				return "", err
-			}
+	var m map[string]interface{}
+	if err := libbuildpack.NewYAML().Load(filepath.Join(dir, "manifest.yml"), &m); err != nil {
+		return "", err
+	}
 
-			if _, err := os.Stat(filepath.Join(cacheDir, file)); err != nil {
-				if err := downloadFromURI(d.URI, filepath.Join(cacheDir, file)); err != nil {
-					return "", err
+	if stack != "" {
+		m["stack"] = stack
+	}
+
+	deps, ok := m["dependencies"].([]interface{})
+	if !ok {
+		return "", fmt.Errorf("Could not cast dependencies to []interface{}")
+	}
+	dependenciesForStack := []interface{}{}
+	for idx, d := range manifest.Dependencies {
+		for _, s := range d.Stacks {
+			if stack == "" || s == stack {
+				dependencyMap := deps[idx]
+				if cached {
+					if file, err := downloadDependency(d, cacheDir); err != nil {
+						return "", err
+					} else {
+						updateDependencyMap(dependencyMap, file)
+						files = append(files, file)
+					}
 				}
+				delete(dependencyMap.(map[interface{}]interface{}), "cf_stacks")
+				dependenciesForStack = append(dependenciesForStack, dependencyMap)
+				break
 			}
-
-			if err := checkSha256(filepath.Join(cacheDir, file), d.SHA256); err != nil {
-				return "", err
-			}
-
-			files = append(files, File{file, filepath.Join(cacheDir, file)})
 		}
-		if err := libbuildpack.NewYAML().Write(filepath.Join(dir, "manifest.yml"), m); err != nil {
-			return "", err
-		}
+	}
+	m["dependencies"] = dependenciesForStack
+
+	if err := libbuildpack.NewYAML().Write(filepath.Join(dir, "manifest.yml"), m); err != nil {
+		return "", err
 	}
 
 	zipFile := fmt.Sprintf("%s_buildpack-v%s.zip", manifest.Language, version)
@@ -145,19 +212,6 @@ func Package(bpDir, cacheDir, version string, cached bool) (string, error) {
 	ZipFiles(zipFile, files)
 
 	return zipFile, err
-}
-
-func setFileOnDep(m map[string]interface{}, idx int, file string) error {
-	if deps, ok := m["dependencies"].([]interface{}); ok {
-		if dep, ok := deps[idx].(map[interface{}]interface{}); ok {
-			dep["file"] = file
-		} else {
-			return fmt.Errorf("Could not cast deps[idx] to map[interface{}]interface{}")
-		}
-	} else {
-		return fmt.Errorf("Could not cast dependencies to []interface{}")
-	}
-	return nil
 }
 
 func downloadFromURI(uri, fileName string) error {

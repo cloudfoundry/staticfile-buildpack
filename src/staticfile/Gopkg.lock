@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "52732f15fbe4f054b3686a4e9fdc527fd51c5cca"
+  revision = "fb5560d003b566d0fc29120e9d7a8900d141b154"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -34,7 +34,7 @@
   branch = "master"
   name = "github.com/golang/mock"
   packages = ["gomock"]
-  revision = "8b2eeeb0ca5f56c78bec5efde9c4a21d9201126c"
+  revision = "22bbf0ddf08105dfa364d0a2fa619dfa71014af5"
 
 [[projects]]
   branch = "master"
@@ -43,7 +43,6 @@
   revision = "a3682377147edf596d303faabd89f81977b3f678"
 
 [[projects]]
-  branch = "master"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -65,10 +64,10 @@
     "reporters/stenographer/support/go-isatty",
     "types"
   ]
-  revision = "6d8be987c536ebd84576a5a46208e7b7a3c796b0"
+  revision = "fa5fabab2a1bfbd924faf4c067d07ae414e2aedf"
+  version = "v1.5.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -84,7 +83,8 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "b7d1a52235cc433a76c556aa3f4229e63b95e7da"
+  revision = "62bff4df71bdbc266561a0caee19f0594b17c240"
+  version = "v1.4.0"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -107,13 +107,13 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
+  revision = "2491c5de3490fced2f6cff376127c667efeed857"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "79b0c6888797020a994db17c8510466c72fe75d9"
+  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
 
 [[projects]]
   name = "golang.org/x/text"
