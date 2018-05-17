@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	httpmock "gopkg.in/jarcoal/httpmock.v1"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/jarcoal/httpmock.v1"
+	"gopkg.in/yaml.v2"
 
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/packager"
@@ -65,9 +65,6 @@ var _ = Describe("Packager", func() {
 				It("adds a top-level stack: key to the manifest", func() {
 					Expect(manifest.Stack).To(Equal(stack))
 				})
-
-				It("CACHED: does not include dependencies for other stacks", func() {
-				})
 			})
 
 			Context("empty stack specified", func() {
@@ -86,18 +83,37 @@ var _ = Describe("Packager", func() {
 				It("does not add a top-level stack: key to the manifest", func() {
 					Expect(manifest.Stack).To(Equal(""))
 				})
-
-				It("CACHED: includes dependencies for other stacks", func() {
-				})
 			})
 		}
 
 		Context("manifest.yml was already packaged", func() {
+			Context("setting specific stack", func() {
+
+				BeforeEach(func() { stack = "cflinuxfs2" })
+
+				It("returns an error", func() {
+					_, err := packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
+				})
+			})
+
+			Context("setting any stack", func() {
+
+				BeforeEach(func() { stack = "" })
+
+				It("returns an error", func() {
+					_, err := packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
+				})
+			})
+		})
+
+		Context("manifest.yml has no dependencies", func() {
 			BeforeEach(func() { stack = "cflinuxfs2" })
 
-			It("returns an error", func() {
-				_, err := packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
-				Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
+			It("allows stack when packaging", func() {
+				_, err := packager.Package("./fixtures/no_dependencies", cacheDir, version, stack, cached)
+				Expect(err).To(BeNil())
 			})
 		})
 

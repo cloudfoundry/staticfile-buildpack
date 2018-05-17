@@ -39,7 +39,7 @@ func FindRoot() (string, error) {
 	}
 }
 
-func PackageUniquelyVersionedBuildpackExtra(name, version string, cached bool) (VersionedBuildpackPackage, error) {
+func PackageUniquelyVersionedBuildpackExtra(name, version, stack string, cached bool) (VersionedBuildpackPackage, error) {
 	bpDir, err := FindRoot()
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
@@ -54,7 +54,7 @@ func PackageUniquelyVersionedBuildpackExtra(name, version string, cached bool) (
 			return VersionedBuildpackPackage{}, err
 		}
 	} else {
-		file, err = packager.Package(bpDir, packager.CacheDir, version, cached)
+		file, err = packager.Package(bpDir, packager.CacheDir, version, stack, cached)
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
 	}
@@ -82,7 +82,7 @@ func isCompileExtensionBuildpack(bpDir string) (bool, error) {
 	return len(manifest.IncludeFiles) == 0, nil
 }
 
-func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
+func PackageUniquelyVersionedBuildpack(stack string) (VersionedBuildpackPackage, error) {
 	bpDir, err := FindRoot()
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
@@ -103,7 +103,7 @@ func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
 		return VersionedBuildpackPackage{}, err
 	}
 
-	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, Cached)
+	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, stack, Cached)
 }
 
 func CopyCfHome() error {

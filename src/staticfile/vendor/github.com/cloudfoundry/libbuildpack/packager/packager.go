@@ -71,10 +71,6 @@ func CompileExtensionPackage(bpDir, version string, cached bool) (string, error)
 }
 
 func validateStack(stack, bpDir string) error {
-	if stack == "" {
-		return nil
-	}
-
 	manifest, err := readManifest(bpDir)
 	if err != nil {
 		return err
@@ -84,8 +80,11 @@ func validateStack(stack, bpDir string) error {
 		return fmt.Errorf("Cannot package from already packaged buildpack manifest")
 	}
 
+	if stack == "" {
+		return nil
+	}
 
-	if !manifest.hasStack(stack) {
+	if len(manifest.Dependencies) > 0 && !manifest.hasStack(stack) {
 		return fmt.Errorf("Stack `%s` not found in manifest", stack)
 	}
 
