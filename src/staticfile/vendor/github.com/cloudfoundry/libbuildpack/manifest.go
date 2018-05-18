@@ -41,6 +41,7 @@ type Manifest struct {
 	DefaultVersions []Dependency      `yaml:"default_versions"`
 	ManifestEntries []ManifestEntry   `yaml:"dependencies"`
 	Deprecations    []DeprecationDate `yaml:"dependency_deprecation_dates"`
+	Stack           string            `yaml:"stack"`
 	manifestRootDir string
 	appCacheDir     string
 	filesInAppCache map[string]interface{}

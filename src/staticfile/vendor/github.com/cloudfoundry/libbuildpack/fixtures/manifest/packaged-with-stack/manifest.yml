@@ -1,0 +1,108 @@
+---
+stack: cflinuxfs2
+language: dotnet-core
+default_versions:
+- name: bower
+  version: 1.8.0
+- name: dotnet
+  version: 1.0.0-preview2-003156
+- name: node
+  version: 6.9.4
+- name: bower
+  version: 1.9.0
+- name: ruby
+  version: 2.x
+- name: jruby
+  version: 9.3.x
+url_to_dependency_map:
+- match: libunwind-(.*)-(\d+\.\d+)
+  name: libunwind
+  version: "$2"
+- match: dotnet\.(.*)\.linux-amd64\.tar\.gz
+  name: dotnet
+  version: "$1"
+- match: dotnet-framework\.(.*)\.linux-amd64\.tar\.gz
+  name: dotnet-framework
+  version: "$1"
+- match: node(.*)(\d+\.\d+\.\d+)-linux-x64.tar.gz
+  name: node
+  version: "$2"
+- match: bower-(\d+\.\d+\.\d+).tgz
+  name: bower
+  version: "$1"
+dependencies:
+- name: ruby
+  version: 2.2.4
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: ruby
+  version: 2.3.3
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: jruby
+  version: 9.3.4
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: jruby
+  version: 9.3.5
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: jruby
+  version: 9.4.4
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: libunwind
+  version: 1.2
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/libunwind-1.2-linux-x64.tgz
+  md5: f56347d4e83c27658a4181ceacd93b35
+- name: dotnet
+  version: 1.0.0-preview2-003156
+  uri: https://buildpacks.cloudfoundry.org/dependencies/dotnet/dotnet.1.0.0-preview2-003156.linux-amd64.tar.gz
+  md5: 0afc3d78c0d44e89b01b1eb333824ff5
+- name: dotnet
+  version: 1.0.0-preview2-003131
+  uri: https://buildpacks.cloudfoundry.org/dependencies/dotnet/dotnet.1.0.0-preview2-003131.linux-amd64.tar.gz
+  md5: ca1ca58a95992c90b0c4230d86168e03
+- name: dotnet
+  version: 1.0.0-preview2-1-003177
+  uri: https://buildpacks.cloudfoundry.org/dependencies/dotnet/dotnet.1.0.0-preview2-1-003177.linux-amd64.tar.gz
+  md5: 5fd10e42a9fb412a2d25c09fcf14e036
+- name: dotnet
+  version: 1.0.0-preview3-004056
+  uri: https://buildpacks.cloudfoundry.org/dependencies/dotnet/dotnet.1.0.0-preview3-004056.linux-amd64.tar.gz
+  md5: f3808b1b6d2d632d6392b1b0f9762e97
+- name: bower
+  version: 1.8.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/bower/bower-1.8.0.tgz
+  md5: b61dd4e9685101f82dab8c13b5c085e1
+- name: dotnet-framework
+  version: 1.0.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/dotnet-framework.1.0.0.linux-amd64.tar.gz
+  md5: 318aba2c18e2bbbc5d0432fd23fc7a8d
+- name: dotnet-framework
+  version: 1.0.1
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/dotnet-framework.1.0.1.linux-amd64.tar.gz
+  md5: 249445eb0d92270688d33333f7de4cd0
+- name: dotnet-framework
+  version: 1.0.3
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/dotnet-framework.1.0.3.linux-amd64.tar.gz
+  md5: cc6bc4bd77c900c3c1f2a3a5ef28e420
+- name: dotnet-framework
+  version: 1.1.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/manual-binaries/dotnet/dotnet-framework.1.1.0.linux-amd64.tar.gz
+  md5: a4fabc3c15c92b795836ad53634cd3dd
+- name: dotnet
+  version: 1.0.0-preview4-004233
+  uri: https://buildpacks.cloudfoundry.org/dependencies/dotnet/dotnet.1.0.0-preview4-004233.linux-amd64.tar.gz
+  md5: 30bff5f194e75c4d8e2933c3d50742a6
+- name: node
+  version: 6.9.4
+  uri: https://buildpacks.cloudfoundry.org/dependencies/node/node-6.9.4-linux-x64.tgz
+  md5: 374ad90048055f1d11bc2ffb70ce08a7
+exclude_files:
+- ".git/"
+- ".gitignore"
+- ".gitmodules"
+- spec/
+- cf_spec/
+- dotnet-core_buildpack-*v*.zip

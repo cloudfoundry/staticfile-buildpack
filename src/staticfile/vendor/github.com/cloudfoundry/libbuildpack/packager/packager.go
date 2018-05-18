@@ -190,7 +190,9 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 						files = append(files, file)
 					}
 				}
-				delete(dependencyMap.(map[interface{}]interface{}), "cf_stacks")
+				if stack != "" {
+					delete(dependencyMap.(map[interface{}]interface{}), "cf_stacks")
+				}
 				dependenciesForStack = append(dependenciesForStack, dependencyMap)
 				break
 			}

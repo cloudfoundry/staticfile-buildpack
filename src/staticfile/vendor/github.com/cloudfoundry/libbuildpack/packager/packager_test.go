@@ -83,6 +83,11 @@ var _ = Describe("Packager", func() {
 				It("does not add a top-level stack: key to the manifest", func() {
 					Expect(manifest.Stack).To(Equal(""))
 				})
+
+				It("does not remove cf_stacks from dependencies", func() {
+					Expect(manifest.Dependencies[0].Stacks).To(Equal([]string{"cflinuxfs2"}))
+					Expect(manifest.Dependencies[1].Stacks).To(Equal([]string{"cflinuxfs3"}))
+				})
 			})
 		}
 
