@@ -1,8 +1,6 @@
 package libbuildpack
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
 )
 
 const dateFormat = "2006-01-02"
@@ -43,9 +40,7 @@ type Manifest struct {
 	Deprecations    []DeprecationDate `yaml:"dependency_deprecation_dates"`
 	Stack           string            `yaml:"stack"`
 	manifestRootDir string
-	appCacheDir     string
-	filesInAppCache map[string]interface{}
-	currentTime     time.Time
+	currentTime     time.Time //move into installer?
 	log             *Logger
 }
 
@@ -70,15 +65,10 @@ func NewManifest(bpDir string, logger *Logger, currentTime time.Time) (*Manifest
 
 	m.currentTime = currentTime
 	m.log = logger
-	m.filesInAppCache = make(map[string]interface{})
 
 	return &m, nil
 }
 
-func (m *Manifest) SetAppCacheDir(appCacheDir string) (err error) {
-	m.appCacheDir, err = filepath.Abs(filepath.Join(appCacheDir, "dependencies"))
-	return
-}
 func (m *Manifest) replaceDefaultVersion(oDep Dependency) {
 	replaced := false
 	for idx, mDep := range m.DefaultVersions {
@@ -191,17 +181,29 @@ func (m *Manifest) Version() (string, error) {
 func (m *Manifest) CheckStackSupport() error {
 	requiredStack := os.Getenv("CF_STACK")
 
-	if len(m.ManifestEntries) == 0 {
+	if m.manifestSupportsStack(requiredStack) {
 		return nil
 	}
+
+	return fmt.Errorf("required stack %s was not found", requiredStack)
+}
+
+func (m *Manifest) manifestSupportsStack(stack string) bool {
+	if m.Stack != "" {
+		return m.Stack == stack
+	}
+
+	if len(m.ManifestEntries) == 0 {
+		return true
+	}
+
 	for _, entry := range m.ManifestEntries {
-		for _, stack := range entry.CFStacks {
-			if stack == requiredStack {
-				return nil
-			}
+		if m.entrySupportsStack(&entry, stack) {
+			return true
 		}
 	}
-	return fmt.Errorf("required stack %s was not found", requiredStack)
+
+	return false
 }
 
 func (m *Manifest) DefaultVersion(depName string) (Dependency, error) {
@@ -238,113 +240,6 @@ func (m *Manifest) DefaultVersion(depName string) (Dependency, error) {
 	return Dependency{Name: depName, Version: highestVersion}, nil
 }
 
-func (m *Manifest) InstallDependency(dep Dependency, outputDir string) error {
-	m.log.BeginStep("Installing %s %s", dep.Name, dep.Version)
-
-	tmpDir, err := ioutil.TempDir("", "downloads")
-	if err != nil {
-		return err
-	}
-	tmpFile := filepath.Join(tmpDir, "archive")
-
-	entry, err := m.getEntry(dep)
-	if err != nil {
-		return err
-	}
-
-	err = m.FetchDependency(dep, tmpFile)
-	if err != nil {
-		return err
-	}
-
-	err = m.warnNewerPatch(dep)
-	if err != nil {
-		return err
-	}
-
-	err = m.warnEndOfLife(dep)
-	if err != nil {
-		return err
-	}
-
-	if strings.HasSuffix(entry.URI, ".sh") {
-		return os.Rename(tmpFile, outputDir)
-	}
-
-	err = os.MkdirAll(outputDir, 0755)
-	if err != nil {
-		return err
-	}
-
-	if strings.HasSuffix(entry.URI, ".zip") {
-		return ExtractZip(tmpFile, outputDir)
-	}
-
-	if strings.HasSuffix(entry.URI, ".tar.xz") {
-		return ExtractTarXz(tmpFile, outputDir)
-	}
-
-	return ExtractTarGz(tmpFile, outputDir)
-}
-
-func (m *Manifest) warnNewerPatch(dep Dependency) error {
-	versions := m.AllDependencyVersions(dep.Name)
-
-	v, err := semver.NewVersion(dep.Version)
-	if err != nil {
-		return nil
-	}
-
-	constraint := fmt.Sprintf("%d.%d.x", v.Major(), v.Minor())
-	latest, err := FindMatchingVersion(constraint, versions)
-	if err != nil {
-		return err
-	}
-
-	if latest != dep.Version {
-		m.log.Warning(outdatedDependencyWarning(dep, latest))
-	}
-
-	return nil
-}
-
-func (m *Manifest) warnEndOfLife(dep Dependency) error {
-	matchVersion := func(versionLine, depVersion string) bool {
-		return versionLine == depVersion
-	}
-
-	v, err := semver.NewVersion(dep.Version)
-	if err == nil {
-		matchVersion = func(versionLine, depVersion string) bool {
-			constraint, err := semver.NewConstraint(versionLine)
-			if err != nil {
-				return false
-			}
-
-			return constraint.Check(v)
-		}
-	}
-
-	for _, deprecation := range m.Deprecations {
-		if deprecation.Name != dep.Name {
-			continue
-		}
-		if !matchVersion(deprecation.VersionLine, dep.Version) {
-			continue
-		}
-
-		eolTime, err := time.Parse(dateFormat, deprecation.Date)
-		if err != nil {
-			return err
-		}
-
-		if eolTime.Sub(m.currentTime) < thirtyDays {
-			m.log.Warning(endOfLifeWarning(dep.Name, deprecation.VersionLine, deprecation.Date, deprecation.Link))
-		}
-	}
-	return nil
-}
-
 func fetchCachedBuildpackDependency(entry *ManifestEntry, outputFile, manifestRootDir string, manifestLog *Logger) error {
 	source := entry.File
 	if !filepath.IsAbs(source) {
@@ -379,88 +274,10 @@ func downloadDependency(entry *ManifestEntry, outputFile string, logger *Logger)
 	return deleteBadFile(entry, outputFile)
 }
 
-func (m *Manifest) fetchAppCachedBuildpackDependency(entry *ManifestEntry, outputFile string) error {
-	shaURI := sha256.Sum256([]byte(entry.URI))
-	cacheFile := filepath.Join(m.appCacheDir, hex.EncodeToString(shaURI[:]), filepath.Base(entry.URI))
+func (m *Manifest) entrySupportsStack(entry *ManifestEntry, stack string) bool {
 
-	m.filesInAppCache[cacheFile] = true
-	m.filesInAppCache[filepath.Dir(cacheFile)] = true
-
-	foundCacheFile, err := FileExists(cacheFile)
-	if err != nil {
-		return err
-	}
-
-	if foundCacheFile {
-		m.log.Info("Copy [%s]", cacheFile)
-		if err := CopyFile(cacheFile, outputFile); err != nil {
-			return err
-		}
-		return deleteBadFile(entry, outputFile)
-	}
-
-	if err := downloadDependency(entry, outputFile, m.log); err != nil {
-		return err
-	}
-	if err := CopyFile(outputFile, cacheFile); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Manifest) FetchDependency(dep Dependency, outputFile string) error {
-	entry, err := m.getEntry(dep)
-	if err != nil {
-		return err
-	}
-
-	if entry.File != "" { // this file is cached by the buildpack
-		return fetchCachedBuildpackDependency(entry, outputFile, m.manifestRootDir, m.log)
-	}
-
-	if m.appCacheDir != "" { // this buildpack caches dependencies in the app cache
-		return m.fetchAppCachedBuildpackDependency(entry, outputFile)
-	}
-
-	return downloadDependency(entry, outputFile, m.log)
-}
-
-func (m *Manifest) CleanupAppCache() error {
-	pathsToDelete := []string{}
-
-	if err := filepath.Walk(m.appCacheDir, func(path string, info os.FileInfo, err error) error {
-		if info == nil || info.IsDir() {
-			return nil
-		}
-		if err != nil {
-			return fmt.Errorf("Failed while cleaning up app cache; couldn't look at %s because: %v", path, err)
-		}
-		if path == m.appCacheDir {
-			return nil
-		}
-		if _, ok := m.filesInAppCache[path]; !ok {
-			pathsToDelete = append(pathsToDelete, path)
-		}
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	for _, path := range pathsToDelete {
-		m.log.Debug("Deleting cached file: %s", path)
-		if err := os.RemoveAll(path); err != nil {
-			return fmt.Errorf("Failed while cleaning up app cache; couldn't delete %s because: %v", path, err)
-		}
-	}
-
-	return nil
-}
-
-func (m *Manifest) entrySupportsCurrentStack(entry *ManifestEntry) bool {
-	stack := os.Getenv("CF_STACK")
-	if stack == "" {
-		return true
+	if m.Stack != "" {
+		return m.Stack == stack
 	}
 
 	for _, s := range entry.CFStacks {
@@ -474,9 +291,10 @@ func (m *Manifest) entrySupportsCurrentStack(entry *ManifestEntry) bool {
 
 func (m *Manifest) AllDependencyVersions(depName string) []string {
 	var depVersions []string
+	currentStack := os.Getenv("CF_STACK")
 
 	for _, e := range m.ManifestEntries {
-		if e.Dependency.Name == depName && m.entrySupportsCurrentStack(&e) {
+		if e.Dependency.Name == depName && m.entrySupportsStack(&e, currentStack) {
 			depVersions = append(depVersions, e.Dependency.Version)
 		}
 	}
@@ -484,22 +302,11 @@ func (m *Manifest) AllDependencyVersions(depName string) []string {
 	return depVersions
 }
 
-func (m *Manifest) InstallOnlyVersion(depName string, installDir string) error {
-	depVersions := m.AllDependencyVersions(depName)
+func (m *Manifest) GetEntry(dep Dependency) (*ManifestEntry, error) {
+	currentStack := os.Getenv("CF_STACK")
 
-	if len(depVersions) > 1 {
-		return fmt.Errorf("more than one version of %s found", depName)
-	} else if len(depVersions) == 0 {
-		return fmt.Errorf("no versions of %s found", depName)
-	}
-
-	dep := Dependency{Name: depName, Version: depVersions[0]}
-	return m.InstallDependency(dep, installDir)
-}
-
-func (m *Manifest) getEntry(dep Dependency) (*ManifestEntry, error) {
 	for _, e := range m.ManifestEntries {
-		if e.Dependency == dep && m.entrySupportsCurrentStack(&e) {
+		if e.Dependency == dep && m.entrySupportsStack(&e, currentStack) {
 			return &e, nil
 		}
 	}

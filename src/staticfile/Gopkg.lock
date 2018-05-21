@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "fb797b0f96c436cae9a697789d96e0d5ddc3e96d"
+  revision = "39046133a215339cf18733a8339c97af952c2a12"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -107,7 +107,7 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "2491c5de3490fced2f6cff376127c667efeed857"
+  revision = "8e0cdda24ed423affc8f35c241e5e9b16180338e"
 
 [[projects]]
   branch = "master"
