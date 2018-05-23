@@ -50,6 +50,7 @@ includes_Darwin='
 #include <sys/mount.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
+#include <sys/xattr.h>
 #include <net/bpf.h>
 #include <net/if.h>
 #include <net/if_types.h>
@@ -428,6 +429,7 @@ ccflags="$@"
 		$2 ~ /^PERF_EVENT_IOC_/ ||
 		$2 ~ /^SECCOMP_MODE_/ ||
 		$2 ~ /^SPLICE_/ ||
+		$2 !~ /^AUDIT_RECORD_MAGIC/ &&
 		$2 ~ /^[A-Z0-9_]+_MAGIC2?$/ ||
 		$2 ~ /^(VM|VMADDR)_/ ||
 		$2 ~ /^IOCTL_VM_SOCKETS_/ ||
@@ -436,7 +438,7 @@ ccflags="$@"
 		$2 ~ /^GENL_/ ||
 		$2 ~ /^STATX_/ ||
 		$2 ~ /^UTIME_/ ||
-		$2 ~ /^XATTR_(CREATE|REPLACE)/ ||
+		$2 ~ /^XATTR_(CREATE|REPLACE|NO(DEFAULT|FOLLOW|SECURITY)|SHOWCOMPRESSION)/ ||
 		$2 ~ /^ATTR_(BIT_MAP_COUNT|(CMN|VOL|FILE)_)/ ||
 		$2 ~ /^FSOPT_/ ||
 		$2 ~ /^WDIOC_/ ||

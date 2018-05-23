@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "6a05435f698360e30b571e2a3058add88adc3d60"
+  revision = "72ebd4773f7406f7846456d3224fe6f164e53c72"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -43,6 +43,7 @@
   revision = "a3682377147edf596d303faabd89f81977b3f678"
 
 [[projects]]
+  branch = "master"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -64,10 +65,10 @@
     "reporters/stenographer/support/go-isatty",
     "types"
   ]
-  revision = "fa5fabab2a1bfbd924faf4c067d07ae414e2aedf"
-  version = "v1.5.0"
+  revision = "26d21430af911e84459ee38099f0a07e57a7f9b0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -83,8 +84,7 @@
     "matchers/support/goraph/util",
     "types"
   ]
-  revision = "62bff4df71bdbc266561a0caee19f0594b17c240"
-  version = "v1.4.0"
+  revision = "cc102abc031d83b2c8294f7a0532a459abd63b1a"
 
 [[projects]]
   name = "github.com/tidwall/gjson"
@@ -107,13 +107,13 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "8e0cdda24ed423affc8f35c241e5e9b16180338e"
+  revision = "9ef9f5bb98a1fdc41f8cf6c250a4404b4085e389"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "7c87d13f8e835d2fb3a70a2912c811ed0c1d241b"
+  revision = "77b0e4315053a57ed2962443614bdb28db152054"
 
 [[projects]]
   name = "golang.org/x/text"

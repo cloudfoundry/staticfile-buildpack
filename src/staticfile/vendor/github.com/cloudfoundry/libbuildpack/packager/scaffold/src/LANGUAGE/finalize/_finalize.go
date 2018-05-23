@@ -17,6 +17,10 @@ type Stager interface {
 type Manifest interface {
 	//TODO: See more options at https://github.com/cloudfoundry/libbuildpack/blob/master/manifest.go
 	AllDependencyVersions(string) []string
+}
+
+type Installer interface {
+	//TODO: See more options at https://github.com/cloudfoundry/libbuildpack/blob/master/installer.go
 	DefaultVersion(string) (libbuildpack.Dependency, error)
 	InstallDependency(libbuildpack.Dependency, string) error
 	InstallOnlyVersion(string, string) error

@@ -35,6 +35,7 @@ func ModifyBuildpackManifest(path string, cb func(*Manifest)) (string, error) {
 }
 
 type Manifest struct {
+	Stack           string `yaml:"stack"`
 	Language        string `yaml:"language"`
 	DefaultVersions []*struct {
 		Name    string `yaml:"name"`
