@@ -1,7 +1,6 @@
 package cutlass
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -46,7 +45,7 @@ type App struct {
 	Memory       string
 	Disk         string
 	StartCommand string
-	Stdout       *bytes.Buffer
+	Stdout       *Buffer
 	appGUID      string
 	env          map[string]string
 	logCmd       *exec.Cmd
@@ -290,7 +289,7 @@ func (a *App) PushNoStart() error {
 	if a.logCmd == nil {
 		a.logCmd = exec.Command("cf", "logs", a.Name)
 		a.logCmd.Stderr = DefaultStdoutStderr
-		a.Stdout = bytes.NewBuffer(nil)
+		a.Stdout = &Buffer{}
 		a.logCmd.Stdout = a.Stdout
 		if err := a.logCmd.Start(); err != nil {
 			return err

@@ -24,10 +24,10 @@ var _ = Describe("Packager", func() {
 		version      string
 		cacheDir     string
 		stack        string
+		err          error
 	)
 
 	BeforeEach(func() {
-		var err error
 		stack = "cflinuxfs2"
 		buildpackDir = "./fixtures/good"
 		cacheDir, err = ioutil.TempDir("", "packager-cachedir")
@@ -93,11 +93,9 @@ var _ = Describe("Packager", func() {
 
 		Context("manifest.yml was already packaged", func() {
 			Context("setting specific stack", func() {
-
 				BeforeEach(func() { stack = "cflinuxfs2" })
-
 				It("returns an error", func() {
-					_, err := packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
 					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
 				})
 			})
@@ -107,7 +105,7 @@ var _ = Describe("Packager", func() {
 				BeforeEach(func() { stack = "" })
 
 				It("returns an error", func() {
-					_, err := packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
 					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
 				})
 			})
@@ -117,7 +115,7 @@ var _ = Describe("Packager", func() {
 			BeforeEach(func() { stack = "cflinuxfs2" })
 
 			It("allows stack when packaging", func() {
-				_, err := packager.Package("./fixtures/no_dependencies", cacheDir, version, stack, cached)
+				zipFile, err = packager.Package("./fixtures/no_dependencies", cacheDir, version, stack, cached)
 				Expect(err).To(BeNil())
 			})
 		})
@@ -127,7 +125,7 @@ var _ = Describe("Packager", func() {
 				BeforeEach(func() { stack = "nonexistent-stack" })
 
 				It("returns an error", func() {
-					_, err := packager.Package(buildpackDir, cacheDir, version, stack, cached)
+					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
 					Expect(err).To(MatchError("Stack `nonexistent-stack` not found in manifest"))
 				})
 			})
@@ -138,7 +136,7 @@ var _ = Describe("Packager", func() {
 				})
 
 				It("returns an error", func() {
-					_, err := packager.Package(buildpackDir, cacheDir, version, stack, cached)
+					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
 					Expect(err).To(MatchError("No matching default dependency `ruby` for stack `cflinuxfs3`"))
 				})
 			})
@@ -331,7 +329,7 @@ var _ = Describe("Packager", func() {
 				buildpackDir = "./fixtures/bad"
 			})
 			It("includes dependencies", func() {
-				_, err := packager.Package(buildpackDir, cacheDir, version, stack, cached)
+				zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
 				Expect(err).ToNot(BeNil())
 				Expect(err.Error()).To(ContainSubstring("dependency sha256 mismatch: expected sha256 fffffff, actual sha256 b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596"))
 			})
