@@ -8,6 +8,9 @@ import (
 
 type Manifest interface {
 	DefaultVersion(string) (libbuildpack.Dependency, error)
+}
+
+type Installer interface {
 	InstallDependency(libbuildpack.Dependency, string) error
 }
 
@@ -17,9 +20,10 @@ type Stager interface {
 }
 
 type Supplier struct {
-	Stager   Stager
-	Manifest Manifest
-	Log      *libbuildpack.Logger
+	Stager    Stager
+	Manifest  Manifest
+	Installer Installer
+	Log       *libbuildpack.Logger
 }
 
 func Run(ss *Supplier) error {
@@ -40,7 +44,7 @@ func (ss *Supplier) InstallNginx() error {
 	}
 	ss.Log.Info("Using nginx version %s", nginx.Version)
 
-	if err := ss.Manifest.InstallDependency(nginx, ss.Stager.DepDir()); err != nil {
+	if err := ss.Installer.InstallDependency(nginx, ss.Stager.DepDir()); err != nil {
 		return err
 	}
 

@@ -19,15 +19,16 @@ import (
 
 var _ = Describe("Supply", func() {
 	var (
-		err          error
-		depsDir      string
-		depsIdx      string
-		depDir       string
-		supplier     *supply.Supplier
-		logger       *libbuildpack.Logger
-		mockCtrl     *gomock.Controller
-		mockManifest *MockManifest
-		buffer       *bytes.Buffer
+		err           error
+		depsDir       string
+		depsIdx       string
+		depDir        string
+		supplier      *supply.Supplier
+		logger        *libbuildpack.Logger
+		mockCtrl      *gomock.Controller
+		mockManifest  *MockManifest
+		mockInstaller *MockInstaller
+		buffer        *bytes.Buffer
 	)
 
 	BeforeEach(func() {
@@ -45,6 +46,7 @@ var _ = Describe("Supply", func() {
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockManifest = NewMockManifest(mockCtrl)
+		mockInstaller = NewMockInstaller(mockCtrl)
 	})
 
 	JustBeforeEach(func() {
@@ -52,9 +54,10 @@ var _ = Describe("Supply", func() {
 		bps := libbuildpack.NewStager(args, logger, &libbuildpack.Manifest{})
 
 		supplier = &supply.Supplier{
-			Stager:   bps,
-			Manifest: mockManifest,
-			Log:      logger,
+			Stager:    bps,
+			Manifest:  mockManifest,
+			Installer: mockInstaller,
+			Log:       logger,
 		}
 	})
 
@@ -70,7 +73,7 @@ var _ = Describe("Supply", func() {
 			dep := libbuildpack.Dependency{Name: "nginx", Version: "99.99"}
 
 			mockManifest.EXPECT().DefaultVersion("nginx").Return(dep, nil)
-			mockManifest.EXPECT().InstallDependency(dep, depDir)
+			mockInstaller.EXPECT().InstallDependency(dep, depDir)
 		})
 
 		It("Installs nginx to the depDir, creating a symlink in <depDir>/bin", func() {

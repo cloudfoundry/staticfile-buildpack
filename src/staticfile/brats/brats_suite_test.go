@@ -23,7 +23,7 @@ func init() {
 
 var _ = SynchronizedBeforeSuite(func() []byte {
 	// Run once
-	return bratshelper.InitBpData("cflinuxfs2").Marshal()
+	return bratshelper.InitBpData(os.Getenv("CF_STACK")).Marshal()
 }, func(data []byte) {
 	// Run on all nodes
 	bratshelper.Data.Unmarshal(data)
