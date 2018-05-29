@@ -111,7 +111,7 @@ var _ = Describe("deploy a staticfile app", func() {
 		buildBpFile := func() {
 			var err error
 			localVersion := fmt.Sprintf("%s.%s", buildpackVersion, time.Now().Format("20060102150405"))
-			bpFile, err = packager.Package(bpDir, packager.CacheDir, localVersion, cutlass.Cached)
+			bpFile, err = packager.Package(bpDir, packager.CacheDir, localVersion, os.Getenv("CF_STACK"), cutlass.Cached)
 			Expect(err).To(BeNil())
 		}
 		AfterEach(func() { os.Remove(bpFile) })
