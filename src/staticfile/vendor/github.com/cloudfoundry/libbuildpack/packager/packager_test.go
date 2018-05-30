@@ -336,7 +336,11 @@ var _ = Describe("Packager", func() {
 		})
 
 		Context("packaging with no stack", func() {
-			BeforeEach(func() { stack = "" })
+			BeforeEach(func() {
+				cached = false
+				stack = ""
+			})
+
 			JustBeforeEach(func() {
 				var err error
 				zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
