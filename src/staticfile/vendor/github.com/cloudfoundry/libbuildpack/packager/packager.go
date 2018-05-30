@@ -204,12 +204,18 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 		return "", err
 	}
 
-	zipFile := fmt.Sprintf("%s_buildpack-v%s.zip", manifest.Language, version)
-	if cached {
-		zipFile = fmt.Sprintf("%s_buildpack-cached-v%s.zip", manifest.Language, version)
+	stackPart := ""
+	if stack != "" {
+		stackPart = "-" + stack
 	}
-	zipFile = filepath.Join(bpDir, zipFile)
 
+	cachedPart := ""
+	if cached  {
+		cachedPart = "-cached"
+	}
+
+	fileName := fmt.Sprintf("%s_buildpack%s%s-v%s.zip", manifest.Language, cachedPart, stackPart, version)
+	zipFile := filepath.Join(bpDir, fileName)
 	ZipFiles(zipFile, files)
 
 	return zipFile, err

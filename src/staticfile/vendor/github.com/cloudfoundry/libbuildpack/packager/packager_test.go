@@ -155,7 +155,7 @@ var _ = Describe("Packager", func() {
 			It("generates a zipfile with name", func() {
 				dir, err := filepath.Abs(buildpackDir)
 				Expect(err).To(BeNil())
-				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-v%s.zip", version))))
+				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-cflinuxfs2-v%s.zip", version))))
 			})
 
 			It("includes files listed in manifest.yml", func() {
@@ -203,7 +203,7 @@ var _ = Describe("Packager", func() {
 			It("generates a zipfile with name", func() {
 				dir, err := filepath.Abs(buildpackDir)
 				Expect(err).To(BeNil())
-				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-cached-v%s.zip", version))))
+				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-cached-cflinuxfs2-v%s.zip", version))))
 			})
 
 			It("includes files listed in manifest.yml", func() {
@@ -302,7 +302,7 @@ var _ = Describe("Packager", func() {
 				}
 				dir, err := filepath.Abs(buildpackDir)
 				Expect(err).To(BeNil())
-				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack%s-v%s.zip", cachedStr, version))))
+				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack%s-cflinuxfs2-v%s.zip", cachedStr, version))))
 			})
 
 			It("includes files listed in manifest.yml", func() {
@@ -332,6 +332,21 @@ var _ = Describe("Packager", func() {
 				zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
 				Expect(err).ToNot(BeNil())
 				Expect(err.Error()).To(ContainSubstring("dependency sha256 mismatch: expected sha256 fffffff, actual sha256 b11329c3fd6dbe9dddcb8dd90f18a4bf441858a6b5bfaccae5f91e5c7d2b3596"))
+			})
+		})
+
+		Context("packaging with no stack", func() {
+			BeforeEach(func() { stack = "" })
+			JustBeforeEach(func() {
+				var err error
+				zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
+				Expect(err).To(BeNil())
+			})
+
+			It("generates a zipfile with name", func() {
+				dir, err := filepath.Abs(buildpackDir)
+				Expect(err).To(BeNil())
+				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-v%s.zip", version))))
 			})
 		})
 	})
