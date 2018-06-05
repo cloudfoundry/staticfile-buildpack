@@ -1,3 +1,11 @@
+v1.4.28 Jun 05, 2018
+=====================
+* Support packaging with associated stacks
+  (https://www.pivotaltracker.com/story/show/153256959)
+
+* Add nginx 1.15.0, remove nginx 1.13.12
+  (https://www.pivotaltracker.com/story/show/158114558)
+
 v1.4.27 Apr 16, 2018
 =====================
 
