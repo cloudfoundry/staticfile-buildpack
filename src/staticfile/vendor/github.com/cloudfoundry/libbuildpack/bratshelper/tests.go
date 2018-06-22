@@ -72,8 +72,9 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 			if count, err := cutlass.CountBuildpack(bpName); err != nil && count > 0 {
 				Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
 			}
-			Expect(cutlass.CountBuildpack(bpName)).To(BeZero())
-
+			count, err := cutlass.CountBuildpack(bpName)
+			Expect(err).To(BeNil())
+			Expect(count).To(BeZero())
 		})
 
 		It("prints useful warning message to stdout", func() {
