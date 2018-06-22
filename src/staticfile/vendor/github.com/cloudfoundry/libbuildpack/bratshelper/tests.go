@@ -66,7 +66,13 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 		})
 		AfterEach(func() {
 			defaultCleanup(app)
+			// With stacks, creating the buildpack twice will result in a second record, one with `nil` stack.
+			// We need to clean up both.
+			Expect(cutlass.CountBuildpack(bpName)).To(Equal(2))
 			Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
+			Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
+			Expect(cutlass.CountBuildpack(bpName)).To(BeZero())
+
 		})
 
 		It("prints useful warning message to stdout", func() {
