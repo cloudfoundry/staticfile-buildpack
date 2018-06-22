@@ -72,9 +72,11 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 			if count, err := cutlass.CountBuildpack(bpName); err == nil && count > 0 {
 				Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
 			}
+			// LTS errors when running `cf buildpacks`. Ignore that output.
 			count, err := cutlass.CountBuildpack(bpName)
-			Expect(err).To(BeNil())
-			Expect(count).To(BeZero())
+			if err == nil {
+				Expect(count).To(BeZero())
+			}
 		})
 
 		It("prints useful warning message to stdout", func() {
