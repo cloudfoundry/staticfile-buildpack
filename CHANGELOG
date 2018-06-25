@@ -1,3 +1,10 @@
+v1.4.29 Jun 25, 2018
+=====================
+
+* Merge pull request #147 from christopherclark/master
+  Update LICENSE
+  (https://www.pivotaltracker.com/story/show/158441699)
+
 v1.4.28 Jun 05, 2018
 =====================
 * Support packaging with associated stacks
