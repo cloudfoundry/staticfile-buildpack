@@ -23,7 +23,7 @@
     "cutlass",
     "packager"
   ]
-  revision = "e118861edfe5558db89cc012af26d315bc86279d"
+  revision = "369e76382c8dbaa89a2f90fa22f1abac0b34a25a"
 
 [[projects]]
   name = "github.com/elazarl/goproxy"
@@ -107,13 +107,13 @@
     "html/atom",
     "html/charset"
   ]
-  revision = "afe8f62b1d6bbd81f31868121a50b06d8188e1f9"
+  revision = "d1d521f6884855bc0e59c3d011574bd0678f18bc"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "63fc586f45fe72d95d5240a5d5eb95e6503907d3"
+  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
   name = "golang.org/x/text"

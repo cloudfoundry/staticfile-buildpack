@@ -20,7 +20,7 @@ import (
 var _ = Describe("Installer", func() {
 	var (
 		oldCfStack  string
-		installer    *libbuildpack.Installer
+		installer   *libbuildpack.Installer
 		manifestDir string
 		err         error
 		currentTime time.Time
