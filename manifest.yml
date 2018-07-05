@@ -2,7 +2,7 @@
 language: staticfile
 default_versions:
 - name: nginx
-  version: 1.15.1
+  version: 1.15.x
 dependencies:
 - name: nginx
   version: 1.15.1
