@@ -2,48 +2,60 @@
 
 
 [[projects]]
+  digest = "1:b856d8248663c39265a764561c1a1a149783f6cc815feb54a1f3a591b91f6eca"
   name = "github.com/Masterminds/semver"
   packages = ["."]
+  pruneopts = ""
   revision = "c7af12943936e8c39859482e61f0574c2fd7fc75"
   version = "v1.4.2"
 
 [[projects]]
+  digest = "1:686d2b178b394e8470a378ec7991fcb4a78ea29518dd1a4cf65d132a8c287b73"
   name = "github.com/blang/semver"
   packages = ["."]
+  pruneopts = ""
   revision = "2ee87856327ba09384cabd113bc6b5d174e9ec0f"
   version = "v3.5.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:99cf84259140ed33bd9b7914d276a461cf2e279298319cc35b93508d68a29b01"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
     "ansicleaner",
     "bratshelper",
     "cutlass",
-    "packager"
+    "packager",
   ]
-  revision = "369e76382c8dbaa89a2f90fa22f1abac0b34a25a"
+  pruneopts = ""
+  revision = "d8c9d7d56dd1aaa02a526d49a25d5f3f606768a7"
 
 [[projects]]
+  digest = "1:bcb408d07b887ca45c733664904934a833e7e3aa101d654d8f0274858335540e"
   name = "github.com/elazarl/goproxy"
   packages = ["."]
+  pruneopts = ""
   revision = "aacba83f36a55ac31cbb71c06547a328c0cd1604"
 
 [[projects]]
   branch = "master"
+  digest = "1:dac13a406f57e8bc34b845937fa131c50a70913fb341de85133764d7db21aad2"
   name = "github.com/golang/mock"
   packages = ["gomock"]
+  pruneopts = ""
   revision = "22bbf0ddf08105dfa364d0a2fa619dfa71014af5"
 
 [[projects]]
   branch = "master"
+  digest = "1:b264547c40314ec7619d2cf264e2621953843be7242c140efe1e3119f93877f4"
   name = "github.com/google/subcommands"
   packages = ["."]
+  pruneopts = ""
   revision = "5bae204cdfb2d92dcc333d56014bae6a2f6c58b1"
 
 [[projects]]
-  branch = "master"
+  digest = "1:f16e7314ccb018314c5b7137c5df380d7b24cf5d2fa2b03a7631dd374edb132c"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -63,12 +75,14 @@
     "reporters/stenographer",
     "reporters/stenographer/support/go-colorable",
     "reporters/stenographer/support/go-isatty",
-    "types"
+    "types",
   ]
-  revision = "000d317071340972710dc1da9ae3c2c016a7a560"
+  pruneopts = ""
+  revision = "v1.5.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:225d55082fae2a1022489e31192e18dd67c597ebf5ddcbe7f772e53b3ed4fda2"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -82,40 +96,50 @@
     "matchers/support/goraph/edge",
     "matchers/support/goraph/node",
     "matchers/support/goraph/util",
-    "types"
+    "types",
   ]
+  pruneopts = ""
   revision = "9be84105672ba4433a3b61f1b4d7f9ff8b022293"
 
 [[projects]]
+  digest = "1:e139a0dfe24e723193005b291ed82a975041718cfcab9136aa6c9540df70a4ff"
   name = "github.com/tidwall/gjson"
   packages = ["."]
+  pruneopts = ""
   revision = "f123b340873a0084cb27267eddd8ff615115fbff"
   version = "v1.1.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:4db4f92bb9cb04cfc4fccb36aba2598b02a988008c4cc0692b241214ad8ac96e"
   name = "github.com/tidwall/match"
   packages = ["."]
+  pruneopts = ""
   revision = "1731857f09b1f38450e2c12409748407822dc6be"
 
 [[projects]]
   branch = "master"
+  digest = "1:50a6b805181a9b3bf2c879fcad6e6ff4cc643fc2287c321c1fbfc751755ea7eb"
   name = "golang.org/x/net"
   packages = [
     "context",
     "html",
     "html/atom",
-    "html/charset"
+    "html/charset",
   ]
-  revision = "d1d521f6884855bc0e59c3d011574bd0678f18bc"
+  pruneopts = ""
+  revision = "d0887baf81f4598189d4e12a37c6da86f0bba4d0"
 
 [[projects]]
   branch = "master"
+  digest = "1:a8944db88149e7ecbea4b760c625b9ccf455fceae21387bc8890c3589d28b623"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
+  pruneopts = ""
+  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
 
 [[projects]]
+  digest = "1:af9bfca4298ef7502c52b1459df274eed401a4f5498b900e9a92d28d3d87ac5a"
   name = "golang.org/x/text"
   packages = [
     "encoding",
@@ -134,26 +158,43 @@
     "language",
     "runes",
     "transform",
-    "unicode/cldr"
+    "unicode/cldr",
   ]
+  pruneopts = ""
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [[projects]]
   branch = "v1"
+  digest = "1:5688a0fdf1d1f29849abc3eff83f9bbe7e0825895d33a52c68c413c5ee1f7a7d"
   name = "gopkg.in/jarcoal/httpmock.v1"
   packages = ["."]
+  pruneopts = ""
   revision = "16f9a43967d613f0adc2000f0094a17b9f6c4c20"
 
 [[projects]]
+  digest = "1:f0620375dd1f6251d9973b5f2596228cc8042e887cd7f827e4220bc1ce8c30e2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = ""
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2c93c90a41a7c19414d41c1dc92c2d56501f9394250161f3acd835b3ed6632f0"
+  input-imports = [
+    "github.com/blang/semver",
+    "github.com/cloudfoundry/libbuildpack",
+    "github.com/cloudfoundry/libbuildpack/ansicleaner",
+    "github.com/cloudfoundry/libbuildpack/bratshelper",
+    "github.com/cloudfoundry/libbuildpack/cutlass",
+    "github.com/cloudfoundry/libbuildpack/packager",
+    "github.com/golang/mock/gomock",
+    "github.com/google/subcommands",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/gomega",
+    "gopkg.in/jarcoal/httpmock.v1",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

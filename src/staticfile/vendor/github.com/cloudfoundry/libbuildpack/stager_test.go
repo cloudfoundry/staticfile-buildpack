@@ -438,7 +438,7 @@ var _ = Describe("Stager", func() {
 			var envVars = map[string]string{}
 
 			BeforeEach(func() {
-				vars := []string{"PATH", "LD_LIBRARY_PATH", "LIBRARY_PATH", "INCLUDE_PATH", "CPATH", "CPPPATH", "PKG_CONFIG_PATH", "ENV_VAR"}
+				vars := []string{"PATH", "LD_LIBRARY_PATH", "LIBRARY_PATH", "CPATH", "PKG_CONFIG_PATH", "ENV_VAR"}
 
 				for _, envVar := range vars {
 					envVars[envVar] = os.Getenv(envVar)
@@ -477,28 +477,12 @@ var _ = Describe("Stager", func() {
 				Expect(newPath).To(Equal(fmt.Sprintf("%s/02/lib:%s/01/lib:existing_LIBRARY_PATH", depsDir, depsDir)))
 			})
 
-			It("sets INCLUDE_PATH based on the supplied deps", func() {
-				err = s.SetStagingEnvironment()
-				Expect(err).To(BeNil())
-
-				newPath := os.Getenv("INCLUDE_PATH")
-				Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include:existing_INCLUDE_PATH", depsDir)))
-			})
-
 			It("sets CPATH based on the supplied deps", func() {
 				err = s.SetStagingEnvironment()
 				Expect(err).To(BeNil())
 
 				newPath := os.Getenv("CPATH")
 				Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include:existing_CPATH", depsDir)))
-			})
-
-			It("sets CPPPATH based on the supplied deps", func() {
-				err = s.SetStagingEnvironment()
-				Expect(err).To(BeNil())
-
-				newPath := os.Getenv("CPPPATH")
-				Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include:existing_CPPPATH", depsDir)))
 			})
 
 			It("sets PKG_CONFIG_PATH based on the supplied deps", func() {
@@ -523,6 +507,7 @@ var _ = Describe("Stager", func() {
 						os.Setenv(key, "")
 					}
 				})
+
 				It("sets PATH based on the supplied deps", func() {
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
@@ -547,27 +532,11 @@ var _ = Describe("Stager", func() {
 					Expect(newPath).To(Equal(fmt.Sprintf("%s/02/lib:%s/01/lib", depsDir, depsDir)))
 				})
 
-				It("sets INCLUDE_PATH based on the supplied deps", func() {
-					err = s.SetStagingEnvironment()
-					Expect(err).To(BeNil())
-
-					newPath := os.Getenv("INCLUDE_PATH")
-					Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include", depsDir)))
-				})
-
 				It("sets CPATH based on the supplied deps", func() {
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
 
 					newPath := os.Getenv("CPATH")
-					Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include", depsDir)))
-				})
-
-				It("sets CPPPATH based on the supplied deps", func() {
-					err = s.SetStagingEnvironment()
-					Expect(err).To(BeNil())
-
-					newPath := os.Getenv("CPPPATH")
 					Expect(newPath).To(Equal(fmt.Sprintf("%s/03/include", depsDir)))
 				})
 
