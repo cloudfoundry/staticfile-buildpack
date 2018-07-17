@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:99cf84259140ed33bd9b7914d276a461cf2e279298319cc35b93508d68a29b01"
+  digest = "1:49073bd2f7d63b10ff9946d9124477645934a2cb7bc9b7798c86727c4633daac"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,7 +29,7 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "d8c9d7d56dd1aaa02a526d49a25d5f3f606768a7"
+  revision = "9841fe5be773d77f39b3495a05ce747764de2a1c"
 
 [[projects]]
   digest = "1:bcb408d07b887ca45c733664904934a833e7e3aa101d654d8f0274858335540e"
@@ -82,7 +82,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:225d55082fae2a1022489e31192e18dd67c597ebf5ddcbe7f772e53b3ed4fda2"
+  digest = "1:4fdaf58dd71c7ae53c695becac1653269f6899602a9e02f53d33b7bca4cf31c8"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -99,7 +99,7 @@
     "types",
   ]
   pruneopts = ""
-  revision = "9be84105672ba4433a3b61f1b4d7f9ff8b022293"
+  revision = "b6ea1ea48f981d0f615a154a45eabb9dd466556d"
 
 [[projects]]
   digest = "1:e139a0dfe24e723193005b291ed82a975041718cfcab9136aa6c9540df70a4ff"
