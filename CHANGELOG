@@ -1,3 +1,12 @@
+v1.4.30 Jul 20, 2018
+=====================
+
+* Default nginx version changed to 1.15.x.
+  (https://www.pivotaltracker.com/story/show/158800160)
+
+* Add nginx 1.15.1, remove nginx 1.15.0
+  (https://www.pivotaltracker.com/story/show/158800160)
+
 v1.4.29 Jun 25, 2018
 =====================
 
