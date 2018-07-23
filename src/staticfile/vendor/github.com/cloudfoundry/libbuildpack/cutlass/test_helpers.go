@@ -55,12 +55,12 @@ func PackageUniquelyVersionedBuildpackExtra(name, version, stack string, cached 
 		}
 	} else {
 		file, err = packager.Package(bpDir, packager.CacheDir, version, stack, cached)
-	if err != nil {
-		return VersionedBuildpackPackage{}, err
-	}
+		if err != nil {
+			return VersionedBuildpackPackage{}, err
+		}
 	}
 
-	err = CreateOrUpdateBuildpack(name, file)
+	err = CreateOrUpdateBuildpack(name, file, stack)
 	if err != nil {
 		return VersionedBuildpackPackage{}, err
 	}

@@ -55,7 +55,7 @@ func New(fixture string) *App {
 	return &App{
 		Name:         filepath.Base(fixture) + "-" + RandStringRunes(20),
 		Path:         fixture,
-		Stack:        "",
+		Stack:        os.Getenv("CF_STACK"),
 		Buildpacks:   []string{},
 		Memory:       DefaultMemory,
 		Disk:         DefaultDisk,
@@ -125,8 +125,8 @@ func DeleteBuildpack(language string) error {
 	return nil
 }
 
-func UpdateBuildpack(language, file string) error {
-	command := exec.Command("cf", "update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file, "--enable")
+func UpdateBuildpack(language, file, stack string) error {
+	command := exec.Command("cf", "update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file, "--enable", "-s", stack)
 	if data, err := command.CombinedOutput(); err != nil {
 		fmt.Println(string(data))
 		return err
@@ -159,9 +159,9 @@ func CountBuildpack(language string) (int, error) {
 	return matches, nil
 }
 
-func CreateOrUpdateBuildpack(language, file string) error {
+func CreateOrUpdateBuildpack(language, file, stack string) error {
 	createBuildpack(language, file)
-	return UpdateBuildpack(language, file)
+	return UpdateBuildpack(language, file, stack)
 }
 
 func (a *App) ConfirmBuildpack(version string) error {

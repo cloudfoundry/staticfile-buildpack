@@ -30,13 +30,13 @@ func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 		var app *cutlass.App
 		BeforeEach(func() {
 			bpName = GenBpName("unbuilt")
+			app = copyBrats("")
+			app.Buildpacks = []string{bpName + "_buildpack"}
 			cmd := exec.Command("git", "archive", "-o", filepath.Join("/tmp", bpName+".zip"), "HEAD")
 			cmd.Dir = Data.BpDir
 			Expect(cmd.Run()).To(Succeed())
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, filepath.Join("/tmp", bpName+".zip"))).To(Succeed())
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, filepath.Join("/tmp", bpName+".zip"), "")).To(Succeed())
 			Expect(os.Remove(filepath.Join("/tmp", bpName+".zip"))).To(Succeed())
-			app = copyBrats("")
-			app.Buildpacks = []string{bpName + "_buildpack"}
 		})
 		AfterEach(func() {
 			defaultCleanup(app)
@@ -57,12 +57,13 @@ func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 
 func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string) *cutlass.App) {
 	Describe("deploying an app with an updated version of the same buildpack", func() {
-		var bpName string
+		var bpName, stack string
 		var app *cutlass.App
 		BeforeEach(func() {
 			bpName = GenBpName("changing")
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
+			stack = app.Stack
 		})
 		AfterEach(func() {
 			defaultCleanup(app)
@@ -80,7 +81,7 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 		})
 
 		It("prints useful warning message to stdout", func() {
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, Data.UncachedFile)).To(Succeed())
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, Data.UncachedFile, stack)).To(Succeed())
 			PushApp(app)
 			Expect(app.Stdout.String()).ToNot(ContainSubstring("buildpack version changed from"))
 
@@ -92,7 +93,7 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 			})
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, newFile)).To(Succeed())
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, newFile, stack)).To(Succeed())
 			PushApp(app)
 			Expect(app.Stdout.String()).To(MatchRegexp(`buildpack version changed from (\S+) to NewVersion`))
 		})
@@ -118,11 +119,12 @@ func StagingWithBuildpackThatSetsEOL(depName string, copyBrats func(string) *cut
 			})
 			Expect(err).ToNot(HaveOccurred())
 			bpName = GenBpName("eol")
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file)).To(Succeed())
-			os.Remove(file)
-
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
+
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, app.Stack)).To(Succeed())
+			os.Remove(file)
+
 			PushApp(app)
 		})
 		AfterEach(func() {
@@ -194,11 +196,12 @@ func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, c
 			})
 			Expect(err).ToNot(HaveOccurred())
 			bpName = GenBpName("eol")
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file)).To(Succeed())
-			os.Remove(file)
 
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
+
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, app.Stack)).To(Succeed())
+			os.Remove(file)
 			PushApp(app)
 		})
 		AfterEach(func() {
