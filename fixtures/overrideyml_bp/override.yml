@@ -10,3 +10,4 @@ staticfile:
     sha256: 062d906c87839d03b243e2821e10653c89b4c92878bfe2bf995dec231e117bfc
     cf_stacks:
     - cflinuxfs2
+    - cflinuxfs3

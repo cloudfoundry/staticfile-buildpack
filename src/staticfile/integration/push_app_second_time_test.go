@@ -27,8 +27,9 @@ var _ = Describe("pushing an app a second time", func() {
 		app.Buildpacks = []string{"staticfile_buildpack"}
 	})
 
-	DownloadRegexp := `Download \[.*/nginx\-[\d\.]+\-linux-x64-[0-9a-f]+\.tgz\]`
-	CopyRegexp := `Copy \[.*/nginx\-[\d\.]+\-linux-x64-[0-9a-f]+\.tgz\]`
+	Regexp := `\[.*/nginx\-[\d\.]+\-linux\-x64\-(cflinuxfs.*-)?[\da-f]+\.tgz\]`
+	DownloadRegexp := "Download " + Regexp
+	CopyRegexp := "Copy " + Regexp
 
 	It("uses the cache for manifest dependencies", func() {
 		PushAppAndConfirm(app)
