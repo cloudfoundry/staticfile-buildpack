@@ -23,7 +23,7 @@ func init() {
 
 var _ = SynchronizedBeforeSuite(func() []byte {
 	// Run once
-	return bratshelper.InitBpData(os.Getenv("CF_STACK")).Marshal()
+	return bratshelper.InitBpData(os.Getenv("CF_STACK"), ApiHasStackAssociation()).Marshal()
 }, func(data []byte) {
 	// Run on all nodes
 	bratshelper.Data.Unmarshal(data)
@@ -57,4 +57,10 @@ func CopyBrats(_ string) *cutlass.App {
 func PushApp(app *cutlass.App) {
 	Expect(app.Push()).To(Succeed())
 	Eventually(app.InstanceStates, 20*time.Second).Should(Equal([]string{"RUNNING"}))
+}
+
+func ApiHasStackAssociation() bool {
+	supported, err := cutlass.ApiGreaterThan("2.113.0")
+	Expect(err).NotTo(HaveOccurred())
+	return supported
 }

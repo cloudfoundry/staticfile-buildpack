@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/blang/semver"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"os"
 	"testing"
 )
 
@@ -32,7 +31,7 @@ func init() {
 var _ = SynchronizedBeforeSuite(func() []byte {
 	// Run once
 	if buildpackVersion == "" {
-		packagedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpack(os.Getenv("CF_STACK"))
+		packagedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpack(os.Getenv("CF_STACK"), ApiHasStackAssociation())
 		Expect(err).NotTo(HaveOccurred())
 
 		data, err := json.Marshal(packagedBuildpack)
@@ -78,20 +77,20 @@ func PushAppAndConfirm(app *cutlass.App) {
 	Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
 }
 
-func ApiGreaterThan(version string) bool {
-	apiVersionString, err := cutlass.ApiVersion()
-	Expect(err).To(BeNil())
-	apiVersion, err := semver.Make(apiVersionString)
-	Expect(err).To(BeNil())
-	reqVersion, err := semver.ParseRange(">= " + version)
-	Expect(err).To(BeNil())
-	return reqVersion(apiVersion)
-}
-
 func ApiHasTask() bool {
-	return ApiGreaterThan("2.75.0")
+	supported, err := cutlass.ApiGreaterThan("2.75.0")
+	Expect(err).NotTo(HaveOccurred())
+	return supported
 }
 
 func ApiHasMultiBuildpack() bool {
-	return ApiGreaterThan("2.90.0")
+	supported, err := cutlass.ApiGreaterThan("2.90.0")
+	Expect(err).NotTo(HaveOccurred())
+	return supported
+}
+
+func ApiHasStackAssociation() bool {
+	supported, err := cutlass.ApiGreaterThan("2.113.0")
+	Expect(err).NotTo(HaveOccurred())
+	return supported
 }
