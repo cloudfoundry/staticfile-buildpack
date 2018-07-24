@@ -26,8 +26,10 @@ func defaultCleanup(app *cutlass.App) {
 
 func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 	Context("Unbuilt buildpack (eg github)", func() {
-		var bpName string
-		var app *cutlass.App
+		var (
+			bpName string
+			app    *cutlass.App
+		)
 		BeforeEach(func() {
 			bpName = GenBpName("unbuilt")
 			app = copyBrats("")
@@ -57,13 +59,21 @@ func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 
 func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string) *cutlass.App) {
 	Describe("deploying an app with an updated version of the same buildpack", func() {
-		var bpName, stack string
-		var app *cutlass.App
+		var (
+			bpName, stack string
+			app           *cutlass.App
+		)
 		BeforeEach(func() {
 			bpName = GenBpName("changing")
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
-			stack = app.Stack
+			stackAssociationSupported, err := cutlass.ApiGreaterThan("2.113.0")
+			Expect(err).ToNot(HaveOccurred())
+			if stackAssociationSupported {
+				stack = app.Stack
+			} else {
+				stack = ""
+			}
 		})
 		AfterEach(func() {
 			defaultCleanup(app)
@@ -103,10 +113,8 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 func StagingWithBuildpackThatSetsEOL(depName string, copyBrats func(string) *cutlass.App) {
 	Describe("staging with "+depName+" buildpack that sets EOL on dependency", func() {
 		var (
-			eolDate       string
-			buildpackFile string
-			bpName        string
-			app           *cutlass.App
+			eolDate, buildpackFile, bpName, stack string
+			app                                   *cutlass.App
 		)
 		JustBeforeEach(func() {
 			eolDate = time.Now().AddDate(0, 0, 10).Format("2006-01-02")
@@ -121,8 +129,15 @@ func StagingWithBuildpackThatSetsEOL(depName string, copyBrats func(string) *cut
 			bpName = GenBpName("eol")
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
+			stackAssociationSupported, err := cutlass.ApiGreaterThan("2.113.0")
+			Expect(err).ToNot(HaveOccurred())
+			if stackAssociationSupported {
+				stack = app.Stack
+			} else {
+				stack = ""
+			}
 
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, app.Stack)).To(Succeed())
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, stack)).To(Succeed())
 			os.Remove(file)
 
 			PushApp(app)
@@ -181,9 +196,8 @@ func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *c
 func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, copyBrats func(string) *cutlass.App) {
 	Describe("staging with custom buildpack that uses credentials in manifest dependency uris", func() {
 		var (
-			buildpackFile string
-			bpName        string
-			app           *cutlass.App
+			buildpackFile, bpName, stack string
+			app                          *cutlass.App
 		)
 		JustBeforeEach(func() {
 			file, err := ModifyBuildpackManifest(buildpackFile, func(m *Manifest) {
@@ -200,7 +214,15 @@ func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, c
 			app = copyBrats("")
 			app.Buildpacks = []string{bpName + "_buildpack"}
 
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, app.Stack)).To(Succeed())
+			stackAssociationSupported, err := cutlass.ApiGreaterThan("2.113.0")
+			Expect(err).ToNot(HaveOccurred())
+			if stackAssociationSupported {
+				stack = app.Stack
+			} else {
+				stack = ""
+			}
+
+			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, stack)).To(Succeed())
 			os.Remove(file)
 			PushApp(app)
 		})

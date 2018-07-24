@@ -25,7 +25,7 @@ type BpData struct {
 
 var Data BpData
 
-func InitBpData(stack string) *BpData {
+func InitBpData(stack string, stackAssociationSupported bool) *BpData {
 	cutlass.SeedRandom()
 
 	Data.BpVersion = cutlass.RandStringRunes(6)
@@ -51,7 +51,7 @@ func InitBpData(stack string) *BpData {
 	go func() {
 		defer wg.Done()
 		fmt.Fprintln(os.Stderr, "Start build cached buildpack")
-		cachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Cached, Data.BpVersion, stack, true)
+		cachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Cached, Data.BpVersion, stack, true, stackAssociationSupported)
 		Expect(err).NotTo(HaveOccurred())
 		Data.CachedFile = cachedBuildpack.File
 		fmt.Fprintln(os.Stderr, "Finish cached buildpack")
@@ -59,7 +59,7 @@ func InitBpData(stack string) *BpData {
 	go func() {
 		defer wg.Done()
 		fmt.Fprintln(os.Stderr, "Start build uncached buildpack")
-		uncachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Uncached, Data.BpVersion, stack, false)
+		uncachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Uncached, Data.BpVersion, stack, false, stackAssociationSupported)
 		Expect(err).NotTo(HaveOccurred())
 		Data.UncachedFile = uncachedBuildpack.File
 		fmt.Fprintln(os.Stderr, "Finish uncached buildpack")

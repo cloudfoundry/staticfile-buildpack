@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/blang/semver"
 	"github.com/tidwall/gjson"
 )
 
@@ -80,6 +81,22 @@ func ApiVersion() (string, error) {
 		return "", err
 	}
 	return info.ApiVersion, nil
+}
+
+func ApiGreaterThan(version string) (bool, error) {
+	apiVersionString, err := ApiVersion()
+	if err != nil {
+		return false, err
+	}
+	apiVersion, err := semver.Make(apiVersionString)
+	if err != nil {
+		return false, err
+	}
+	reqVersion, err := semver.ParseRange(">= " + version)
+	if err != nil {
+		return false, err
+	}
+	return reqVersion(apiVersion), nil
 }
 
 func Stacks() ([]string, error) {
