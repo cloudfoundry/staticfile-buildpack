@@ -10,7 +10,7 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:686d2b178b394e8470a378ec7991fcb4a78ea29518dd1a4cf65d132a8c287b73"
+  digest = "1:79421244ba5848aae4b0a5c41e633a04e4894cb0b164a219dc8c15ec7facb7f1"
   name = "github.com/blang/semver"
   packages = ["."]
   pruneopts = ""
@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:522070d03ddf618d99dbe8faf9f517563d7e90c4b05b2fc07b80498bab9942cb"
+  digest = "1:b292c1540847139525b2ebcdd548af8a443ad6229cab781a818c254a91d4ddbf"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,10 +29,10 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "8610e488e9b8e4dccb10f3a87a9d5d09341970f4"
+  revision = "f5e78e8a5d0de8263eb2f3007c83c1ea6b2f3fdc"
 
 [[projects]]
-  digest = "1:bcb408d07b887ca45c733664904934a833e7e3aa101d654d8f0274858335540e"
+  digest = "1:7ce300e943482aff885b3318c1c6a609827f43e3ba26a073380d5ba6143a0c48"
   name = "github.com/elazarl/goproxy"
   packages = ["."]
   pruneopts = ""
@@ -40,7 +40,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dac13a406f57e8bc34b845937fa131c50a70913fb341de85133764d7db21aad2"
+  digest = "1:ce56f74a4a68e66a7b40ba284f0628b707a1930afff00b82104c37bed63fb9b5"
   name = "github.com/golang/mock"
   packages = ["gomock"]
   pruneopts = ""
@@ -55,7 +55,7 @@
   revision = "5bae204cdfb2d92dcc333d56014bae6a2f6c58b1"
 
 [[projects]]
-  digest = "1:f16e7314ccb018314c5b7137c5df380d7b24cf5d2fa2b03a7631dd374edb132c"
+  digest = "1:1eece6e2aa8a8f94e0461483229f0c4b0555c17e76e0e7e6b8597c2093d269f8"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -82,7 +82,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4fdaf58dd71c7ae53c695becac1653269f6899602a9e02f53d33b7bca4cf31c8"
+  digest = "1:a2453f1424ddc8c28a93b2bb59f9503f61f4a1a3a4719b007c8d48a2cada631b"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -119,7 +119,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:58d8f8f3ad415b10d2145316519e5b7995b7cf9e663b33a1e9e0c2ddd96c1d58"
+  digest = "1:96d281cfaaa12ac602772da38ac85f00d59b1d3aa7bfe69d8ba334d6ee41e3e6"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -128,18 +128,18 @@
     "html/charset",
   ]
   pruneopts = ""
-  revision = "a680a1efc54dd51c040b3b5ce4939ea3cf2ea0d1"
+  revision = "3673e40ba22529d22c3fd7c93e97b0ce50fa7bdd"
 
 [[projects]]
   branch = "master"
-  digest = "1:a8944db88149e7ecbea4b760c625b9ccf455fceae21387bc8890c3589d28b623"
+  digest = "1:0e1506f3caef942bf9d08a91ebbe8bd87d263e7e440f8e0427b2f85b44eac3f7"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = ""
-  revision = "ac767d655b305d4e9612f5f6e33120b9176c4ad4"
+  revision = "e072cadbbdc8dd3d3ffa82b8b4b9304c261d9311"
 
 [[projects]]
-  digest = "1:af9bfca4298ef7502c52b1459df274eed401a4f5498b900e9a92d28d3d87ac5a"
+  digest = "1:5acd3512b047305d49e8763eef7ba423901e85d5dd2fd1e71778a0ea8de10bd4"
   name = "golang.org/x/text"
   packages = [
     "encoding",

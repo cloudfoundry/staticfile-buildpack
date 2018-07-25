@@ -42,21 +42,21 @@ func FindRoot() (string, error) {
 func PackageUniquelyVersionedBuildpackExtra(name, version, stack string, cached, stackAssociationSupported bool) (VersionedBuildpackPackage, error) {
 	bpDir, err := FindRoot()
 	if err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to find root: %v", err)
 	}
 
 	var file string
 	if compileExtension, err := isCompileExtensionBuildpack(bpDir); err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to decide if this is a compile extension buildpack: %v", err)
 	} else if compileExtension {
-		file, err = packager.CompileExtensionPackage(bpDir, version, cached)
+		file, err = packager.CompileExtensionPackage(bpDir, version, cached, stack)
 		if err != nil {
-			return VersionedBuildpackPackage{}, err
+			return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package as a compile extension buildpack: %v", err)
 		}
 	} else {
 		file, err = packager.Package(bpDir, packager.CacheDir, version, stack, cached)
 		if err != nil {
-			return VersionedBuildpackPackage{}, err
+			return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package buildpack: %v", err)
 		}
 	}
 
@@ -66,7 +66,7 @@ func PackageUniquelyVersionedBuildpackExtra(name, version, stack string, cached,
 
 	err = CreateOrUpdateBuildpack(name, file, stack)
 	if err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to create or update buildpack: %v", err)
 	}
 
 	return VersionedBuildpackPackage{
@@ -89,12 +89,12 @@ func isCompileExtensionBuildpack(bpDir string) (bool, error) {
 func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported bool) (VersionedBuildpackPackage, error) {
 	bpDir, err := FindRoot()
 	if err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to find root: %v", err)
 	}
 
 	data, err := ioutil.ReadFile(filepath.Join(bpDir, "VERSION"))
 	if err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to read VERSION file: %v", err)
 	}
 	buildpackVersion := strings.TrimSpace(string(data))
 	buildpackVersion = fmt.Sprintf("%s.%s", buildpackVersion, time.Now().Format("20060102150405"))
@@ -104,7 +104,7 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 	}
 	err = libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest)
 	if err != nil {
-		return VersionedBuildpackPackage{}, err
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to load manifest.yml file: %v", err)
 	}
 
 	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, stack, Cached, stackAssociationSupported)
