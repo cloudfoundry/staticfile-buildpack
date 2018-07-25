@@ -70,7 +70,7 @@ func CompileExtensionPackage(bpDir, version string, cached bool, stack string) (
 	}
 	zipFile := fmt.Sprintf("%s_buildpack%s-v%s.zip", manifest.Language, stackName, version)
 	if cached {
-		zipFile = fmt.Sprintf("%s_buildpack%s-cached-v%s.zip", manifest.Language, stackName, version)
+		zipFile = fmt.Sprintf("%s_buildpack-cached%s-v%s.zip", manifest.Language, stackName, version)
 	}
 	if err := libbuildpack.CopyFile(filepath.Join(dir, zipFile), filepath.Join(bpDir, zipFile)); err != nil {
 		return "", fmt.Errorf("Failed to copy %s from %s to %s: %v", zipFile, dir, bpDir, err)
