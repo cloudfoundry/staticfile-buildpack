@@ -26,6 +26,7 @@ var _ = Describe("Scaffold", func() {
 
 	BeforeEach(func() {
 		var err error
+		fmt.Print("\n\n **Remember**: If you have changed files in scaffold directory, be sure to run go generate.\n\n")
 		buildpackDir = "./fixtures/good"
 		cacheDir, err = ioutil.TempDir("", "packager-cachedir")
 		Expect(err).To(BeNil())
