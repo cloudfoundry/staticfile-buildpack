@@ -10,7 +10,7 @@ import (
 )
 
 func PushApp(app *cutlass.App) {
-	Expect(app.Push()).To(Succeed())
+	Expect(app.Push()).To(Succeed(), "Failed to push %s", app.Name)
 	Eventually(app.InstanceStates, 20*time.Second).Should(Equal([]string{"RUNNING"}))
 }
 
