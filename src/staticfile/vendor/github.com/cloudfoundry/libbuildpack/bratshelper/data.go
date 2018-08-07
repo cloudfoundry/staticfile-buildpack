@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -50,6 +51,7 @@ func InitBpData(stack string, stackAssociationSupported bool) *BpData {
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
+		defer GinkgoRecover()
 		fmt.Fprintln(os.Stderr, "Start build cached buildpack")
 		cachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Cached, Data.BpVersion, stack, true, stackAssociationSupported)
 		Expect(err).NotTo(HaveOccurred())
@@ -58,6 +60,7 @@ func InitBpData(stack string, stackAssociationSupported bool) *BpData {
 	}()
 	go func() {
 		defer wg.Done()
+		defer GinkgoRecover()
 		fmt.Fprintln(os.Stderr, "Start build uncached buildpack")
 		uncachedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpackExtra(Data.Uncached, Data.BpVersion, stack, false, stackAssociationSupported)
 		Expect(err).NotTo(HaveOccurred())
