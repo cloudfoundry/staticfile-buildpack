@@ -29,6 +29,7 @@ func init() {
 }
 
 var _ = SynchronizedBeforeSuite(func() []byte {
+	defer GinkgoRecover()
 	// Run once
 	if buildpackVersion == "" {
 		packagedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpack(os.Getenv("CF_STACK"), ApiHasStackAssociation())
@@ -41,6 +42,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 
 	return []byte{}
 }, func(data []byte) {
+	defer GinkgoRecover()
 	// Run on all nodes
 	var err error
 	if len(data) > 0 {
@@ -61,6 +63,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 var _ = SynchronizedAfterSuite(func() {
 	// Run on all nodes
 }, func() {
+	defer GinkgoRecover()
 	// Run once
 	Expect(cutlass.RemovePackagedBuildpack(packagedBuildpack)).To(Succeed())
 	Expect(cutlass.DeleteOrphanedRoutes()).To(Succeed())
