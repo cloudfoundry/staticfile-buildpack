@@ -479,7 +479,8 @@ func TestBasic4(t *testing.T) {
 	}
 	token = get(basicJSON, "arr.#")
 	if token.String() != "6" {
-		t.Fatal("expecting '6'", "got", token.String())
+		fmt.Printf("%#v\n", token)
+		t.Fatal("expecting 6", "got", token.String())
 	}
 	token = get(basicJSON, "arr.3.hello")
 	if token.String() != "world" {
@@ -1351,6 +1352,78 @@ null
 	})
 	if i != 4 {
 		t.Fatalf("expected '%v', got '%v'", 4, i)
+	}
+
+}
+
+func TestNumUint64String(t *testing.T) {
+	i := 9007199254740993 //2^53 + 1
+	j := fmt.Sprintf(`{"data":  [  %d, "hello" ] }`, i)
+	res := Get(j, "data.0")
+	if res.String() != "9007199254740993" {
+		t.Fatalf("expected '%v', got '%v'", "9007199254740993", res.String())
+	}
+}
+
+func TestNumInt64String(t *testing.T) {
+	i := -9007199254740993
+	j := fmt.Sprintf(`{"data":[ "hello", %d ]}`, i)
+	res := Get(j, "data.1")
+	if res.String() != "-9007199254740993" {
+		t.Fatalf("expected '%v', got '%v'", "-9007199254740993", res.String())
+	}
+}
+
+func TestNumBigString(t *testing.T) {
+	i := "900719925474099301239109123101" // very big
+	j := fmt.Sprintf(`{"data":[ "hello", "%s" ]}`, i)
+	res := Get(j, "data.1")
+	if res.String() != "900719925474099301239109123101" {
+		t.Fatalf("expected '%v', got '%v'", "900719925474099301239109123101", res.String())
+	}
+}
+
+func TestNumFloatString(t *testing.T) {
+	i := -9007199254740993
+	j := fmt.Sprintf(`{"data":[ "hello", %d ]}`, i) //No quotes around value!!
+	res := Get(j, "data.1")
+	if res.String() != "-9007199254740993" {
+		t.Fatalf("expected '%v', got '%v'", "-9007199254740993", res.String())
+	}
+}
+
+func TestDuplicateKeys(t *testing.T) {
+	// this is vaild json according to the JSON spec
+	var json = `{"name": "Alex","name": "Peter"}`
+	if Parse(json).Get("name").String() !=
+		Parse(json).Map()["name"].String() {
+		t.Fatalf("expected '%v', got '%v'",
+			Parse(json).Get("name").String(),
+			Parse(json).Map()["name"].String(),
+		)
+	}
+	if !Valid(json) {
+		t.Fatal("should be valid")
+	}
+}
+
+func TestArrayValues(t *testing.T) {
+	var json = `{"array": ["PERSON1","PERSON2",0],}`
+	values := Get(json, "array").Array()
+	var output string
+	for i, val := range values {
+		if i > 0 {
+			output += "\n"
+		}
+		output += fmt.Sprintf("%#v", val)
+	}
+	expect := strings.Join([]string{
+		`gjson.Result{Type:3, Raw:"\"PERSON1\"", Str:"PERSON1", Num:0, Index:0}`,
+		`gjson.Result{Type:3, Raw:"\"PERSON2\"", Str:"PERSON2", Num:0, Index:0}`,
+		`gjson.Result{Type:2, Raw:"0", Str:"", Num:0, Index:0}`,
+	}, "\n")
+	if output != expect {
+		t.Fatalf("expected '%v', got '%v'", expect, output)
 	}
 
 }

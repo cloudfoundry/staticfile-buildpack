@@ -77,7 +77,20 @@ func (t Result) String() string {
 	case False:
 		return "false"
 	case Number:
-		return strconv.FormatFloat(t.Num, 'f', -1, 64)
+		if len(t.Raw) == 0 {
+			// calculated result
+			return strconv.FormatFloat(t.Num, 'f', -1, 64)
+		}
+		var i int
+		if t.Raw[0] == '-' {
+			i++
+		}
+		for ; i < len(t.Raw); i++ {
+			if t.Raw[i] < '0' || t.Raw[i] > '9' {
+				return strconv.FormatFloat(t.Num, 'f', -1, 64)
+			}
+		}
+		return t.Raw
 	case String:
 		return t.Str
 	case JSON:
@@ -344,24 +357,30 @@ func (t Result) arrayOrMap(vc byte, valueize bool) (r arrayOrMapResult) {
 			if (json[i] >= '0' && json[i] <= '9') || json[i] == '-' {
 				value.Type = Number
 				value.Raw, value.Num = tonum(json[i:])
+				value.Str = ""
 			} else {
 				continue
 			}
 		case '{', '[':
 			value.Type = JSON
 			value.Raw = squash(json[i:])
+			value.Str, value.Num = "", 0
 		case 'n':
 			value.Type = Null
 			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
 		case 't':
 			value.Type = True
 			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
 		case 'f':
 			value.Type = False
 			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
 		case '"':
 			value.Type = String
 			value.Raw, value.Str = tostr(json[i:])
+			value.Num = 0
 		}
 		i += len(value.Raw) - 1
 
@@ -370,9 +389,13 @@ func (t Result) arrayOrMap(vc byte, valueize bool) (r arrayOrMapResult) {
 				key = value
 			} else {
 				if valueize {
-					r.oi[key.Str] = value.Value()
+					if _, ok := r.oi[key.Str]; !ok {
+						r.oi[key.Str] = value.Value()
+					}
 				} else {
-					r.o[key.Str] = value
+					if _, ok := r.o[key.Str]; !ok {
+						r.o[key.Str] = value
+					}
 				}
 			}
 			count++
@@ -1288,7 +1311,7 @@ func parseArray(c *parseContext, i int, path string) (int, bool) {
 					if rp.alogok {
 						break
 					}
-					c.value.Raw = val
+					c.value.Raw = ""
 					c.value.Type = Number
 					c.value.Num = float64(h - 1)
 					c.calcd = true
