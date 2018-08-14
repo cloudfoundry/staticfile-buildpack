@@ -30,3 +30,7 @@ func (c *Command) Output(dir string, program string, args ...string) (string, er
 func (c *Command) Run(cmd *exec.Cmd) error {
 	return cmd.Run()
 }
+
+func (c *Command) RunWithOutput(cmd *exec.Cmd) ([]byte, error) {
+	return cmd.Output()
+}
