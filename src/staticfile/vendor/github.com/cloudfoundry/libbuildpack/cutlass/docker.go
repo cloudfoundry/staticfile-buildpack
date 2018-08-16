@@ -11,30 +11,33 @@ import (
 	"strings"
 )
 
-func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, bool, error) {
+func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, bool, []string, error) {
 	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) && /buildpack/bin/detect /tmp/staged && echo 'Detect completed' && /buildpack/bin/compile /tmp/staged /tmp/cache && echo 'Compile completed'  && /buildpack/bin/release /tmp/staged /tmp/cache && echo 'Release completed' && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 
 	output, err := executeDockerFile(bp_dir, fixture_path, buildpack_path, envs, network_command)
 	if err != nil {
-		return nil, false, err
+		return nil, false, nil, err
 	}
 
-	var internet_traffic []string
+	var internet_traffic, logs []string
 	detected, compiled, released := false, false, false
 	for _, line := range strings.Split(output, "\n") {
 		if idx := strings.Index(line, "internet traffic: "); idx >= 0 && idx < 10 {
-			internet_traffic = append(internet_traffic, line[(idx + 18):])
-		} else if strings.Contains(line, "Detect completed") {
-			detected = true
-		} else if strings.Contains(line, "Compile completed") {
-			compiled = true
-		} else if strings.Contains(line, "Release completed") {
-			released = true
+			internet_traffic = append(internet_traffic, line[(idx+18):])
+		} else {
+			logs = append(logs, line)
+			if strings.Contains(line, "Detect completed") {
+				detected = true
+			} else if strings.Contains(line, "Compile completed") {
+				compiled = true
+			} else if strings.Contains(line, "Release completed") {
+				released = true
+			}
 		}
 
 	}
 
-	return internet_traffic, detected && compiled && released, nil
+	return internet_traffic, detected && compiled && released, logs, nil
 }
 
 func UniqueDestination(traffic []string, destination string) error {
