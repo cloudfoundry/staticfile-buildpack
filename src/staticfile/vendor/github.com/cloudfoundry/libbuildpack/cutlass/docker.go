@@ -77,9 +77,13 @@ func executeDockerFile(bp_dir, fixture_path, buildpack_path string, envs []strin
 }
 
 func dockerfile(fixture_path, buildpack_path string, envs []string, network_command string) string {
-	out := "FROM cloudfoundry/cflinuxfs2\n" +
-		"ENV CF_STACK cflinuxfs2\n" +
-		"ENV VCAP_APPLICATION {}\n"
+	cfStack := os.Getenv("CF_STACK")
+	if cfStack == "" {
+		cfStack = "cflinuxfs2"
+	}
+	out := fmt.Sprintf("FROM cloudfoundry/%s\n"+
+		"ENV CF_STACK %s\n"+
+		"ENV VCAP_APPLICATION {}\n", cfStack, cfStack)
 	for _, env := range envs {
 		out = out + "ENV " + env + "\n"
 	}
