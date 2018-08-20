@@ -210,7 +210,7 @@ ruby:
 
 	Describe("AllDependencyVersions", func() {
 		It("returns all the versions of the dependency", func() {
-			versions := manifest.AllDependencyVersions("dotnet-framework")
+			versions := manifest.AllDependencyVersions("dotnet-runtime")
 			Expect(versions).To(Equal([]string{"1.0.0", "1.0.1", "1.0.3", "1.1.0"}))
 		})
 
