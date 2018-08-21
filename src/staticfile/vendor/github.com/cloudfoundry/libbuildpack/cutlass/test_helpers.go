@@ -107,7 +107,7 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to load manifest.yml file: %v", err)
 	}
 
-	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, stack, Cached, stackAssociationSupported)
+	return PackageUniquelyVersionedBuildpackExtra(strings.Replace(manifest.Language, "-", "_", -1), buildpackVersion, stack, Cached, stackAssociationSupported)
 }
 
 func CopyCfHome() error {

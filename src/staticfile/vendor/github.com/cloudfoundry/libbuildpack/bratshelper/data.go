@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
@@ -43,9 +44,10 @@ func InitBpData(stack string, stackAssociationSupported bool) *BpData {
 	var ok bool
 	Data.BpLanguage, ok = obj["language"].(string)
 	Expect(ok).To(BeTrue())
+	bpLanguage := strings.Replace(Data.BpLanguage, "-", "_", -1)
 
-	Data.Cached = "brats_" + Data.BpLanguage + "_cached_" + Data.BpVersion
-	Data.Uncached = "brats_" + Data.BpLanguage + "_uncached_" + Data.BpVersion
+	Data.Cached = "brats_" + bpLanguage + "_cached_" + Data.BpVersion
+	Data.Uncached = "brats_" + bpLanguage + "_uncached_" + Data.BpVersion
 
 	var wg sync.WaitGroup
 	wg.Add(2)
