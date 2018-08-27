@@ -79,17 +79,27 @@ http {
 
     root <%= ENV["APP_ROOT"] %>/public;
 
-   {{if .ForceHTTPS}}
-     if ($http_x_forwarded_proto != "https") {
-       return 301 https://$host$request_uri;
-     }
-   {{else}}
-   <% if ENV["FORCE_HTTPS"] %>
-     if ($http_x_forwarded_proto != "https") {
-       return 301 https://$host$request_uri;
-     }
-   <% end %>
-   {{end}}
+    {{if .ForceHTTPS}}
+      set $updated_host $host;
+      if ($http_x_forwarded_host != "") {
+        set $updated_host $http_x_forwarded_host;
+      } 
+
+      if ($http_x_forwarded_proto != "https") {
+        return 301 https://$updated_host$request_uri;
+      }
+    {{else}}
+      <% if ENV["FORCE_HTTPS"] %>
+        set $updated_host $host;
+        if ($http_x_forwarded_host != "") {
+          set $updated_host $http_x_forwarded_host;
+        } 
+
+        if ($http_x_forwarded_proto != "https") {
+          return 301 https://$updated_host$request_uri;
+        }
+      <% end %>
+    {{end}}
 
 
     location / {
