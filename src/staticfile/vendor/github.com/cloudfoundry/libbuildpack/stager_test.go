@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/cloudfoundry/libbuildpack"
@@ -85,8 +85,8 @@ var _ = Describe("Stager", func() {
 				Expect(s.BuildDir()).To(Equal("buildDir"))
 				Expect(s.CacheDir()).To(Equal("cacheDir"))
 				Expect(s.DepsIdx()).To(Equal("idx"))
-				Expect(s.DepDir()).To(Equal("depsDir/idx"))
-				Expect(s.ProfileDir()).To(Equal("buildDir/.profile.d"))
+				Expect(s.DepDir()).To(Equal(filepath.Join("depsDir", "idx")))
+				Expect(s.ProfileDir()).To(Equal(filepath.Join("buildDir", ".profile.d")))
 			})
 		})
 
@@ -99,7 +99,7 @@ var _ = Describe("Stager", func() {
 				Expect(s.CacheDir()).To(Equal("cacheDir"))
 				Expect(s.DepsIdx()).To(Equal(""))
 				Expect(s.DepDir()).To(Equal(""))
-				Expect(s.ProfileDir()).To(Equal("buildDir/.profile.d"))
+				Expect(s.ProfileDir()).To(Equal(filepath.Join("buildDir", ".profile.d")))
 			})
 		})
 
@@ -262,13 +262,37 @@ var _ = Describe("Stager", func() {
 
 	Describe("AddBinDependencyLink", func() {
 		It("creates a symlink <depDir>/bin/<name> with the relative path to dest", func() {
-			err := s.AddBinDependencyLink(filepath.Join(depsDir, depsIdx, "some", "long", "path"), "dep")
+			var err error
+			destDir := filepath.Join(depsDir, depsIdx, "some", "long")
+			dest := filepath.Join(destDir, "path")
+
+			/* Windows uses hard links, the file must already exist and
+			* be an actual file (not a directory)
+			 */
+			if runtime.GOOS == "windows" {
+				err = os.MkdirAll(destDir, 0777)
+				Expect(err).To(BeNil())
+				f, err := os.Create(dest)
+				Expect(err).To(BeNil())
+				f.Close()
+			}
+
+			err = s.AddBinDependencyLink(dest, "dep")
 			Expect(err).To(BeNil())
 
-			link, err := os.Readlink(filepath.Join(s.DepDir(), "bin", "dep"))
-			Expect(err).To(BeNil())
+			linkSource := filepath.Join(s.DepDir(), "bin", "dep")
 
-			Expect(link).To(Equal("../some/long/path"))
+			if runtime.GOOS == "windows" {
+				f1, err := os.Stat(linkSource)
+				Expect(err).To(BeNil())
+				f2, err := os.Stat(dest)
+				Expect(err).To(BeNil())
+				Expect(os.SameFile(f1, f2)).To(BeTrue())
+			} else {
+				link, err := os.Readlink(linkSource)
+				Expect(err).To(BeNil())
+				Expect(link).To(Equal(filepath.Join("..", "some", "long", "path")))
+			}
 		})
 	})
 
@@ -297,7 +321,7 @@ var _ = Describe("Stager", func() {
 
 			link, err := os.Readlink(filepath.Join(s.DepDir(), "include", "thing1"))
 			Expect(err).To(BeNil())
-			Expect(link).To(Equal("../../../" + path.Base(destDir) + "/thing1"))
+			Expect(link).To(Equal(filepath.Join("..", "..", "..", filepath.Base(destDir), "thing1")))
 
 			data, err := ioutil.ReadFile(filepath.Join(s.DepDir(), "include", "thing1"))
 			Expect(err).To(BeNil())
@@ -305,7 +329,7 @@ var _ = Describe("Stager", func() {
 
 			link, err = os.Readlink(filepath.Join(s.DepDir(), "include", "thing2"))
 			Expect(err).To(BeNil())
-			Expect(link).To(Equal("../../../" + path.Base(destDir) + "/thing2"))
+			Expect(link).To(Equal(filepath.Join("..", "..", "..", filepath.Base(destDir), "thing2")))
 
 			data, err = ioutil.ReadFile(filepath.Join(s.DepDir(), "include", "thing2"))
 			Expect(err).To(BeNil())
@@ -321,7 +345,7 @@ var _ = Describe("Stager", func() {
 
 			link, err := os.Readlink(filepath.Join(s.DepDir(), "include", "thing1"))
 			Expect(err).To(BeNil())
-			Expect(link).To(Equal("../../../" + path.Base(destDir) + "/thing1"))
+			Expect(link).To(Equal(filepath.Join("..", "..", "..", filepath.Base(destDir), "thing1")))
 		})
 	})
 
@@ -352,11 +376,13 @@ var _ = Describe("Stager", func() {
 			It("creates the file as an executable", func() {
 				Expect(profileDScript).To(BeAnExistingFile())
 
-				info, err = os.Stat(profileDScript)
-				Expect(err).To(BeNil())
+				if runtime.GOOS != "windows" { // executable file permissions not relevant for Windows
+					info, err = os.Stat(profileDScript)
+					Expect(err).To(BeNil())
 
-				// make sure at least 1 executable bit is set
-				Expect(info.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+					// make sure at least 1 executable bit is set
+					Expect(info.Mode().Perm() & 0111).NotTo(Equal(os.FileMode(0000)))
+				}
 			})
 
 			It("the script has the correct contents", func() {
@@ -458,10 +484,18 @@ var _ = Describe("Stager", func() {
 				Expect(err).To(BeNil())
 
 				newPath := os.Getenv("PATH")
-				Expect(newPath).To(Equal(fmt.Sprintf("%s/01/bin:%s/00/bin:existing_PATH", depsDir, depsDir)))
+				if runtime.GOOS == "windows" {
+					Expect(newPath).To(Equal(fmt.Sprintf("%s\\01\\bin;%s\\00\\bin;existing_PATH", depsDir, depsDir)))
+				} else {
+					Expect(newPath).To(Equal(fmt.Sprintf("%s/01/bin:%s/00/bin:existing_PATH", depsDir, depsDir)))
+				}
 			})
 
 			It("sets LD_LIBRARY_PATH based on the supplied deps", func() {
+				if runtime.GOOS == "windows" {
+					Skip("We don't use LD_LIBRARY_PATH on Windows.")
+				}
+
 				err = s.SetStagingEnvironment()
 				Expect(err).To(BeNil())
 
@@ -470,6 +504,10 @@ var _ = Describe("Stager", func() {
 			})
 
 			It("sets LIBRARY_PATH based on the supplied deps", func() {
+				if runtime.GOOS == "windows" {
+					Skip("We don't use LIBRARY_PATH on Windows.")
+				}
+
 				err = s.SetStagingEnvironment()
 				Expect(err).To(BeNil())
 
@@ -478,6 +516,10 @@ var _ = Describe("Stager", func() {
 			})
 
 			It("sets CPATH based on the supplied deps", func() {
+				if runtime.GOOS == "windows" {
+					Skip("We don't use CPATH on Windows.")
+				}
+
 				err = s.SetStagingEnvironment()
 				Expect(err).To(BeNil())
 
@@ -486,6 +528,10 @@ var _ = Describe("Stager", func() {
 			})
 
 			It("sets PKG_CONFIG_PATH based on the supplied deps", func() {
+				if runtime.GOOS == "windows" {
+					Skip("We don't use PKG_CONFIG_PATH on Windows.")
+				}
+
 				err = s.SetStagingEnvironment()
 				Expect(err).To(BeNil())
 
@@ -513,10 +559,17 @@ var _ = Describe("Stager", func() {
 					Expect(err).To(BeNil())
 
 					newPath := os.Getenv("PATH")
-					Expect(newPath).To(Equal(fmt.Sprintf("%s/01/bin:%s/00/bin", depsDir, depsDir)))
+					if runtime.GOOS == "windows" {
+						Expect(newPath).To(Equal(fmt.Sprintf("%s\\01\\bin;%s\\00\\bin", depsDir, depsDir)))
+					} else {
+						Expect(newPath).To(Equal(fmt.Sprintf("%s/01/bin:%s/00/bin", depsDir, depsDir)))
+					}
 				})
 
 				It("sets LD_LIBRARY_PATH based on the supplied deps", func() {
+					if runtime.GOOS == "windows" {
+						Skip("We don't use LD_LIBRARY_PATH on Windows.")
+					}
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
 
@@ -525,6 +578,9 @@ var _ = Describe("Stager", func() {
 				})
 
 				It("sets LIBRARY_PATH based on the supplied deps", func() {
+					if runtime.GOOS == "windows" {
+						Skip("We don't use LIBRARY_PATH on Windows.")
+					}
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
 
@@ -533,6 +589,9 @@ var _ = Describe("Stager", func() {
 				})
 
 				It("sets CPATH based on the supplied deps", func() {
+					if runtime.GOOS == "windows" {
+						Skip("We don't use CPATH on Windows.")
+					}
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
 
@@ -541,6 +600,9 @@ var _ = Describe("Stager", func() {
 				})
 
 				It("sets PKG_CONFIG_PATH based on the supplied deps", func() {
+					if runtime.GOOS == "windows" {
+						Skip("We don't use PKG_CONFIG_PATH on Windows.")
+					}
 					err = s.SetStagingEnvironment()
 					Expect(err).To(BeNil())
 
@@ -555,12 +617,17 @@ var _ = Describe("Stager", func() {
 				err = s.SetLaunchEnvironment()
 				Expect(err).To(BeNil())
 
-				contents, err := ioutil.ReadFile(filepath.Join(profileDir, "000_multi-supply.sh"))
-				Expect(err).To(BeNil())
-
-				Expect(string(contents)).To(ContainSubstring(`export PATH=$DEPS_DIR/01/bin:$DEPS_DIR/00/bin$([[ ! -z "${PATH:-}" ]] && echo ":$PATH")`))
-				Expect(string(contents)).To(ContainSubstring(`export LD_LIBRARY_PATH=$DEPS_DIR/02/lib:$DEPS_DIR/01/lib$([[ ! -z "${LD_LIBRARY_PATH:-}" ]] && echo ":$LD_LIBRARY_PATH")`))
-				Expect(string(contents)).To(ContainSubstring(`export LIBRARY_PATH=$DEPS_DIR/02/lib:$DEPS_DIR/01/lib$([[ ! -z "${LIBRARY_PATH:-}" ]] && echo ":$LIBRARY_PATH")`))
+				if runtime.GOOS == "windows" {
+					contents, err := ioutil.ReadFile(filepath.Join(profileDir, "000_multi-supply.bat"))
+					Expect(err).To(BeNil())
+					Expect(string(contents)).To(ContainSubstring(`set PATH=%DEPS_DIR%\01\bin;%DEPS_DIR%\00\bin;%PATH%`))
+				} else {
+					contents, err := ioutil.ReadFile(filepath.Join(profileDir, "000_multi-supply.sh"))
+					Expect(err).To(BeNil())
+					Expect(string(contents)).To(ContainSubstring(`export LIBRARY_PATH=$DEPS_DIR/02/lib:$DEPS_DIR/01/lib$([[ ! -z "${LIBRARY_PATH:-}" ]] && echo ":$LIBRARY_PATH")`))
+					Expect(string(contents)).To(ContainSubstring(`export LD_LIBRARY_PATH=$DEPS_DIR/02/lib:$DEPS_DIR/01/lib$([[ ! -z "${LD_LIBRARY_PATH:-}" ]] && echo ":$LD_LIBRARY_PATH")`))
+					Expect(string(contents)).To(ContainSubstring(`export LIBRARY_PATH=$DEPS_DIR/02/lib:$DEPS_DIR/01/lib$([[ ! -z "${LIBRARY_PATH:-}" ]] && echo ":$LIBRARY_PATH")`))
+				}
 			})
 
 			It("copies scripts from <deps-dir>/<idx>/profile.d to the .profile.d directory, prepending <idx>", func() {

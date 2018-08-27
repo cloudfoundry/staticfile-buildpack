@@ -88,21 +88,6 @@ func (s *Stager) WriteEnvFile(envVar, envVal string) error {
 	return ioutil.WriteFile(filepath.Join(envDir, envVar), []byte(envVal), 0644)
 }
 
-func (s *Stager) AddBinDependencyLink(destPath, sourceName string) error {
-	binDir := filepath.Join(s.DepDir(), "bin")
-
-	if err := os.MkdirAll(binDir, 0755); err != nil {
-		return err
-	}
-
-	relPath, err := filepath.Rel(binDir, destPath)
-	if err != nil {
-		return err
-	}
-
-	return os.Symlink(relPath, filepath.Join(binDir, sourceName))
-}
-
 func (s *Stager) LinkDirectoryInDepDir(destDir, depSubDir string) error {
 	srcDir := filepath.Join(s.DepDir(), depSubDir)
 	if err := os.MkdirAll(srcDir, 0755); err != nil {
@@ -216,20 +201,6 @@ func (s *Stager) DepsIdx() string {
 	return s.depsIdx
 }
 
-var stagingEnvVarDirs = map[string]string{
-	"PATH":            "bin",
-	"LD_LIBRARY_PATH": "lib",
-	"LIBRARY_PATH":    "lib",
-	"CPATH":           "include",
-	"PKG_CONFIG_PATH": "pkgconfig",
-}
-
-var launchEnvVarDirs = map[string]string{
-	"PATH":            "bin",
-	"LD_LIBRARY_PATH": "lib",
-	"LIBRARY_PATH":    "lib",
-}
-
 func (s *Stager) SetStagingEnvironment() error {
 	for envVar, dir := range stagingEnvVarDirs {
 		oldVal := os.Getenv(envVar)
@@ -243,7 +214,7 @@ func (s *Stager) SetStagingEnvironment() error {
 			if len(oldVal) > 0 {
 				depsPaths = append(depsPaths, oldVal)
 			}
-			os.Setenv(envVar, strings.Join(depsPaths, ":"))
+			os.Setenv(envVar, strings.Join(depsPaths, envPathSeparator))
 		}
 	}
 
@@ -279,13 +250,13 @@ func (s *Stager) SetLaunchEnvironment() error {
 	scriptContents := ""
 
 	for envVar, dir := range launchEnvVarDirs {
-		depsPaths, err := existingDepsDirs(s.depsDir, dir, "$DEPS_DIR")
+		depsPaths, err := existingDepsDirs(s.depsDir, dir, depsDirEnvVar)
 		if err != nil {
 			return err
 		}
 
 		if len(depsPaths) != 0 {
-			scriptContents += fmt.Sprintf(`export %[1]s=%[2]s$([[ ! -z "${%[1]s:-}" ]] && echo ":$%[1]s")`, envVar, strings.Join(depsPaths, ":"))
+			scriptContents += fmt.Sprintf(scriptLineTemplate, envVar, strings.Join(depsPaths, envPathSeparator))
 			scriptContents += "\n"
 		}
 	}
@@ -294,7 +265,7 @@ func (s *Stager) SetLaunchEnvironment() error {
 		return err
 	}
 
-	scriptLocation := filepath.Join(s.ProfileDir(), "000_multi-supply.sh")
+	scriptLocation := filepath.Join(s.ProfileDir(), scriptName)
 	if err := writeToFile(strings.NewReader(scriptContents), scriptLocation, 0755); err != nil {
 		return err
 	}

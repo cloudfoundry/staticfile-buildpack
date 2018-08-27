@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"syscall"
+	"runtime"
 
 	"github.com/cloudfoundry/libbuildpack"
 	. "github.com/onsi/ginkgo"
@@ -12,6 +12,8 @@ import (
 )
 
 var _ = Describe("Util", func() {
+	const windowsFileModeWarning = "Windows does not respect file mode bits as Linux does, see https://golang.org/pkg/os/#Chmod"
+
 	Describe("ExtractZip", func() {
 		var (
 			tmpdir   string
@@ -42,6 +44,10 @@ var _ = Describe("Util", func() {
 			})
 
 			It("preserves the file mode", func() {
+				if runtime.GOOS == "windows" {
+					Skip(windowsFileModeWarning)
+				}
+
 				err = libbuildpack.ExtractZip("fixtures/thing.zip", tmpdir)
 				Expect(err).To(BeNil())
 
@@ -141,6 +147,10 @@ var _ = Describe("Util", func() {
 				Expect(ioutil.ReadFile(filepath.Join(tmpdir, "thing", "bin", "file2.exe"))).To(Equal([]byte("progam2\n")))
 			})
 			It("preserves the file mode", func() {
+				if runtime.GOOS == "windows" {
+					Skip(windowsFileModeWarning)
+				}
+
 				err = libbuildpack.ExtractTarGz("fixtures/thing.tgz", tmpdir)
 				Expect(err).To(BeNil())
 
@@ -201,11 +211,12 @@ var _ = Describe("Util", func() {
 			Expect(err).To(BeNil())
 			defer fh.Close()
 
-			err = fh.Chmod(0742)
-			Expect(err).To(BeNil())
+			if runtime.GOOS != "windows" {
+				err = fh.Chmod(0742)
+				Expect(err).To(BeNil())
+			}
 
-			oldUmask = syscall.Umask(0000)
-
+			oldUmask = umask(0000)
 		})
 		AfterEach(func() {
 			var fh *os.File
@@ -215,13 +226,15 @@ var _ = Describe("Util", func() {
 			Expect(err).To(BeNil())
 			defer fh.Close()
 
-			err = fh.Chmod(oldMode)
-			Expect(err).To(BeNil())
+			if runtime.GOOS != "windows" {
+				err = fh.Chmod(oldMode)
+				Expect(err).To(BeNil())
+			}
 
 			err = os.RemoveAll(tmpdir)
 			Expect(err).To(BeNil())
 
-			syscall.Umask(oldUmask)
+			umask(oldUmask)
 		})
 
 		Context("with a valid source file", func() {
@@ -234,6 +247,10 @@ var _ = Describe("Util", func() {
 			})
 
 			It("preserves the file mode", func() {
+				if runtime.GOOS == "windows" {
+					Skip(windowsFileModeWarning)
+				}
+
 				err = libbuildpack.CopyFile("fixtures/source.txt", filepath.Join(tmpdir, "out.txt"))
 				Expect(err).To(BeNil())
 
@@ -276,6 +293,10 @@ var _ = Describe("Util", func() {
 		})
 
 		It("handles symlink to directory", func() {
+			if runtime.GOOS == "windows" {
+				Skip("Symlinks require administrator privileges on windows and are not used")
+			}
+
 			srcDir := filepath.Join("fixtures", "copydir_symlinks")
 			err = libbuildpack.CopyDirectory(srcDir, destDir)
 			Expect(err).To(BeNil())
