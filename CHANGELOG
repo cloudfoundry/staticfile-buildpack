@@ -1,3 +1,15 @@
+v1.4.32 Sep 07, 2018
+=====================
+
+* Add nginx 1.15.3, remove nginx 1.15.2
+  for stacks cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/160100616)
+
+* Preserves x_forwarded_host on https
+  Closes #141. Updates .ForceHTTPS block to preserve the
+  x-forwarded-host on https redirects.
+  (https://www.pivotaltracker.com/story/show/156376954)
+
 v1.4.31 Jul 27, 2018
 =====================
 
