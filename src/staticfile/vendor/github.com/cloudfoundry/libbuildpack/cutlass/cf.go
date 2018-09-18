@@ -285,8 +285,8 @@ func (a *App) PushNoStart() error {
 	if a.Stack != "" {
 		args = append(args, "-s", a.Stack)
 	}
-	if len(a.Buildpacks) == 1 {
-		args = append(args, "-b", a.Buildpacks[len(a.Buildpacks)-1])
+	for _, buildpack := range a.Buildpacks {
+		args = append(args, "-b", buildpack)
 	}
 	if _, err := os.Stat(filepath.Join(a.Path, "manifest.yml")); err == nil {
 		args = append(args, "-f", filepath.Join(a.Path, "manifest.yml"))
@@ -296,9 +296,6 @@ func (a *App) PushNoStart() error {
 	}
 	if a.Disk != "" {
 		args = append(args, "-k", a.Disk)
-	}
-	if a.StartCommand != "" {
-		args = append(args, "-c", a.StartCommand)
 	}
 	if a.StartCommand != "" {
 		args = append(args, "-c", a.StartCommand)
@@ -337,16 +334,7 @@ func (a *App) Push() error {
 		return err
 	}
 
-	var args []string
-	if len(a.Buildpacks) > 1 {
-		args = []string{"v3-push", a.Name, "-p", a.Path}
-		for _, buildpack := range a.Buildpacks {
-			args = append(args, "-b", buildpack)
-		}
-	} else {
-		args = []string{"start", a.Name}
-	}
-	command := exec.Command("cf", args...)
+	command := exec.Command("cf", "start", a.Name)
 	command.Stdout = DefaultStdoutStderr
 	command.Stderr = DefaultStdoutStderr
 	if err := command.Run(); err != nil {
