@@ -329,6 +329,26 @@ func (a *App) PushNoStart() error {
 	return nil
 }
 
+func (a *App) V3Push() error {
+	if err := a.PushNoStart(); err != nil {
+		return err
+	}
+
+	args := []string{"v3-push", a.Name}
+	if len(a.Buildpacks) > 1 {
+		for _, buildpack := range a.Buildpacks {
+			args = append(args, "-b", buildpack)
+		}
+	}
+	command := exec.Command("cf", args...)
+	command.Stdout = DefaultStdoutStderr
+	command.Stderr = DefaultStdoutStderr
+	if err := command.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (a *App) Push() error {
 	if err := a.PushNoStart(); err != nil {
 		return err
