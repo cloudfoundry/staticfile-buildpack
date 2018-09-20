@@ -334,7 +334,7 @@ func (a *App) V3Push() error {
 		return err
 	}
 
-	args := []string{"v3-push", a.Name}
+	args := []string{"v3-push", a.Name, "-p", a.Path}
 	if len(a.Buildpacks) > 1 {
 		for _, buildpack := range a.Buildpacks {
 			args = append(args, "-b", buildpack)
