@@ -193,7 +193,7 @@ func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *c
 	StagingWithADepThatIsNotTheLatestConstrained(depName, "x", copyBrats)
 }
 
-func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, copyBrats func(string) *cutlass.App) {
+func StagingWithCustomBuildpackWithCredentialsInDependencies(copyBrats func(string) *cutlass.App) {
 	Describe("staging with custom buildpack that uses credentials in manifest dependency uris", func() {
 		var (
 			buildpackFile, bpName, stack, username, password string
@@ -254,7 +254,7 @@ func StagingWithCustomBuildpackWithCredentialsInDependencies(depRegexp string, c
 				buildpackFile = Data.UncachedFile
 			})
 			It("does not include credentials in logged dependency uris", func() {
-				Expect(app.Stdout.String()).To(MatchRegexp(depRegexp))
+				Expect(app.Stdout.String()).To(MatchRegexp(`\[.*-redacted-:-redacted-.*\]`))
 				Expect(app.Stdout.String()).ToNot(ContainSubstring(username))
 				Expect(app.Stdout.String()).ToNot(ContainSubstring(password))
 			})
