@@ -203,6 +203,16 @@ func (a *App) RunTask(command string) ([]byte, error) {
 	return bytes, nil
 }
 
+func (a *App) Stop() error {
+	command := exec.Command("cf", "stop", a.Name)
+	command.Stdout = DefaultStdoutStderr
+	command.Stderr = DefaultStdoutStderr
+	if err := command.Run(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (a *App) Restart() error {
 	command := exec.Command("cf", "restart", a.Name)
 	command.Stdout = DefaultStdoutStderr
