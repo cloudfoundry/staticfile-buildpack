@@ -1,3 +1,12 @@
+v1.4.33 Oct 15, 2018
+=====================
+
+* Add nginx 1.15.5, remove nginx 1.15.3
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/160928056)
+  (https://www.pivotaltracker.com/story/show/160793492)
+
+
 v1.4.32 Sep 07, 2018
 =====================
 
