@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a335865660d76e4ceffb1037e87d4791b3b756b3df135946a15290d476df0b8b"
+  digest = "1:247bddbfc543e03625816480644ae8f879a347bbb44d06f41a506a4bc6fb0e45"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,7 +29,7 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "b3a93a61afe673eea69e3165b5e987e52e3cfafc"
+  revision = "fe1bbde44a2153ae92e42c74bbce4423bf14decd"
 
 [[projects]]
   digest = "1:7ce300e943482aff885b3318c1c6a609827f43e3ba26a073380d5ba6143a0c48"
@@ -48,11 +48,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b264547c40314ec7619d2cf264e2621953843be7242c140efe1e3119f93877f4"
+  digest = "1:df265b7f54410945dad5cf5979d91461b9fa7ff9b397ab58d2d577002a8a0e24"
   name = "github.com/google/subcommands"
   packages = ["."]
   pruneopts = ""
-  revision = "5bae204cdfb2d92dcc333d56014bae6a2f6c58b1"
+  revision = "46f0354f63152e8801bb460d26f5b6c4c878efbb"
 
 [[projects]]
   digest = "1:1eece6e2aa8a8f94e0461483229f0c4b0555c17e76e0e7e6b8597c2093d269f8"
@@ -119,7 +119,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:547dcb6aebfb7fb17947660ebb034470c13f4d63d893def190a2f7ba3d09bc38"
+  digest = "1:6543c75ddc1efc0041202dd49378ee2e5711b7cc82c2845c0437eef6276cc984"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -128,15 +128,15 @@
     "html/charset",
   ]
   pruneopts = ""
-  revision = "49bb7cea24b1df9410e1712aa6433dae904ff66a"
+  revision = "04a2e542c03f1d053ab3e4d6e5abcd4b66e2be8e"
 
 [[projects]]
   branch = "master"
-  digest = "1:2ed0bf267e44950120acd95570227e28184573ffb099bd85b529ee148e004ddb"
+  digest = "1:03a1b1f2bfb0a6b2291c4161032429b1e8a1f23cc68530ad64358f8b493ead5f"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = ""
-  revision = "fa43e7bc11baaae89f3f902b2b4d832b68234844"
+  revision = "8a28ead16f52c8aaeffbf79239b251dfdf6c4f96"
 
 [[projects]]
   digest = "1:5acd3512b047305d49e8763eef7ba423901e85d5dd2fd1e71778a0ea8de10bd4"

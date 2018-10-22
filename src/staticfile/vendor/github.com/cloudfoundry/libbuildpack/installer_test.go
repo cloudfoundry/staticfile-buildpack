@@ -31,7 +31,7 @@ var _ = Describe("Installer", func() {
 	BeforeEach(func() {
 		oldCfStack = os.Getenv("CF_STACK")
 		os.Setenv("CF_STACK", "cflinuxfs2")
-
+		err = nil
 		manifestDir = "fixtures/manifest/standard"
 		currentTime = time.Now()
 		httpmock.Reset()
@@ -260,7 +260,6 @@ var _ = Describe("Installer", func() {
 
 		Context("app cached", func() {
 			var (
-				err             error
 				manifestForTest libbuildpack.Manifest
 			)
 			inputs := DownloadingTestInputs{}

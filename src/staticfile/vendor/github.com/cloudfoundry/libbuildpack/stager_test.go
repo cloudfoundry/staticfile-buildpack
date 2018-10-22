@@ -26,7 +26,6 @@ var _ = Describe("Stager", func() {
 		logger      *libbuildpack.Logger
 		s           *libbuildpack.Stager
 		err         error
-		oldCfStack  string
 		buffer      *bytes.Buffer
 		manifestDir string
 	)
@@ -153,7 +152,6 @@ var _ = Describe("Stager", func() {
 
 	Describe("CheckBuildpackValid", func() {
 		BeforeEach(func() {
-			oldCfStack = os.Getenv("CF_STACK")
 			err = os.Setenv("CF_STACK", "cflinuxfs2")
 			Expect(err).To(BeNil())
 		})
