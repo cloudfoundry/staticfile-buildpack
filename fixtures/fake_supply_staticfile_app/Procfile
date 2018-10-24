@@ -1,0 +1,1 @@
+web: 'echo "dotnet: $(dotnet --version)" && $APP_ROOT/boot.sh'
