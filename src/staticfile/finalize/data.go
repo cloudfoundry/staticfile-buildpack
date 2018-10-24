@@ -153,7 +153,7 @@ types {
   text/xml xml;
   image/gif gif;
   image/jpeg jpeg jpg;
-  application/x-javascript js;
+  application/javascript js;
   application/atom+xml atom;
   application/rss+xml rss;
   font/ttf ttf;
