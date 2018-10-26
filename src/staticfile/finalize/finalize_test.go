@@ -468,32 +468,6 @@ var _ = Describe("Compile", func() {
 			finalizer.Warnings()
 		})
 
-		Context("location_include is set", func() {
-			BeforeEach(func() {
-				staticfile.LocationInclude = "includes/*.conf"
-			})
-
-			Context("root is NOT set", func() {
-				BeforeEach(func() {
-					staticfile.RootDir = ""
-				})
-				It("warns the user", func() {
-					Expect(buffer.String()).To(ContainSubstring("**WARNING** The location_include directive only works in conjunction with root."))
-					Expect(buffer.String()).To(ContainSubstring("Please specify root to use location_include"))
-				})
-			})
-
-			Context("root IS set", func() {
-				BeforeEach(func() {
-					staticfile.RootDir = "public"
-				})
-				It("does not warn the user", func() {
-					Expect(buffer.String()).ToNot(ContainSubstring("location_include directive only works in conjunction with root."))
-					Expect(buffer.String()).ToNot(ContainSubstring("Please specify root to use location_include"))
-				})
-			})
-		})
-
 		Context("app dir has a nginx/conf directory", func() {
 			const WarningLine1 = "**WARNING** You have an nginx/conf directory, but have not set *root*, or have set it to '.'."
 			const WarningLine2 = "If you are using the nginx/conf directory for nginx configuration, you probably need to also set the *root* directive."
