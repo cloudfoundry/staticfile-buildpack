@@ -1,3 +1,10 @@
+v1.4.34 Oct 29, 2018
+=====================
+
+* Changes include headers to allow for a root directory
+  - don't copy nginx to public during staging
+  (https://www.pivotaltracker.com/story/show/156479950)
+
 v1.4.33 Oct 15, 2018
 =====================
 
