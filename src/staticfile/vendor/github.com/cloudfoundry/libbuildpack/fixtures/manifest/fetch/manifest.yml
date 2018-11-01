@@ -46,6 +46,24 @@ dependencies:
   uri: https://example.com/dependencies/real_zip_file-3-linux-x64.zip
   sha256: b742b6d71d03f13c43ecdeb429ef19e79aaa0727544522ab14710935887be2b0
 - name: thing
+  version: 8.1.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-8.1.2-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+- name: thing
+  version: 8.1.3
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-8.1.3-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+- name: thing
+  version: 8.2.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-8.2.2-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+- name: thing
   version: 6.2.2
   cf_stacks:
   - cflinuxfs2
@@ -56,6 +74,18 @@ dependencies:
   cf_stacks:
   - cflinuxfs2
   uri: https://example.com/dependencies/thing-6.2.3-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+- name: thing
+  version: 7.2.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-7.2.2-linux-x64.tgz
+  sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
+- name: thing
+  version: 7.3.2
+  cf_stacks:
+  - cflinuxfs2
+  uri: https://example.com/dependencies/thing-7.3.2-linux-x64.tgz
   sha256: 8208480eb849203632239f73bd3c61ed488546d19d29c06d7c2e1649d8950bd1
 - name: thing
   version: 6.2.1

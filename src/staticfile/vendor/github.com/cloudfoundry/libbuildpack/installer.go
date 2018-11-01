@@ -1,25 +1,26 @@
 package libbuildpack
 
 import (
-	"path/filepath"
-	"io/ioutil"
-	"strings"
-	"os"
-	"github.com/Masterminds/semver"
-	"fmt"
-	"time"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
+	"github.com/Masterminds/semver"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 type Installer struct {
-	manifest *Manifest
+	manifest        *Manifest
 	appCacheDir     string
 	filesInAppCache map[string]interface{}
+	versionLine     *map[string]string
 }
 
 func NewInstaller(manifest *Manifest) *Installer {
-	return &Installer{ manifest, "",	make(map[string]interface{}) }
+	return &Installer{manifest, "", make(map[string]interface{}), &map[string]string{}}
 }
 
 func (i *Installer) SetAppCacheDir(appCacheDir string) (err error) {
@@ -86,7 +87,13 @@ func (i *Installer) warnNewerPatch(dep Dependency) error {
 		return nil
 	}
 
-	constraint := fmt.Sprintf("%d.%d.x", v.Major(), v.Minor())
+	minor := fmt.Sprintf("%v", v.Minor())
+	versionLine := *i.GetVersionLine()
+	if versionLine[dep.Name] == "minor" {
+		minor = "x"
+	}
+	constraint := fmt.Sprintf("%d.%s.x", v.Major(), minor)
+
 	latest, err := FindMatchingVersion(constraint, versions)
 	if err != nil {
 		return err
@@ -225,4 +232,12 @@ func (i *Installer) fetchAppCachedBuildpackDependency(entry *ManifestEntry, outp
 	}
 
 	return nil
+}
+
+func (i *Installer) SetVersionLine(depName string, line string) {
+	(*i.versionLine)[depName] = line
+}
+
+func (i *Installer) GetVersionLine() *map[string]string {
+	return i.versionLine
 }

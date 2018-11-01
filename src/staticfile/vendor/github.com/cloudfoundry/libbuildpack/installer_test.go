@@ -292,6 +292,7 @@ var _ = Describe("Installer", func() {
 				checkOnError := func() {
 					It("cached file does not exist", func() {
 						err = installer.FetchDependency(entryToFetch.entry.Dependency, outputFile)
+						Expect(err).ToNot(BeNil())
 
 						Expect(entryToFetch.appCachePath).ToNot(BeAnExistingFile())
 					})
@@ -511,7 +512,7 @@ var _ = Describe("Installer", func() {
 					Expect(ioutil.ReadFile(filepath.Join(outputDir, "thing", "bin", "file2.exe"))).To(Equal([]byte("progam2\n")))
 				})
 
-				Context("version is NOT latest in version line", func() {
+				Context("by default, the version is NOT latest patch in version line", func() {
 					BeforeEach(func() {
 						tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
 						Expect(err).To(BeNil())
@@ -525,6 +526,46 @@ var _ = Describe("Installer", func() {
 							"Old versions of thing are only provided to assist in migrating to newer versions.\n"
 
 						err = installer.InstallDependency(libbuildpack.Dependency{Name: "thing", Version: "6.2.2"}, outputDir)
+						Expect(err).To(BeNil())
+						Expect(buffer.String()).To(ContainSubstring(patchWarning))
+					})
+				})
+
+				Context("when there is a greater minor version and a greater patch version", func() {
+					BeforeEach(func() {
+						tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
+						Expect(err).To(BeNil())
+						httpmock.RegisterResponder("GET", "https://example.com/dependencies/thing-8.1.2-linux-x64.tgz",
+							httpmock.NewStringResponder(200, string(tgzContents)))
+					})
+
+					It("warns about greater minor version over greater patch version", func() {
+						installer.SetVersionLine("thing", "minor")
+						patchWarning := "**WARNING** A newer version of thing is available in this buildpack. " +
+							"Please adjust your app to use version 8.2.2 instead of version 8.1.2 as soon as possible. " +
+							"Old versions of thing are only provided to assist in migrating to newer versions.\n"
+
+						err = installer.InstallDependency(libbuildpack.Dependency{Name: "thing", Version: "8.1.2"}, outputDir)
+						Expect(err).To(BeNil())
+						Expect(buffer.String()).To(ContainSubstring(patchWarning))
+					})
+				})
+
+				Context("when the version line in a manifest is by patch line and the version installed is not the latest patch in that line", func() {
+					BeforeEach(func() {
+						tgzContents, err := ioutil.ReadFile("fixtures/thing.tgz")
+						Expect(err).To(BeNil())
+						httpmock.RegisterResponder("GET", "https://example.com/dependencies/thing-8.1.2-linux-x64.tgz",
+							httpmock.NewStringResponder(200, string(tgzContents)))
+					})
+
+					It("warns about greater patch version and not the greater minor version", func() {
+						installer.SetVersionLine("thing", "patch")
+						patchWarning := "**WARNING** A newer version of thing is available in this buildpack. " +
+							"Please adjust your app to use version 8.1.3 instead of version 8.1.2 as soon as possible. " +
+							"Old versions of thing are only provided to assist in migrating to newer versions.\n"
+
+						err = installer.InstallDependency(libbuildpack.Dependency{Name: "thing", Version: "8.1.2"}, outputDir)
 						Expect(err).To(BeNil())
 						Expect(buffer.String()).To(ContainSubstring(patchWarning))
 					})
@@ -862,6 +903,42 @@ var _ = Describe("Installer", func() {
 				Expect(err).NotTo(BeNil())
 				Expect(err.Error()).To(Equal("no versions of not_a_dependency found"))
 			})
+		})
+	})
+
+	Describe("SetVersionLine", func() {
+		var i *libbuildpack.Installer
+		var versionLine map[string]string
+
+		BeforeEach(func(){
+			i = libbuildpack.NewInstaller(nil)
+			versionLine = *i.GetVersionLine()
+		})
+
+		It("is an empty map by default", func() {
+			Expect(len(versionLine)).To(BeZero())
+		})
+
+		It("returns the version line that was previously set", func() {
+			i.SetVersionLine("thing", "minor")
+			line := versionLine["thing"]
+			Expect(line).To(Equal("minor"))
+		})
+
+		It("sets more than one line", func() {
+			i.SetVersionLine("thing", "minor")
+			i.SetVersionLine("thing2", "patch")
+			line := versionLine["thing"]
+			Expect(line).To(Equal("minor"))
+			line = versionLine["thing2"]
+			Expect(line).To(Equal("patch"))
+		})
+
+		It("overrides a previously set line", func() {
+			i.SetVersionLine("thing", "minor")
+			i.SetVersionLine("thing", "patch")
+			line := versionLine["thing"]
+			Expect(line).To(Equal("patch"))
 		})
 	})
 })
