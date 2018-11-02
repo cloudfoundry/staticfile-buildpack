@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // CopyDirectory copies srcDir to destDir
@@ -76,7 +77,7 @@ func ExtractZip(zipfile, destDir string) error {
 	defer r.Close()
 
 	for _, f := range r.File {
-		path := filepath.Join(destDir, f.Name)
+		path := filepath.Join(destDir, filepath.Clean(f.Name))
 
 		rc, err := f.Open()
 		if err != nil {
@@ -194,25 +195,44 @@ func extractTar(src io.Reader, destDir string) error {
 		if err == io.EOF {
 			break
 		}
-		path := filepath.Join(destDir, hdr.Name)
-		fi := hdr.FileInfo()
+		path := filepath.Join(destDir, cleanPath(hdr.Name))
 
+		fi := hdr.FileInfo()
 		if fi.IsDir() {
-			err = os.MkdirAll(path, hdr.FileInfo().Mode())
+			if err := os.MkdirAll(path, hdr.FileInfo().Mode()); err != nil {
+				return err
+			}
 		} else if fi.Mode()&os.ModeSymlink != 0 {
-			target := hdr.Linkname
 			if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 				return err
 			}
-			if err = os.Symlink(target, path); err != nil {
+
+			if filepath.IsAbs(hdr.Linkname) {
+				return fmt.Errorf("cannot link to an absolute path when extracting archives")
+			}
+
+			fullLink, err := filepath.Abs(filepath.Join(filepath.Dir(path), hdr.Linkname))
+			if err != nil {
+				return err
+			}
+
+			fullDest, err := filepath.Abs(destDir)
+			if err != nil {
+				return err
+			}
+
+			// check that the relative link does not escape the destination dir
+			if !strings.HasPrefix(fullLink, fullDest) {
+				return fmt.Errorf("cannot link outside of the destination diretory when extracting archives")
+			}
+
+			if err = os.Symlink(hdr.Linkname, path); err != nil {
 				return err
 			}
 		} else {
-			err = writeToFile(tr, path, hdr.FileInfo().Mode())
-		}
-
-		if err != nil {
-			return err
+			if err := writeToFile(tr, path, hdr.FileInfo().Mode()); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -288,4 +308,18 @@ func writeToFile(source io.Reader, destFile string, mode os.FileMode) error {
 	}
 
 	return nil
+}
+
+func cleanPath(path string) string {
+	if path == "" {
+		return ""
+	}
+
+	path = filepath.Clean(path)
+	if !filepath.IsAbs(path) {
+		path = filepath.Clean(string(os.PathSeparator) + path)
+		path, _ = filepath.Rel(string(os.PathSeparator), path)
+	}
+
+	return filepath.Clean(path)
 }
