@@ -2,18 +2,18 @@
 language: staticfile
 default_versions:
 - name: nginx
-  version: 1.15.5
+  version: 1.15.6
 dependencies:
 - name: nginx
-  version: 1.15.5
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.5-linux-x64-cflinuxfs2-df8b02ea.tgz
-  sha256: df8b02eab4ff7e4f97688ca2f614eb4a40344cfca49165a17019f7bbf7f03c5e
+  version: 1.15.6
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.6-linux-x64-cflinuxfs2-d8a2c4eb.tgz
+  sha256: d8a2c4ebae2d4ce59af2b39799c16feabf1afdfbfc7359351d761e3a5bd34e51
   cf_stacks:
   - cflinuxfs2
 - name: nginx
-  version: 1.15.5
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.5-linux-x64-cflinuxfs3-798caddc.tgz
-  sha256: 798caddcb29e2a1ce6a110d800e70960f82bbb2196c21d3dc034e98691a51c21
+  version: 1.15.6
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.6-linux-x64-cflinuxfs3-2746e45a.tgz
+  sha256: 2746e45a1b49de52978d3b4fc7da3f98f584ec479fae8bc3a7ec1ee10af42b60
   cf_stacks:
   - cflinuxfs3
 pre_package: scripts/build.sh
