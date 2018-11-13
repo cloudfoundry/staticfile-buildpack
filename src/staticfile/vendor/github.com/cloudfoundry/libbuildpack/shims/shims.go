@@ -15,22 +15,57 @@ import (
 const setupPathContent = "export PATH={{ range $_, $path := . }}{{ $path }}:{{ end }}$PATH"
 
 type Shimmer interface {
-	RootDir() string
-	Detect(buildpacks, group, launch, order, plan string) error
-	Supply(buildpacks, cache, group, launch, plan, platform string) error
+	Detect(binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata string) error
+	Supply(binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir string) error
 }
 
-func Detect(s Shimmer, workspaceDir string) error {
+type Shim struct {}
+
+func (s *Shim) Detect(binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata string) error {
+	cmd := exec.Command(
+		filepath.Join(binDir, "v3-detector"),
+		"-buildpacks", buildpacksDir,
+		"-group", groupMetadata,
+		"-launch", launchDir,
+		"-order", orderMetadata,
+		"-plan", planMetadata,
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Env = append(os.Environ(), "PACK_STACK_ID=org.cloudfoundry.stacks."+os.Getenv("CF_STACK"))
+	return cmd.Run()
+}
+
+func (s *Shim) Supply(binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir string) error {
+	cmd := exec.Command(
+		filepath.Join(binDir, "v3-builder"),
+		"-buildpacks", buildpacksDir,
+		"-cache", cacheDir,
+		"-group", groupMetadata,
+		"-launch", launchDir,
+		"-plan", planMetadata,
+		"-platform", platformDir,
+	)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Env = append(os.Environ(), "PACK_STACK_ID=org.cloudfoundry.stacks."+os.Getenv("CF_STACK"))
+
+	return cmd.Run()
+}
+
+
+func Detect(s Shimmer, buildpackDir, workspaceDir string) error {
 	return s.Detect(
-		filepath.Join(s.RootDir(), "cnbs"),
+		filepath.Join(buildpackDir, "bin"),
+		filepath.Join(buildpackDir, "cnbs"),
 		filepath.Join(workspaceDir, "group.toml"),
 		workspaceDir,
-		filepath.Join(s.RootDir(), "order.toml"),
+		filepath.Join(buildpackDir, "order.toml"),
 		filepath.Join(workspaceDir, "plan.toml"),
 	)
 }
 
-func Supply(s Shimmer, buildDir, cacheDir, depsDir, depsIndex, workspaceDir, launchDir string) error {
+func Supply(s Shimmer, buildpackDir, buildDir, cacheDir, depsDir, depsIndex, workspaceDir, launchDir string) error {
 	if err := os.Symlink(buildDir, filepath.Join(launchDir, "app")); err != nil {
 		return err
 	}
@@ -39,11 +74,12 @@ func Supply(s Shimmer, buildDir, cacheDir, depsDir, depsIndex, workspaceDir, lau
 	_, planErr := os.Stat(filepath.Join(workspaceDir, "plan.toml"))
 
 	if os.IsNotExist(groupErr) || os.IsNotExist(planErr) {
-		Detect(s, workspaceDir)
+		Detect(s, buildpackDir, workspaceDir)
 	}
 
 	err := s.Supply(
-		filepath.Join(s.RootDir(), "cnbs"),
+		filepath.Join(buildpackDir, "bin"),
+		filepath.Join(buildpackDir, "cnbs"),
 		cacheDir,
 		filepath.Join(workspaceDir, "group.toml"),
 		launchDir,
@@ -151,52 +187,4 @@ func Release(buildDir string, writer io.Writer) error {
 
 	output := outputMetadata{DefaultProcessTypes: struct{ Web string }{Web: webCommand}}
 	return yaml.NewEncoder(writer).Encode(output)
-}
-
-type Shim struct {
-	rootDir string
-}
-
-func NewShim() (*Shim, error) {
-	buildpackDir, err := filepath.Abs(filepath.Join(filepath.Dir(os.Args[0]), ".."))
-	if err != nil {
-		return nil, err
-	}
-	return &Shim{buildpackDir}, nil
-}
-
-func (s *Shim) RootDir() string {
-	return s.rootDir
-}
-
-func (s *Shim) Detect(buildpacks, group, launch, order, plan string) error {
-	cmd := exec.Command(
-		filepath.Join(s.rootDir, "bin", "v3-detector"),
-		"-buildpacks", buildpacks,
-		"-group", group,
-		"-launch", launch,
-		"-order", order,
-		"-plan", plan,
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Env = append(os.Environ(), "PACK_STACK_ID=org.cloudfoundry.stacks."+os.Getenv("CF_STACK"))
-	return cmd.Run()
-}
-
-func (s *Shim) Supply(buildpacks, cache, group, launch, plan, platform string) error {
-	cmd := exec.Command(
-		filepath.Join(s.rootDir, "bin", "v3-builder"),
-		"-buildpacks", buildpacks,
-		"-cache", cache,
-		"-group", group,
-		"-launch", launch,
-		"-plan", plan,
-		"-platform", platform,
-	)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Env = append(os.Environ(), "PACK_STACK_ID=org.cloudfoundry.stacks."+os.Getenv("CF_STACK"))
-
-	return cmd.Run()
 }

@@ -32,38 +32,26 @@ func (m *MockShimmer) EXPECT() *MockShimmerMockRecorder {
 	return m.recorder
 }
 
-// RootDir mocks base method
-func (m *MockShimmer) RootDir() string {
-	ret := m.ctrl.Call(m, "RootDir")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// RootDir indicates an expected call of RootDir
-func (mr *MockShimmerMockRecorder) RootDir() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RootDir", reflect.TypeOf((*MockShimmer)(nil).RootDir))
-}
-
 // Detect mocks base method
-func (m *MockShimmer) Detect(buildpacks, group, launch, order, plan string) error {
-	ret := m.ctrl.Call(m, "Detect", buildpacks, group, launch, order, plan)
+func (m *MockShimmer) Detect(binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata string) error {
+	ret := m.ctrl.Call(m, "Detect", binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Detect indicates an expected call of Detect
-func (mr *MockShimmerMockRecorder) Detect(buildpacks, group, launch, order, plan interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Detect", reflect.TypeOf((*MockShimmer)(nil).Detect), buildpacks, group, launch, order, plan)
+func (mr *MockShimmerMockRecorder) Detect(binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Detect", reflect.TypeOf((*MockShimmer)(nil).Detect), binDir, buildpacksDir, groupMetadata, launchDir, orderMetadata, planMetadata)
 }
 
 // Supply mocks base method
-func (m *MockShimmer) Supply(buildpacks, cache, group, launch, plan, platform string) error {
-	ret := m.ctrl.Call(m, "Supply", buildpacks, cache, group, launch, plan, platform)
+func (m *MockShimmer) Supply(binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir string) error {
+	ret := m.ctrl.Call(m, "Supply", binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Supply indicates an expected call of Supply
-func (mr *MockShimmerMockRecorder) Supply(buildpacks, cache, group, launch, plan, platform interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Supply", reflect.TypeOf((*MockShimmer)(nil).Supply), buildpacks, cache, group, launch, plan, platform)
+func (mr *MockShimmerMockRecorder) Supply(binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Supply", reflect.TypeOf((*MockShimmer)(nil).Supply), binDir, buildpacksDir, cacheDir, groupMetadata, launchDir, planMetadata, platformDir)
 }

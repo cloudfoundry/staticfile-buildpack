@@ -8,14 +8,10 @@ import (
 )
 
 func main() {
+	buildpackDir := filepath.Join(os.Args[0], "..", "..")
 	workspaceDir := filepath.Join(os.Args[1], "..")
 
-	detector, err := shims.NewShim()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = shims.Detect(detector, workspaceDir)
+	err := shims.Detect(&shims.Shim{}, buildpackDir, workspaceDir)
 	if err != nil {
 		log.Fatal(err)
 	}

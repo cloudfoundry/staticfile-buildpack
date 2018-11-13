@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:33df0252c5fb3f6e685aa5c9bc54cda826209830beefde8df323fe8201b66b8b"
+  digest = "1:2fea7150638f41e330d9ae19996522491d23895fd5851d03d3150b1ca1dabe00"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,7 +29,7 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "ed5668f343240d815c5a041b64c14ac9a2d0874d"
+  revision = "1780c735dd27f9438617bb5a4de6997bb71a04d3"
 
 [[projects]]
   digest = "1:7ce300e943482aff885b3318c1c6a609827f43e3ba26a073380d5ba6143a0c48"
@@ -119,7 +119,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3b86e1cf4059ba6c2cf189f60655a16a8e32d221ed23c4137ac6b2adeaeccc52"
+  digest = "1:fbc2896199a45d32325e24ceb56624c7db49f9cfb068f739ee53339a8fb183b3"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -128,7 +128,7 @@
     "html/charset",
   ]
   pruneopts = ""
-  revision = "03003ca0c849e57b6ea29a4bab8d3cb6e4d568fe"
+  revision = "88d92db4c548972d942ac2a3531a8a9a34c82ca6"
 
 [[projects]]
   branch = "master"
@@ -165,7 +165,6 @@
   version = "v0.3.0"
 
 [[projects]]
-  branch = "v1"
   digest = "1:52d1352ab8d4c60e3e4b6c47c927ac92e39db9ae95e62244c2a2b154160e0e87"
   name = "gopkg.in/jarcoal/httpmock.v1"
   packages = ["."]

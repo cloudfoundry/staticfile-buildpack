@@ -28,13 +28,8 @@ var _ = Describe("Shims", func() {
 		It("runs with the correct arguments", func() {
 			mockShimmer.
 				EXPECT().
-				RootDir().
-				Return("buildpack-dir").
-				Times(2)
-
-			mockShimmer.
-				EXPECT().
 				Detect(
+					filepath.Join("buildpack-dir", "bin"),
 					filepath.Join("buildpack-dir", "cnbs"),
 					filepath.Join("build-dir", "group.toml"),
 					"build-dir",
@@ -43,7 +38,7 @@ var _ = Describe("Shims", func() {
 				).
 				Times(1)
 
-			Expect(shims.Detect(mockShimmer, "build-dir")).To(Succeed())
+			Expect(shims.Detect(mockShimmer, "buildpack-dir", "build-dir")).To(Succeed())
 		})
 	})
 
@@ -86,13 +81,8 @@ var _ = Describe("Shims", func() {
 			It("runs with the correct arguments and moves things to the correct place", func() {
 				mockShimmer.
 					EXPECT().
-					RootDir().
-					Return("buildpack-dir").
-					Times(2)
-
-				mockShimmer.
-					EXPECT().
 					Supply(
+						filepath.Join("buildpack-dir", "bin"),
 						filepath.Join("buildpack-dir", "cnbs"),
 						"cache-dir",
 						filepath.Join(workspaceDir, "group.toml"),
@@ -106,7 +96,7 @@ var _ = Describe("Shims", func() {
 					}).
 					Times(1)
 
-				Expect(shims.Supply(mockShimmer, buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
+				Expect(shims.Supply(mockShimmer, "buildpack-dir", buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
 				Expect(filepath.Join(buildDir, "metadata.toml")).To(BeAnExistingFile())
 				Expect(filepath.Join(depsDir, "0", "test.txt")).To(BeAnExistingFile())
 			})
@@ -116,13 +106,8 @@ var _ = Describe("Shims", func() {
 			It("runs the v3 detector", func() {
 				mockShimmer.
 					EXPECT().
-					RootDir().
-					Return("buildpack-dir").
-					Times(2)
-
-				mockShimmer.
-					EXPECT().
 					Detect(
+						filepath.Join("buildpack-dir", "bin"),
 						filepath.Join("buildpack-dir", "cnbs"),
 						filepath.Join(workspaceDir, "group.toml"),
 						workspaceDir,
@@ -132,13 +117,8 @@ var _ = Describe("Shims", func() {
 
 				mockShimmer.
 					EXPECT().
-					RootDir().
-					Return("buildpack-dir").
-					Times(2)
-
-				mockShimmer.
-					EXPECT().
 					Supply(
+						filepath.Join("buildpack-dir", "bin"),
 						filepath.Join("buildpack-dir", "cnbs"),
 						"cache-dir",
 						filepath.Join(workspaceDir, "group.toml"),
@@ -152,7 +132,7 @@ var _ = Describe("Shims", func() {
 					}).
 					Times(1)
 
-				Expect(shims.Supply(mockShimmer, buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
+				Expect(shims.Supply(mockShimmer, "buildpack-dir", buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
 				Expect(filepath.Join(buildDir, "metadata.toml")).To(BeAnExistingFile())
 				Expect(filepath.Join(depsDir, "0", "test.txt")).To(BeAnExistingFile())
 			})
