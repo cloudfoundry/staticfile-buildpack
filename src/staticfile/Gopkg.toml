@@ -20,7 +20,7 @@ required = ["github.com/google/subcommands"]
   branch = "master"
 
 [[constraint]]
-  branch = "v1"
+  revision = "c463961d8bfec5823f8100e620bcc73e9afdd7d4"
   name = "gopkg.in/jarcoal/httpmock.v1"
 
 [[override]]
