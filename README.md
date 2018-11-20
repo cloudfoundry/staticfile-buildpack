@@ -92,5 +92,5 @@ The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/proje
 ### Acknowledgements
 
 This buildpack is based heavily upon Jordon Bedwell's Heroku buildpack and the modifications by David Laing for Cloud Foundry [nginx-buildpack (deprecated)](https://github.com/cloudfoundry-community/nginx-buildpack). It has been tuned for usability (configurable with `Staticfile`) and to be included as a default buildpack (detects `Staticfile` rather than the presence of an `index.html`). Thanks for the buildpack Jordon!
-If you require additional custom NGINX configuration you should got to the new [NGINX Buildpack](https://github.com/cloudfoundry/nginx-buildpack).
+If you require additional custom NGINX configuration, use the new [nginx-buildpack](https://github.com/cloudfoundry/nginx-buildpack).
 
