@@ -256,10 +256,10 @@ ruby:
 				BeforeEach(func() {
 					os.Setenv("CF_STACK", "cflinuxfs2")
 				})
-			    It("returns all versions of the dependency", func() {
+				It("returns all versions of the dependency", func() {
 					versions := manifest.AllDependencyVersions("jruby")
 					Expect(versions).To(Equal([]string{"9.3.4", "9.3.5", "9.4.4"}))
-			    })
+				})
 			})
 
 			Context("stack does not match", func() {
@@ -496,7 +496,7 @@ ruby:
 
 		Context("dependency matches", func() {
 			BeforeEach(func() {
-			    depToFind = libbuildpack.Dependency{"jruby", "9.3.5"}
+				depToFind = libbuildpack.Dependency{"jruby", "9.3.5"}
 			})
 
 			Context("top-level manifest stack exists", func() {

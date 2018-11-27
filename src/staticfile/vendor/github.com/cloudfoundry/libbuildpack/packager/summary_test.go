@@ -8,9 +8,9 @@ import (
 )
 
 var _ = Describe("Packager", func() {
-var (
-	buildpackDir string
-)
+	var (
+		buildpackDir string
+	)
 	BeforeEach(func() {
 		buildpackDir = "./fixtures/good"
 

@@ -1,15 +1,23 @@
 package main
 
 import (
-	"github.com/cloudfoundry/libbuildpack/shims"
+	"errors"
 	"log"
 	"os"
+	"path/filepath"
+
+	"github.com/cloudfoundry/libbuildpack/shims"
 )
 
 func main() {
-	buildDir := os.Args[1]
+	if len(os.Args) != 2 {
+		log.Fatal(errors.New("incorrect number of arguments"))
+	}
 
-	if err := shims.Release(buildDir, os.Stdout); err != nil {
+	metadataPath := filepath.Join(os.Args[1], ".cloudfoundry", "metadata.toml")
+
+	releaser := shims.Releaser{MetadataPath: metadataPath, Writer: os.Stdout}
+	if err := releaser.Release(); err != nil {
 		log.Fatal(err)
 	}
 }

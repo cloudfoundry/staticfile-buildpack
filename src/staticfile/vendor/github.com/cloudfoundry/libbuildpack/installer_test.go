@@ -910,7 +910,7 @@ var _ = Describe("Installer", func() {
 		var i *libbuildpack.Installer
 		var versionLine map[string]string
 
-		BeforeEach(func(){
+		BeforeEach(func() {
 			i = libbuildpack.NewInstaller(nil)
 			versionLine = *i.GetVersionLine()
 		})

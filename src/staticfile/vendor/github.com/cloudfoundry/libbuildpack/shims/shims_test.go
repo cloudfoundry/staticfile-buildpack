@@ -2,215 +2,198 @@ package shims_test
 
 import (
 	"bytes"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	"github.com/cloudfoundry/libbuildpack/shims"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
-//go:generate mockgen -source=shims.go --destination=mocks_shims_test.go --package=shims_test
+//go:generate mockgen -source=supplier.go --destination=mocks_shims_test.go --package=shims_test
 
 var _ = Describe("Shims", func() {
-	Describe("Detect", func() {
+	Describe("Supplier", func() {
 		var (
-			mockCtrl    *gomock.Controller
-			mockShimmer *MockShimmer
-		)
-
-		BeforeEach(func() {
-			mockCtrl = gomock.NewController(GinkgoT())
-			mockShimmer = NewMockShimmer(mockCtrl)
-		})
-
-		It("runs with the correct arguments", func() {
-			mockShimmer.
-				EXPECT().
-				Detect(
-					filepath.Join("buildpack-dir", "bin"),
-					filepath.Join("buildpack-dir", "cnbs"),
-					filepath.Join("build-dir", "group.toml"),
-					"build-dir",
-					filepath.Join("buildpack-dir", "order.toml"),
-					filepath.Join("build-dir", "plan.toml"),
-				).
-				Times(1)
-
-			Expect(shims.Detect(mockShimmer, "buildpack-dir", "build-dir")).To(Succeed())
-		})
-	})
-
-	Describe("Supply", func() {
-		var (
-			mockCtrl                                   *gomock.Controller
-			mockShimmer                                *MockShimmer
-			buildDir, depsDir, launchDir, workspaceDir string
+			supplier                                                                                                                                        shims.Supplier
+			mockCtrl                                                                                                                                        *gomock.Controller
+			mockDetector                                                                                                                                    *MockDetector
+			binDir, v2BuildDir, cnbAppDir, buildpacksDir, cacheDir, depsDir, depsIndex, groupMetadata, launchDir, orderMetadata, planMetadata, workspaceDir string
 		)
 
 		BeforeEach(func() {
 			var err error
 
 			mockCtrl = gomock.NewController(GinkgoT())
-			mockShimmer = NewMockShimmer(mockCtrl)
+			mockDetector = NewMockDetector(mockCtrl)
 
 			workspaceDir, err = ioutil.TempDir("", "workspace")
 			Expect(err).NotTo(HaveOccurred())
 
-			buildDir = filepath.Join(workspaceDir, "build")
-			Expect(os.MkdirAll(buildDir, 0777)).To(Succeed())
+			v2BuildDir = filepath.Join(workspaceDir, "build")
+			Expect(os.MkdirAll(v2BuildDir, 0777)).To(Succeed())
+
+			cnbAppDir = filepath.Join(workspaceDir, "cnb-app")
+
+			binDir = filepath.Join(workspaceDir, "bin")
+			Expect(os.MkdirAll(binDir, 0777)).To(Succeed())
+
+			cacheDir = filepath.Join(workspaceDir, "cache")
+			Expect(os.MkdirAll(cacheDir, 0777)).To(Succeed())
+
+			buildpacksDir = filepath.Join(workspaceDir, "cnbs")
+			Expect(os.MkdirAll(buildpacksDir, 0777)).To(Succeed())
 
 			depsDir = filepath.Join(workspaceDir, "deps")
-			Expect(os.MkdirAll(filepath.Join(depsDir, "0"), 0777)).To(Succeed())
+			depsIndex = "0"
+
+			Expect(os.MkdirAll(filepath.Join(depsDir, depsIndex), 0777)).To(Succeed())
 
 			launchDir = filepath.Join(workspaceDir, "launch")
 			Expect(os.MkdirAll(filepath.Join(launchDir, "config"), 0777)).To(Succeed())
+
+			orderMetadata = filepath.Join(workspaceDir, "order.toml")
+			Expect(ioutil.WriteFile(orderMetadata, []byte(""), 0666)).To(Succeed())
+
+			groupMetadata = filepath.Join(workspaceDir, "group.toml")
+
+			planMetadata = filepath.Join(workspaceDir, "plan.toml")
+
+			supplier = shims.Supplier{
+				Detector:      mockDetector,
+				BinDir:        binDir,
+				V2BuildDir:    v2BuildDir,
+				CNBAppDir:     cnbAppDir,
+				BuildpacksDir: buildpacksDir,
+				CacheDir:      cacheDir,
+				DepsDir:       depsDir,
+				DepsIndex:     depsIndex,
+				LaunchDir:     launchDir,
+				OrderMetadata: orderMetadata,
+				GroupMetadata: groupMetadata,
+				PlanMetadata:  planMetadata,
+				WorkspaceDir:  workspaceDir,
+			}
 		})
 
 		AfterEach(func() {
-			os.RemoveAll(workspaceDir)
+			mockCtrl.Finish()
+			Expect(os.RemoveAll(workspaceDir)).To(Succeed())
 		})
 
-		Context("when detection has already run", func() {
+		Context("GetBuildPlan", func() {
+			It("runs detection when group or plan metadata does not exist", func() {
+				mockDetector.
+					EXPECT().
+					Detect()
+				Expect(supplier.GetBuildPlan()).To(Succeed())
+			})
+
+			It("does NOT run detection when group and plan metadata exists", func() {
+				Expect(ioutil.WriteFile(groupMetadata, []byte(""), 0666)).To(Succeed())
+				Expect(ioutil.WriteFile(planMetadata, []byte(""), 0666)).To(Succeed())
+
+				mockDetector.
+					EXPECT().
+					Detect().
+					Times(0)
+				Expect(supplier.GetBuildPlan()).To(Succeed())
+			})
+		})
+
+		Context("MoveLayers", func() {
 			BeforeEach(func() {
-				Expect(ioutil.WriteFile(filepath.Join(workspaceDir, "group.toml"), []byte(""), 0666)).To(Succeed())
-				Expect(ioutil.WriteFile(filepath.Join(workspaceDir, "plan.toml"), []byte(""), 0666)).To(Succeed())
+				Expect(os.MkdirAll(filepath.Join(launchDir, "config"), 0777)).To(Succeed())
+				Expect(ioutil.WriteFile(filepath.Join(launchDir, "config", "metadata.toml"), []byte(""), 0666)).To(Succeed())
+
+				Expect(os.MkdirAll(filepath.Join(launchDir, "layer"), 0777)).To(Succeed())
+				Expect(os.MkdirAll(filepath.Join(launchDir, "anotherLayer"), 0777)).To(Succeed())
 			})
 
-			It("runs with the correct arguments and moves things to the correct place", func() {
-				mockShimmer.
-					EXPECT().
-					Supply(
-						filepath.Join("buildpack-dir", "bin"),
-						filepath.Join("buildpack-dir", "cnbs"),
-						"cache-dir",
-						filepath.Join(workspaceDir, "group.toml"),
-						launchDir,
-						filepath.Join(workspaceDir, "plan.toml"),
-						workspaceDir,
-					).
-					Do(func(args ...string) {
-						Expect(ioutil.WriteFile(filepath.Join(launchDir, "test.txt"), []byte("hello"), 0666)).To(Succeed())
-						Expect(ioutil.WriteFile(filepath.Join(launchDir, "config", "metadata.toml"), []byte("howdy"), 0666)).To(Succeed())
-					}).
-					Times(1)
-
-				Expect(shims.Supply(mockShimmer, "buildpack-dir", buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
-				Expect(filepath.Join(buildDir, "metadata.toml")).To(BeAnExistingFile())
-				Expect(filepath.Join(depsDir, "0", "test.txt")).To(BeAnExistingFile())
-			})
-		})
-
-		Context("when the group.toml and plan.toml do not exist", func() {
-			It("runs the v3 detector", func() {
-				mockShimmer.
-					EXPECT().
-					Detect(
-						filepath.Join("buildpack-dir", "bin"),
-						filepath.Join("buildpack-dir", "cnbs"),
-						filepath.Join(workspaceDir, "group.toml"),
-						workspaceDir,
-						filepath.Join("buildpack-dir", "order.toml"),
-						filepath.Join(workspaceDir, "plan.toml"),
-					).Times(1)
-
-				mockShimmer.
-					EXPECT().
-					Supply(
-						filepath.Join("buildpack-dir", "bin"),
-						filepath.Join("buildpack-dir", "cnbs"),
-						"cache-dir",
-						filepath.Join(workspaceDir, "group.toml"),
-						launchDir,
-						filepath.Join(workspaceDir, "plan.toml"),
-						workspaceDir,
-					).
-					Do(func(args ...string) {
-						Expect(ioutil.WriteFile(filepath.Join(launchDir, "test.txt"), []byte("hello"), 0666)).To(Succeed())
-						Expect(ioutil.WriteFile(filepath.Join(launchDir, "config", "metadata.toml"), []byte("howdy"), 0666)).To(Succeed())
-					}).
-					Times(1)
-
-				Expect(shims.Supply(mockShimmer, "buildpack-dir", buildDir, "cache-dir", depsDir, "0", workspaceDir, launchDir)).To(Succeed())
-				Expect(filepath.Join(buildDir, "metadata.toml")).To(BeAnExistingFile())
-				Expect(filepath.Join(depsDir, "0", "test.txt")).To(BeAnExistingFile())
+			It("moves the layers to deps dir and metadata to build dir", func() {
+				Expect(supplier.MoveLayers()).To(Succeed())
+				Expect(filepath.Join(v2BuildDir, ".cloudfoundry", "metadata.toml")).To(BeAnExistingFile())
+				Expect(filepath.Join(depsDir, depsIndex, "layer")).To(BeAnExistingFile())
+				Expect(filepath.Join(depsDir, depsIndex, "anotherLayer")).To(BeAnExistingFile())
 			})
 		})
 	})
 
-	Describe("Finalize", func() {
+	Describe("Finalizer", func() {
 		var (
-			depsDir, profileDir string
+			finalizer             shims.Finalizer
+			profileDir, depsIndex string
 		)
 
 		BeforeEach(func() {
 			var err error
 
-			depsDir, err = ioutil.TempDir("", "deps")
-			Expect(err).NotTo(HaveOccurred())
-
-			tempProfileDir := filepath.Join(depsDir, "0", "some-buildpack", "some-dep", "profile.d")
-			Expect(os.MkdirAll(tempProfileDir, 0777)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(tempProfileDir, "some_script.sh"), []byte(""), 0666)).To(Succeed())
-
-			otherTempProfileDir := filepath.Join(depsDir, "0", "some-other-buildpack", "some-other-dep", "profile.d")
-			Expect(os.MkdirAll(otherTempProfileDir, 0777)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(otherTempProfileDir, "some_other_script.sh"), []byte(""), 0666)).To(Succeed())
-
-			Expect(os.MkdirAll(filepath.Join(depsDir, "0", "some-buildpack", "some-dep", "bin"), 0777)).To(Succeed())
-			Expect(os.MkdirAll(filepath.Join(depsDir, "0", "some-other-buildpack", "some-other-dep", "bin"), 0777)).To(Succeed())
+			depsIndex = "0"
 
 			profileDir, err = ioutil.TempDir("", "profile")
 			Expect(err).NotTo(HaveOccurred())
+
+			finalizer = shims.Finalizer{DepsIndex: depsIndex, ProfileDir: profileDir}
 		})
 
 		AfterEach(func() {
-			os.RemoveAll(depsDir)
 			os.RemoveAll(profileDir)
 		})
 
 		It("runs with the correct arguments and moves things to the correct place", func() {
-			Expect(shims.Finalize(depsDir, "0", profileDir)).To(Succeed())
+			Expect(finalizer.Finalize()).To(Succeed())
 
-			Expect(filepath.Join(profileDir, "some_script.sh")).To(BeAnExistingFile())
-			Expect(filepath.Join(profileDir, "some_other_script.sh")).To(BeAnExistingFile())
+			contents, err := ioutil.ReadFile(filepath.Join(profileDir, "0_shim.sh"))
+			Expect(err).NotTo(HaveOccurred())
 
-			Expect(filepath.Join(profileDir, "0.sh")).To(BeAnExistingFile())
-			Expect(ioutil.ReadFile(filepath.Join(profileDir, "0.sh"))).To(Equal([]byte(
-				`export PATH=$DEPS_DIR/0/some-buildpack/some-dep/bin:$DEPS_DIR/0/some-other-buildpack/some-other-dep/bin:$PATH`,
-			)))
+			Expect(string(contents)).To(Equal(`export PACK_STACK_ID="org.cloudfoundry.stacks."
+export PACK_LAUNCH_DIR="$DEPS_DIR/0"
+export PACK_APP_DIR="$HOME"
+exec $DEPS_DIR/v3-launcher "$2"
+`))
 		})
 	})
 
-	Describe("Release", func() {
+	Describe("Releaser", func() {
 		var (
-			buildDir string
+			releaser   shims.Releaser
+			v2BuildDir string
+			buf        *bytes.Buffer
 		)
 
 		BeforeEach(func() {
 			var err error
 
-			buildDir, err = ioutil.TempDir("", "build")
+			v2BuildDir, err = ioutil.TempDir("", "build")
 			Expect(err).NotTo(HaveOccurred())
+
 			contents := `
-buildpacks = ["some.buildpacks", "some.other.buildpack"]
-[[processes]]
-type = "web"
-command = "npm start"
-`
-			Expect(ioutil.WriteFile(filepath.Join(buildDir, "metadata.toml"), []byte(contents), 0666)).To(Succeed())
+			buildpacks = ["some.buildpacks", "some.other.buildpack"]
+			[[processes]]
+			type = "web"
+			command = "npm start"
+			`
+			os.MkdirAll(filepath.Join(v2BuildDir, ".cloudfoundry"), 0777)
+			Expect(ioutil.WriteFile(filepath.Join(v2BuildDir, ".cloudfoundry", "metadata.toml"), []byte(contents), 0666)).To(Succeed())
+
+			buf = &bytes.Buffer{}
+
+			releaser = shims.Releaser{
+				MetadataPath: filepath.Join(v2BuildDir, ".cloudfoundry", "metadata.toml"),
+				Writer:       buf,
+			}
 		})
 
 		AfterEach(func() {
-			os.RemoveAll(buildDir)
+			os.RemoveAll(v2BuildDir)
 		})
 
 		It("runs with the correct arguments and moves things to the correct place", func() {
-			buf := &bytes.Buffer{}
-			Expect(shims.Release(buildDir, buf)).To(Succeed())
+			Expect(releaser.Release()).To(Succeed())
 			Expect(buf.Bytes()).To(Equal([]byte("default_process_types:\n  web: npm start\n")))
-			Expect(filepath.Join(buildDir, "metadata.toml")).NotTo(BeAnExistingFile())
+			Expect(filepath.Join(v2BuildDir, ".cloudfoundry", "metadata.toml")).NotTo(BeAnExistingFile())
 		})
 	})
 })
