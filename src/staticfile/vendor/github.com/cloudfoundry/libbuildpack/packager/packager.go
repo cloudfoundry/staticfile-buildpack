@@ -18,8 +18,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"github.com/cloudfoundry/libbuildpack"
 )
 
@@ -309,7 +307,7 @@ func ZipFiles(filename string, files []File) error {
 
 		zipfile, err := os.Open(file.Path)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("failed to open included_file: %s", file.Path))
+			return fmt.Errorf("failed to open included_file: %s, %v", file.Path, err)
 		}
 		defer zipfile.Close()
 
