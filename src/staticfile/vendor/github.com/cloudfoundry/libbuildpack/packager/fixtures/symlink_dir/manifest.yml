@@ -16,5 +16,5 @@ include_files:
 - VERSION
 - bin/filename
 - hi.txt
-- random_dir/file
+- random_dir
 - sym_dir

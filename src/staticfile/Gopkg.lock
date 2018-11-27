@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:abe36298ba15ffdee31511eaa75bcab133f36445b709c71baacf646d32d51959"
+  digest = "1:dae990019de812548bd4741dff6967e91a697446b83a0935e5cd43c98854b16f"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,7 +29,7 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "854a07b75c4154ba9fcd014f15a2a70e0552e9ed"
+  revision = "4b8f54af5ba6bd0b6b2a8f5fc19142b99d296b06"
 
 [[projects]]
   digest = "1:7ce300e943482aff885b3318c1c6a609827f43e3ba26a073380d5ba6143a0c48"
