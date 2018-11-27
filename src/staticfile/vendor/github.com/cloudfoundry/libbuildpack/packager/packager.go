@@ -18,6 +18,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/cloudfoundry/libbuildpack"
 )
 
@@ -225,7 +227,10 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 
 	fileName := fmt.Sprintf("%s_buildpack%s%s-v%s.zip", manifest.Language, cachedPart, stackPart, version)
 	zipFile := filepath.Join(bpDir, fileName)
-	ZipFiles(zipFile, files)
+
+	if err := ZipFiles(zipFile, files); err != nil {
+		return "", err
+	}
 
 	return zipFile, err
 }
@@ -304,7 +309,7 @@ func ZipFiles(filename string, files []File) error {
 
 		zipfile, err := os.Open(file.Path)
 		if err != nil {
-			return err
+			return errors.Wrap(err, fmt.Sprintf("failed to open included_file: %s", file.Path))
 		}
 		defer zipfile.Close()
 

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -90,57 +91,6 @@ var _ = Describe("Packager", func() {
 				})
 			})
 		}
-
-		Context("manifest.yml was already packaged", func() {
-			Context("setting specific stack", func() {
-				BeforeEach(func() { stack = "cflinuxfs2" })
-				It("returns an error", func() {
-					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
-					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
-				})
-			})
-
-			Context("setting any stack", func() {
-
-				BeforeEach(func() { stack = "" })
-
-				It("returns an error", func() {
-					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
-					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
-				})
-			})
-		})
-
-		Context("manifest.yml has no dependencies", func() {
-			BeforeEach(func() { stack = "cflinuxfs2" })
-
-			It("allows stack when packaging", func() {
-				zipFile, err = packager.Package("./fixtures/no_dependencies", cacheDir, version, stack, cached)
-				Expect(err).To(BeNil())
-			})
-		})
-
-		Context("stack is invalid", func() {
-			Context("stack not found in any dependencies", func() {
-				BeforeEach(func() { stack = "nonexistent-stack" })
-
-				It("returns an error", func() {
-					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
-					Expect(err).To(MatchError("Stack `nonexistent-stack` not found in manifest"))
-				})
-			})
-			Context("stack not found in any default dependencies", func() {
-				BeforeEach(func() {
-					stack = "cflinuxfs3"
-					buildpackDir = "./fixtures/missing_default_fs3"
-				})
-
-				It("returns an error", func() {
-					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
-					Expect(err).To(MatchError("No matching default dependency `ruby` for stack `cflinuxfs3`"))
-				})
-			})
-		})
 
 		Context("uncached", func() {
 			BeforeEach(func() { cached = false })
@@ -282,8 +232,62 @@ var _ = Describe("Packager", func() {
 			})
 		})
 
+		Context("manifest.yml was already packaged", func() {
+			Context("setting specific stack", func() {
+				BeforeEach(func() { stack = "cflinuxfs2" })
+				It("returns an error", func() {
+					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
+				})
+			})
+
+			Context("setting any stack", func() {
+
+				BeforeEach(func() { stack = "" })
+
+				It("returns an error", func() {
+					zipFile, err = packager.Package("./fixtures/prepackaged", cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("Cannot package from already packaged buildpack manifest"))
+				})
+			})
+		})
+
+		Context("manifest.yml has no dependencies", func() {
+			BeforeEach(func() { stack = "cflinuxfs2" })
+
+			It("allows stack when packaging", func() {
+				zipFile, err = packager.Package("./fixtures/no_dependencies", cacheDir, version, stack, cached)
+				Expect(err).To(BeNil())
+			})
+		})
+
+		Context("stack is invalid", func() {
+			Context("stack not found in any dependencies", func() {
+				BeforeEach(func() { stack = "nonexistent-stack" })
+
+				It("returns an error", func() {
+					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("Stack `nonexistent-stack` not found in manifest"))
+				})
+			})
+			Context("stack not found in any default dependencies", func() {
+				BeforeEach(func() {
+					stack = "cflinuxfs3"
+					buildpackDir = "./fixtures/missing_default_fs3"
+				})
+
+				It("returns an error", func() {
+					zipFile, err = packager.Package(buildpackDir, cacheDir, version, stack, cached)
+					Expect(err).To(MatchError("No matching default dependency `ruby` for stack `cflinuxfs3`"))
+				})
+			})
+		})
+
 		Context("when buildpack includes symlink to directory", func() {
 			BeforeEach(func() {
+				if runtime.GOOS == "darwin" {
+					Skip("io.Copy fails with symlinked directory on Darwin")
+				}
 				cached = true
 				buildpackDir = "./fixtures/symlink_dir"
 			})
@@ -351,6 +355,14 @@ var _ = Describe("Packager", func() {
 				dir, err := filepath.Abs(buildpackDir)
 				Expect(err).To(BeNil())
 				Expect(zipFile).To(Equal(filepath.Join(dir, fmt.Sprintf("ruby_buildpack-v%s.zip", version))))
+			})
+		})
+
+		Context("packaging with missing included_files", func() {
+			It("returns an error", func() {
+				zipFile, err = packager.Package("./fixtures/missing_included_files", cacheDir, version, stack, cached)
+
+				Expect(err.Error()).To(MatchRegexp("failed to open included_file: .*/DOESNOTEXIST.txt"))
 			})
 		})
 	})
