@@ -12,9 +12,9 @@ dependencies:
   cf_stacks:
   - cflinuxfs2
 include_files:
+- random_dir
 - manifest.yml
 - VERSION
 - bin/filename
 - hi.txt
-- random_dir
 - sym_dir

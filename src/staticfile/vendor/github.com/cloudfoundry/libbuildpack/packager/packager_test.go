@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
@@ -285,9 +284,10 @@ var _ = Describe("Packager", func() {
 
 		Context("when buildpack includes symlink to directory", func() {
 			BeforeEach(func() {
-				if runtime.GOOS == "darwin" {
-					Skip("io.Copy fails with symlinked directory on Darwin")
-				}
+				// this is actually a failing test....
+				//if runtime.GOOS == "darwin" {
+				//	Skip("io.Copy fails with symlinked directory on Darwin")
+				//}
 				cached = true
 				buildpackDir = "./fixtures/symlink_dir"
 			})
