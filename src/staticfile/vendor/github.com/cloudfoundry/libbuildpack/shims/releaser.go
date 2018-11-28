@@ -2,11 +2,10 @@ package shims
 
 import (
 	"fmt"
-	"io"
-	"os"
-
 	"github.com/BurntSushi/toml"
 	"gopkg.in/yaml.v2"
+	"io"
+	"os"
 )
 
 type inputMetadata struct {

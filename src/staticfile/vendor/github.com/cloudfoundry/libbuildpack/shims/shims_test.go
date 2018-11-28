@@ -2,9 +2,13 @@ package shims_test
 
 import (
 	"bytes"
+	"github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack/ansicleaner"
+	"gopkg.in/jarcoal/httpmock.v1"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/cloudfoundry/libbuildpack/shims"
 	"github.com/golang/mock/gomock"
@@ -17,10 +21,21 @@ import (
 var _ = Describe("Shims", func() {
 	Describe("Supplier", func() {
 		var (
-			supplier                                                                                                                                        shims.Supplier
-			mockCtrl                                                                                                                                        *gomock.Controller
-			mockDetector                                                                                                                                    *MockDetector
-			binDir, v2BuildDir, cnbAppDir, buildpacksDir, cacheDir, depsDir, depsIndex, groupMetadata, launchDir, orderMetadata, planMetadata, workspaceDir string
+			supplier      shims.Supplier
+			mockCtrl      *gomock.Controller
+			mockDetector  *MockDetector
+			binDir        string
+			v2BuildDir    string
+			cnbAppDir     string
+			buildpacksDir string
+			cacheDir      string
+			depsDir       string
+			depsIndex     string
+			groupMetadata string
+			launchDir     string
+			orderMetadata string
+			planMetadata  string
+			workspaceDir  string
 		)
 
 		BeforeEach(func() {
@@ -62,19 +77,19 @@ var _ = Describe("Shims", func() {
 			planMetadata = filepath.Join(workspaceDir, "plan.toml")
 
 			supplier = shims.Supplier{
-				Detector:      mockDetector,
-				BinDir:        binDir,
-				V2BuildDir:    v2BuildDir,
-				CNBAppDir:     cnbAppDir,
-				BuildpacksDir: buildpacksDir,
-				CacheDir:      cacheDir,
-				DepsDir:       depsDir,
-				DepsIndex:     depsIndex,
-				LaunchDir:     launchDir,
-				OrderMetadata: orderMetadata,
-				GroupMetadata: groupMetadata,
-				PlanMetadata:  planMetadata,
-				WorkspaceDir:  workspaceDir,
+				Detector:        mockDetector,
+				BinDir:          binDir,
+				V2AppDir:        v2BuildDir,
+				V3AppDir:        cnbAppDir,
+				V3BuildpacksDir: buildpacksDir,
+				V2CacheDir:      cacheDir,
+				V2DepsDir:       depsDir,
+				V2DepsIndex:     depsIndex,
+				V3LaunchDir:     launchDir,
+				OrderMetadata:   orderMetadata,
+				GroupMetadata:   groupMetadata,
+				PlanMetadata:    planMetadata,
+				V3WorkspaceDir:  workspaceDir,
 			}
 		})
 
@@ -194,6 +209,51 @@ exec $DEPS_DIR/v3-launcher "$2"
 			Expect(releaser.Release()).To(Succeed())
 			Expect(buf.Bytes()).To(Equal([]byte("default_process_types:\n  web: npm start\n")))
 			Expect(filepath.Join(v2BuildDir, ".cloudfoundry", "metadata.toml")).NotTo(BeAnExistingFile())
+		})
+	})
+
+	Describe("CNBInstaller", func() {
+		BeforeEach(func() {
+			os.Setenv("CF_STACK", "cflinuxfs3")
+
+			httpmock.Reset()
+
+			contents, err := ioutil.ReadFile("fixtures/bpA.tgz")
+			Expect(err).ToNot(HaveOccurred())
+
+			httpmock.RegisterResponder("GET", "https://a-fake-url.com/bpA.tgz",
+				httpmock.NewStringResponder(200, string(contents)))
+
+			contents, err = ioutil.ReadFile("fixtures/bpB.tgz")
+			Expect(err).ToNot(HaveOccurred())
+
+			httpmock.RegisterResponder("GET", "https://a-fake-url.com/bpB.tgz",
+				httpmock.NewStringResponder(200, string(contents)))
+		})
+
+		AfterEach(func() {
+			os.Unsetenv("CF_STACK")
+		})
+
+		It("installs the latest/unique buildpacks from an order.toml", func() {
+			tmpDir, err := ioutil.TempDir("", "")
+			Expect(err).ToNot(HaveOccurred())
+			defer os.RemoveAll(tmpDir)
+
+			buffer := new(bytes.Buffer)
+			logger := libbuildpack.NewLogger(ansicleaner.New(buffer))
+
+			manifest, err := libbuildpack.NewManifest("fixtures", logger, time.Now())
+			Expect(err).To(BeNil())
+
+			installer := shims.NewCNBInstaller(manifest)
+
+			Expect(installer.InstallCNBS("fixtures/order.toml", tmpDir)).To(Succeed())
+			Expect(filepath.Join(tmpDir, "this.is.a.fake.bpA", "1.0.1", "a.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(tmpDir, "this.is.a.fake.bpB", "1.0.2", "b.txt")).To(BeAnExistingFile())
+			Expect(filepath.Join(tmpDir, "this.is.a.fake.bpA", "latest")).To(BeAnExistingFile())
+			Expect(filepath.Join(tmpDir, "this.is.a.fake.bpB", "latest")).To(BeAnExistingFile())
+
 		})
 	})
 })
