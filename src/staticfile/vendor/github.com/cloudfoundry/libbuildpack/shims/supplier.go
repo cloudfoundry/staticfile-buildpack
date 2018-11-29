@@ -42,15 +42,15 @@ func (s *Supplier) Supply() error {
 		return err
 	}
 
+	if err := s.GetBuildPlan(); err != nil {
+		return err
+	}
+
 	if err := os.RemoveAll(s.V3AppDir); err != nil {
 		return err
 	}
 
 	if err := os.Rename(s.V2AppDir, s.V3AppDir); err != nil {
-		return err
-	}
-
-	if err := s.GetBuildPlan(); err != nil {
 		return err
 	}
 
