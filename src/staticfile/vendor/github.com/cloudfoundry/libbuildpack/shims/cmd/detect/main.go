@@ -19,7 +19,7 @@ func main() {
 
 	appDir := os.Args[1]
 
-	buildpackDir, err := filepath.Abs(filepath.Join(os.Args[0], "..", ".."))
+	buildpackDir, err := libbuildpack.GetBuildpackDir()
 	if err != nil {
 		logger.Error("Unable to find buildpack directory: %s", err.Error())
 		os.Exit(1)

@@ -29,7 +29,7 @@ func supply(logger *libbuildpack.Logger) error {
 	v2DepsDir := os.Args[3]
 	v2DepsIndex := os.Args[4]
 
-	buildpackDir, err := filepath.Abs(filepath.Join(os.Args[0], "..", ".."))
+	buildpackDir, err := libbuildpack.GetBuildpackDir()
 	if err != nil {
 		return err
 	}
