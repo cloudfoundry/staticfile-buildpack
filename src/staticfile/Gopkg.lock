@@ -19,7 +19,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:685c68ec1b4313d5e1346af655e8e6536b7679c531113452b7a95d8f1513e40b"
+  digest = "1:0c4b30eeb0c21297ace85e50347cae635a51fb66fa432ab0eb5b0c9bb9560333"
   name = "github.com/cloudfoundry/libbuildpack"
   packages = [
     ".",
@@ -29,7 +29,7 @@
     "packager",
   ]
   pruneopts = ""
-  revision = "5dfdbbdbc9b186350cd1651fe42b007f55e76bd5"
+  revision = "df2259c35386a3e182183db7eff91a1e15d09bad"
 
 [[projects]]
   digest = "1:7ce300e943482aff885b3318c1c6a609827f43e3ba26a073380d5ba6143a0c48"
@@ -40,11 +40,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dc95ddc48bfea0298738be2453a406b19714fa4af6ca8fb03ad09b908af2d30e"
+  digest = "1:c95e9ec2ca7d7bf0d5d737c91c00e56a377343e4946517d776583d5f929c3fcf"
   name = "github.com/golang/mock"
   packages = ["gomock"]
   pruneopts = ""
-  revision = "bcfe3c1f21d5271939479786888af1338fa1b25c"
+  revision = "df19b5a75c145c48e393bba02e49b13a52fe271e"
 
 [[projects]]
   branch = "master"
@@ -82,7 +82,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6bbb2c2eb93df91035e496aa33359bc06b521ed0a2d95e6fae42f249ca0cb063"
+  digest = "1:6e3a4f6869c0b5f7c55982586b51040a8795bffcd72b9574080052b3b62ae226"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -99,7 +99,7 @@
     "types",
   ]
   pruneopts = ""
-  revision = "1136bd4f6ec1a5c48accd629ef28fd3c78ca2880"
+  revision = "e0d4387cf37d6cc3baeb80f61bd24a37e5dfae26"
 
 [[projects]]
   digest = "1:3ddca2bd5496c6922a2a9e636530e178a43c2a534ea6634211acdc7d10222794"
