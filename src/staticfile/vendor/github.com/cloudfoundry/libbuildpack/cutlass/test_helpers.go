@@ -1,6 +1,7 @@
 package cutlass
 
 import (
+	"archive/zip"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -46,17 +47,25 @@ func PackageUniquelyVersionedBuildpackExtra(name, version, stack string, cached,
 	}
 
 	var file string
-	if compileExtension, err := isCompileExtensionBuildpack(bpDir); err != nil {
-		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to decide if this is a compile extension buildpack: %v", err)
-	} else if compileExtension {
-		file, err = packager.CompileExtensionPackage(bpDir, version, cached, stack)
-		if err != nil {
-			return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package as a compile extension buildpack: %v", err)
+	if os.Getenv("BUILDPACK_FILE") == "" {
+		if compileExtension, err := isCompileExtensionBuildpack(bpDir); err != nil {
+			return VersionedBuildpackPackage{}, fmt.Errorf("Failed to decide if this is a compile extension buildpack: %v", err)
+		} else if compileExtension {
+			file, err = packager.CompileExtensionPackage(bpDir, version, cached, stack)
+			if err != nil {
+				return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package as a compile extension buildpack: %v", err)
+			}
+		} else {
+			file, err = packager.Package(bpDir, packager.CacheDir, version, stack, cached)
+			if err != nil {
+				return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package buildpack: %v", err)
+			}
 		}
 	} else {
-		file, err = packager.Package(bpDir, packager.CacheDir, version, stack, cached)
+		file = os.Getenv("BUILDPACK_FILE")
+		version, err = readVersionFromZip(file)
 		if err != nil {
-			return VersionedBuildpackPackage{}, fmt.Errorf("Failed to package buildpack: %v", err)
+			return VersionedBuildpackPackage{}, err
 		}
 	}
 
@@ -135,5 +144,39 @@ func SeedRandom() {
 }
 
 func RemovePackagedBuildpack(buildpack VersionedBuildpackPackage) error {
-	return os.Remove(buildpack.File)
+	if os.Getenv("BUILDPACK_FILE") == "" {
+		return os.Remove(buildpack.File)
+	}
+	return nil
+}
+
+func readVersionFromZip(filePath string) (string, error) {
+	r, err := zip.OpenReader(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	defer r.Close()
+
+	for _, f := range r.File {
+		if f.Name != "VERSION" {
+			continue
+		}
+
+		rc, err := f.Open()
+		defer rc.Close()
+		if err != nil {
+			return "", err
+		}
+
+		out, err := ioutil.ReadAll(rc)
+		if err != nil {
+			return "", err
+
+		}
+
+
+		return fmt.Sprintf("%s", out), nil
+	}
+	return "", fmt.Errorf("Could not find VERSION file from buildpack artifact: %s", filePath)
 }
