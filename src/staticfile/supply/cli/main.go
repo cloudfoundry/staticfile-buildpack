@@ -2,9 +2,10 @@ package main
 
 import (
 	"os"
-	_ "staticfile/hooks"
-	"staticfile/supply"
 	"time"
+
+	_ "github.com/cloudfoundry/staticfile-buildpack/src/staticfile/hooks"
+	"github.com/cloudfoundry/staticfile-buildpack/src/staticfile/supply"
 
 	"github.com/cloudfoundry/libbuildpack"
 )

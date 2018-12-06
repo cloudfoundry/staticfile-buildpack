@@ -1,6 +1,0 @@
-[[groups]]
-labels = ["test"]
-buildpacks = [
-  { id = "this.is.a.fake.bpA", version = 'latest' },
-  { id = "this.is.a.fake.bpB", version = 'latest' }
-]

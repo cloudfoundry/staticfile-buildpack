@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("CF Statifile Buildpack", func() {
+var _ = Describe("CF Staticfile Buildpack", func() {
 	var app *cutlass.App
 	var createdServices []string
 	AfterEach(func() {

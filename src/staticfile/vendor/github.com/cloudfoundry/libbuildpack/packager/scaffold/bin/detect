@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# bin/detect <build-dir>
-#
-#
-# This script determines whether or not to apply the buildpack to an app
-# TODO: Write code here to exit 0 if the buildpack is compatible with the app and exit 1 otherwise
-
-exit 1

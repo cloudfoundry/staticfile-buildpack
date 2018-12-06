@@ -11,7 +11,7 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/golang/mock/gomock"
 
-	"staticfile/hooks"
+	"github.com/cloudfoundry/staticfile-buildpack/src/staticfile/hooks"
 
 	"gopkg.in/jarcoal/httpmock.v1"
 

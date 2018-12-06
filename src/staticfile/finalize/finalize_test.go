@@ -6,8 +6,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"staticfile/finalize"
 	"syscall"
+
+	"github.com/cloudfoundry/staticfile-buildpack/src/staticfile/finalize"
 
 	"bytes"
 

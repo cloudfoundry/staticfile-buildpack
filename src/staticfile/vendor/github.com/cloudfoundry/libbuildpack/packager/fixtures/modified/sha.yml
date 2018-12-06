@@ -1,5 +1,0 @@
-sha:
-  manifest.yml: 89114cde7614011031eff8ba9135e66a433fbdf58ca375548c897d87ecab5df2
-  src/mylanguage/Gopkg.toml: 64e5a2e2aa78477f800ea48f786e70ebf20764d929c14d938070556feb348421
-  src/mylanguage/supply/supply.go: aaaaaae23382a5d16c7d7a8e0a837db542f0fd9c079609842d2538f1e31b1957
-  src/mylanguage/supply/supply_test.go: 40335b858d6cb58a27bece5a2b61199a48c41dd84af1a6393f706baa4f8a2613

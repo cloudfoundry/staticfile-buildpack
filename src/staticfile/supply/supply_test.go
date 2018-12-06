@@ -4,7 +4,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"staticfile/supply"
+
+	"github.com/cloudfoundry/staticfile-buildpack/src/staticfile/supply"
 
 	"bytes"
 
