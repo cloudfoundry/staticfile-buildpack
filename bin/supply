@@ -11,6 +11,8 @@ source "$BUILDPACK_DIR/scripts/install_go.sh"
 output_dir=$(mktemp -d -t supplyXXX)
 
 echo "-----> Running go build supply"
-GOROOT=$GoInstallDir/go GOPATH=$BUILDPACK_DIR $GoInstallDir/go/bin/go build -o $output_dir/supply staticfile/supply/cli
+pushd $BUILDPACK_DIR
+  $GoInstallDir/go/bin/go build -o $output_dir/supply ./src/staticfile/supply/cli
+popd
 
 $output_dir/supply "$BUILD_DIR" "$CACHE_DIR" "$DEPS_DIR" "$DEPS_IDX"
