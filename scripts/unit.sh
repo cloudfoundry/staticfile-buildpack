@@ -6,4 +6,4 @@ source .envrc
 ./scripts/install_tools.sh
 
 cd src/*/integration/..
-ginkgo -r -skipPackage=brats,integration
+ginkgo -r -skipPackage=brats,integration -compilers=1

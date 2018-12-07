@@ -16,8 +16,8 @@ cd src/*/integration
 
 echo "Run Uncached Buildpack"
 BUILDPACK_FILE="$UNCACHED_BUILDPACK_FILE" \
-  ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached=false
+  ginkgo -r -compilers=1 --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached=false
 
 echo "Run Cached Buildpack"
 BUILDPACK_FILE="$CACHED_BUILDPACK_FILE" \
-  ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached
+  ginkgo -r -compilers=1 --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached
