@@ -5,11 +5,15 @@ github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdn
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181203192608-40fcf6231d2e h1:n5B4kVCmuOwi7Q98xvHqEDYwpKBBB96lmlN/zaS7+bc=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181203192608-40fcf6231d2e/go.mod h1:japFdv9g1jWFQEcb/V8fljrTzZY5GmpH3GS3kGg61FM=
+github.com/cloudfoundry/libbuildpack v0.0.0-20181211154449-49acf76fd9c6 h1:jdQ7/f0GJxM4g0CdMnT2W892FxvyErFuK4yuQY1Ox3A=
+github.com/cloudfoundry/libbuildpack v0.0.0-20181211154449-49acf76fd9c6/go.mod h1:japFdv9g1jWFQEcb/V8fljrTzZY5GmpH3GS3kGg61FM=
 github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a h1:A4wNiqeKqU56ZhtnzJCTyPZ1+cyu8jKtIchQ3TtxHgw=
 github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/golang/mock v1.1.1 h1:G5FRp8JnTd7RQH5kemVNlMeyXQAztQ3mOWV95KxsXH8=
 github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
+github.com/golang/mock v1.2.0 h1:28o5sBqPkBsMGnC6b4MvE2TzSr5/AT4c/1fLqVGIwlk=
+github.com/golang/mock v1.2.0/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/subcommands v0.0.0-20181012225330-46f0354f6315 h1:WW91Hq2v0qDzoPME+TPD4En72+d2Ue3ZMKPYfwR9yBU=
 github.com/google/subcommands v0.0.0-20181012225330-46f0354f6315/go.mod h1:ZjhPrFU+Olkh9WazFPsl27BQ4UPiG37m3yTrtFlrHVk=

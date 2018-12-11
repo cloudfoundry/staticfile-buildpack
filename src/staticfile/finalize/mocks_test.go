@@ -34,6 +34,7 @@ func (m *MockYAML) EXPECT() *MockYAMLMockRecorder {
 
 // Load mocks base method
 func (m *MockYAML) Load(arg0 string, arg1 interface{}) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Load", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -41,5 +42,6 @@ func (m *MockYAML) Load(arg0 string, arg1 interface{}) error {
 
 // Load indicates an expected call of Load
 func (mr *MockYAMLMockRecorder) Load(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Load", reflect.TypeOf((*MockYAML)(nil).Load), arg0, arg1)
 }

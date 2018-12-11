@@ -35,6 +35,7 @@ func (m *MockManifest) EXPECT() *MockManifestMockRecorder {
 
 // DefaultVersion mocks base method
 func (m *MockManifest) DefaultVersion(arg0 string) (libbuildpack.Dependency, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DefaultVersion", arg0)
 	ret0, _ := ret[0].(libbuildpack.Dependency)
 	ret1, _ := ret[1].(error)
@@ -43,6 +44,7 @@ func (m *MockManifest) DefaultVersion(arg0 string) (libbuildpack.Dependency, err
 
 // DefaultVersion indicates an expected call of DefaultVersion
 func (mr *MockManifestMockRecorder) DefaultVersion(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultVersion", reflect.TypeOf((*MockManifest)(nil).DefaultVersion), arg0)
 }
 
@@ -71,6 +73,7 @@ func (m *MockInstaller) EXPECT() *MockInstallerMockRecorder {
 
 // InstallDependency mocks base method
 func (m *MockInstaller) InstallDependency(arg0 libbuildpack.Dependency, arg1 string) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InstallDependency", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -78,6 +81,7 @@ func (m *MockInstaller) InstallDependency(arg0 libbuildpack.Dependency, arg1 str
 
 // InstallDependency indicates an expected call of InstallDependency
 func (mr *MockInstallerMockRecorder) InstallDependency(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallDependency", reflect.TypeOf((*MockInstaller)(nil).InstallDependency), arg0, arg1)
 }
 
@@ -106,6 +110,7 @@ func (m *MockStager) EXPECT() *MockStagerMockRecorder {
 
 // AddBinDependencyLink mocks base method
 func (m *MockStager) AddBinDependencyLink(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddBinDependencyLink", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -113,11 +118,13 @@ func (m *MockStager) AddBinDependencyLink(arg0, arg1 string) error {
 
 // AddBinDependencyLink indicates an expected call of AddBinDependencyLink
 func (mr *MockStagerMockRecorder) AddBinDependencyLink(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddBinDependencyLink", reflect.TypeOf((*MockStager)(nil).AddBinDependencyLink), arg0, arg1)
 }
 
 // DepDir mocks base method
 func (m *MockStager) DepDir() string {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DepDir")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -125,5 +132,6 @@ func (m *MockStager) DepDir() string {
 
 // DepDir indicates an expected call of DepDir
 func (mr *MockStagerMockRecorder) DepDir() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DepDir", reflect.TypeOf((*MockStager)(nil).DepDir))
 }

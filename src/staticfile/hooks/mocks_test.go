@@ -35,6 +35,7 @@ func (m *MockCommand) EXPECT() *MockCommandMockRecorder {
 
 // Execute mocks base method
 func (m *MockCommand) Execute(arg0 string, arg1, arg2 io.Writer, arg3 string, arg4 ...string) error {
+	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1, arg2, arg3}
 	for _, a := range arg4 {
 		varargs = append(varargs, a)
@@ -46,6 +47,7 @@ func (m *MockCommand) Execute(arg0 string, arg1, arg2 io.Writer, arg3 string, ar
 
 // Execute indicates an expected call of Execute
 func (mr *MockCommandMockRecorder) Execute(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), varargs...)
 }
