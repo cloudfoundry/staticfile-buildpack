@@ -5,9 +5,8 @@
 package finalize_test
 
 import (
-	reflect "reflect"
-
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockYAML is a mock of YAML interface

@@ -5,10 +5,9 @@
 package supply_test
 
 import (
-	reflect "reflect"
-
 	libbuildpack "github.com/cloudfoundry/libbuildpack"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockManifest is a mock of Manifest interface

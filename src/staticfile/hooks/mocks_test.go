@@ -5,10 +5,9 @@
 package hooks_test
 
 import (
+	gomock "github.com/golang/mock/gomock"
 	io "io"
 	reflect "reflect"
-
-	gomock "github.com/golang/mock/gomock"
 )
 
 // MockCommand is a mock of Command interface
