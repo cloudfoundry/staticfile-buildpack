@@ -3,10 +3,9 @@ package hooks_test
 import (
 	"testing"
 
+	"github.com/kardolus/httpmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"gopkg.in/jarcoal/httpmock.v1"
 )
 
 var _ = BeforeSuite(func() {

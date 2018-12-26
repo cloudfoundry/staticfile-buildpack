@@ -20,11 +20,11 @@ type Command interface {
 }
 
 type DynatraceCredentials struct {
-	ServiceName string
+	ServiceName   string
 	EnvironmentId string
-	ApiToken string
-	ApiURL string
-	SkipErrors bool
+	ApiToken      string
+	ApiURL        string
+	SkipErrors    bool
 }
 
 type DynatraceHook struct {
@@ -177,11 +177,11 @@ func (h DynatraceHook) dtCredentials() (DynatraceCredentials, bool) {
 		for _, service := range services {
 			if strings.Contains(service.Name, "dynatrace") {
 				credentials := DynatraceCredentials{
-					ServiceName :   service.Name,
-					EnvironmentId : h.getCredentialString(service.Credentials, "environmentid"),
-					ApiToken :      h.getCredentialString(service.Credentials, "apitoken"),
-					ApiURL :        h.getCredentialString(service.Credentials, "apiurl"),
-					SkipErrors :    h.getCredentialString(service.Credentials, "skiperrors") == "true",
+					ServiceName:   service.Name,
+					EnvironmentId: h.getCredentialString(service.Credentials, "environmentid"),
+					ApiToken:      h.getCredentialString(service.Credentials, "apitoken"),
+					ApiURL:        h.getCredentialString(service.Credentials, "apiurl"),
+					SkipErrors:    h.getCredentialString(service.Credentials, "skiperrors") == "true",
 				}
 
 				if credentials.EnvironmentId != "" && credentials.ApiToken != "" {

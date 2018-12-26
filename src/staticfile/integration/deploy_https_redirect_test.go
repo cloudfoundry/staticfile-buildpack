@@ -5,9 +5,10 @@ import (
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
+	"fmt"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"fmt"
 )
 
 var _ = Describe("deploy a staticfile app", func() {

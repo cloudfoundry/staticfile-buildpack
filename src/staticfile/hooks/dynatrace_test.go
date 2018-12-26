@@ -13,7 +13,7 @@ import (
 
 	"github.com/cloudfoundry/staticfile-buildpack/src/staticfile/hooks"
 
-	"gopkg.in/jarcoal/httpmock.v1"
+	"github.com/kardolus/httpmock"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
