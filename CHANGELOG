@@ -1,3 +1,24 @@
+v1.4.37 Dec 31, 2018
+=====================
+
+* Add nginx 1.15.8, remove nginx 1.15.7
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/162839811)
+
+commit 513f145d5f567f9b15245196a52661bc343bbf82
+Author: Danny Joyce <djoyce@pivotal.io>
+Date:   Fri Dec 7 11:00:04 2018 -0500
+
+    Add ginkgo "compilers=1" flag in attempt to fix go mod download issues
+
+
+* Install ginkgo and packager with go 1.11
+  (https://www.pivotaltracker.com/story/show/161601715)
+
+* Migrate to go modules.
+  (https://www.pivotaltracker.com/story/show/161601715)
+
+
 v1.4.36 Dec 06, 2018
 =====================
 
