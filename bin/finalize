@@ -13,7 +13,7 @@ output_dir=$(mktemp -d -t finalizeXXX)
 
 echo "-----> Running go build finalize"
 pushd $BUILDPACK_DIR
-  $GoInstallDir/go/bin/go build -o $output_dir/finalize ./src/staticfile/finalize/cli
+  $GoInstallDir/go/bin/go build -mod=vendor -o $output_dir/finalize ./src/staticfile/finalize/cli
 popd
 
 $output_dir/finalize "$BUILD_DIR" "$CACHE_DIR" "$DEPS_DIR" "$DEPS_IDX" "$PROFILE_DIR"
