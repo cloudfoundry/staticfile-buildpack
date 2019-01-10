@@ -26,6 +26,14 @@ func NewStager(args []string, logger *Logger, manifest *Manifest) *Stager {
 	depsIdx := ""
 	profileDir := ""
 
+	sentPath := filepath.Join(buildDir, ".cloudfoundry", "sentinal")
+	sentinal, err := FileExists(sentPath)
+	if err != nil {
+		logger.Error("Problem resolving buildDir : %v", err)
+	} else if sentinal {
+		panic("ERROR: You are running a V2 buildpack after a V3 buildpack. This is unsupported.")
+	}
+
 	if len(args) >= 4 {
 		depsDir = args[2]
 		depsIdx = args[3]

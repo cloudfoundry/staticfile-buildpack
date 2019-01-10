@@ -309,7 +309,7 @@ func ZipFiles(filename string, files []File) error {
 		if err != nil {
 			returnErr := fmt.Errorf("failed to open included_file: %s, %v", file.Path, err)
 			err = os.Remove(filename)
-			if err != nil{
+			if err != nil {
 				returnErr = fmt.Errorf("%s. Failed to remove broken buildpack file: %s", returnErr.Error(), filename)
 			}
 			return returnErr
@@ -336,7 +336,7 @@ func ZipFiles(filename string, files []File) error {
 		if err != nil {
 			return err
 		}
-		if !info.IsDir(){
+		if !info.IsDir() {
 			if _, err = io.Copy(writer, zipfile); err != nil {
 				return err
 			}
