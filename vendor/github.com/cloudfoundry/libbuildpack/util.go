@@ -10,13 +10,19 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 // CopyDirectory copies srcDir to destDir
 func CopyDirectory(srcDir, destDir string) error {
@@ -185,6 +191,15 @@ func FileExists(file string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func RandString(n int) string {
+	letterRunes := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
 
 func extractTar(src io.Reader, destDir string) error {
