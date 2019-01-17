@@ -1,3 +1,12 @@
+v1.4.38 Jan 17, 2019
+=====================
+
+* Vendor with go modules
+  - Fix performance regression when the buildpack is executed
+    directly from github by re-vendoring source code
+  (https://www.pivotaltracker.com/story/show/162654926)
+
+
 v1.4.37 Dec 31, 2018
 =====================
 
