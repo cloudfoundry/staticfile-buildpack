@@ -1,3 +1,9 @@
+v1.4.39 Jan 23, 2019
+=====================
+
+* Use built version of go 1.11.4 in online unbuilt/URL buildpack
+  (https://www.pivotaltracker.com/story/show/163089977)
+
 v1.4.38 Jan 17, 2019
 =====================
 
