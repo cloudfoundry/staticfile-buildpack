@@ -26,7 +26,7 @@ var _ = Describe("running supply buildpacks before the staticfile buildpack", fu
 
 			app = cutlass.New(filepath.Join(bpDir, "fixtures", "fake_supply_staticfile_app"))
 			app.Buildpacks = []string{
-				"https://github.com/cloudfoundry/dotnet-core-buildpack#develop",
+				"https://github.com/cloudfoundry/dotnet-core-buildpack#master",
 				"staticfile_buildpack",
 			}
 			app.Disk = "1G"
