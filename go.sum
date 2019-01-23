@@ -13,6 +13,8 @@ github.com/cloudfoundry/libbuildpack v0.0.0-20190110200243-27d5cb5e3702 h1:8HUGY
 github.com/cloudfoundry/libbuildpack v0.0.0-20190110200243-27d5cb5e3702/go.mod h1:rdSHSV2PLp7YHbdQgYbYMSmE6NJ1ZOAYnhMBQdkUVx0=
 github.com/cloudfoundry/libbuildpack v0.0.0-20190115190946-c10a4cd29881 h1:640+S316H9WsAQKPvI99n+0k6n/Wp1cFIHRql6fRkqM=
 github.com/cloudfoundry/libbuildpack v0.0.0-20190115190946-c10a4cd29881/go.mod h1:rdSHSV2PLp7YHbdQgYbYMSmE6NJ1ZOAYnhMBQdkUVx0=
+github.com/cloudfoundry/libbuildpack v0.0.0-20190123211659-27fcba64ad86 h1:BUIA3w0fBRwcyvysoYjACRE8lWEILVeW67q8R6IfgbI=
+github.com/cloudfoundry/libbuildpack v0.0.0-20190123211659-27fcba64ad86/go.mod h1:rdSHSV2PLp7YHbdQgYbYMSmE6NJ1ZOAYnhMBQdkUVx0=
 github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a h1:A4wNiqeKqU56ZhtnzJCTyPZ1+cyu8jKtIchQ3TtxHgw=
 github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
