@@ -81,9 +81,15 @@ func dockerfile(fixture_path, buildpack_path string, envs []string, network_comm
 	if cfStack == "" {
 		cfStack = "cflinuxfs2"
 	}
-	out := fmt.Sprintf("FROM cloudfoundry/%s\n"+
+
+	stackDockerImage := os.Getenv("CF_STACK_DOCKER_IMAGE")
+	if stackDockerImage == "" {
+		stackDockerImage = fmt.Sprintf("cloudfoundry/%s", cfStack)
+	}
+
+	out := fmt.Sprintf("FROM %s\n"+
 		"ENV CF_STACK %s\n"+
-		"ENV VCAP_APPLICATION {}\n", cfStack, cfStack)
+		"ENV VCAP_APPLICATION {}\n", stackDockerImage, cfStack)
 	for _, env := range envs {
 		out = out + "ENV " + env + "\n"
 	}
