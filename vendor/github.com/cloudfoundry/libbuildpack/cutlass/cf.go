@@ -50,6 +50,7 @@ type App struct {
 	appGUID      string
 	env          map[string]string
 	logCmd       *exec.Cmd
+	HealthCheck  string
 }
 
 func New(fixture string) *App {
@@ -64,6 +65,7 @@ func New(fixture string) *App {
 		appGUID:      "",
 		env:          map[string]string{},
 		logCmd:       nil,
+		HealthCheck:  "",
 	}
 }
 
@@ -310,6 +312,10 @@ func (a *App) PushNoStart() error {
 	if a.StartCommand != "" {
 		args = append(args, "-c", a.StartCommand)
 	}
+	if a.HealthCheck != "" {
+		args = append(args, "-u", a.HealthCheck)
+	}
+
 	command := exec.Command("cf", args...)
 	command.Stdout = DefaultStdoutStderr
 	command.Stderr = DefaultStdoutStderr

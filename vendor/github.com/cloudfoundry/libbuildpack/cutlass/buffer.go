@@ -25,6 +25,11 @@ func (b *Buffer) String() string {
 	defer b.m.Unlock()
 	return b.b.String()
 }
+func (b *Buffer) ANSIStrippedString() string {
+	b.m.Lock()
+	defer b.m.Unlock()
+	return StripColor(b.b.String())
+}
 func (b *Buffer) Reset() {
 	b.m.Lock()
 	defer b.m.Unlock()

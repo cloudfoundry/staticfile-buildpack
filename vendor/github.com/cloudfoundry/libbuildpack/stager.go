@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const SENTINEL = "sentinel"
+
 type Stager struct {
 	buildDir   string
 	cacheDir   string
@@ -26,7 +28,7 @@ func NewStager(args []string, logger *Logger, manifest *Manifest) *Stager {
 	depsIdx := ""
 	profileDir := ""
 
-	sentinalPath := filepath.Join(string(filepath.Separator), "home", "vcap", "app", ".cloudfoundry", "sentinal")
+	sentinalPath := filepath.Join(string(filepath.Separator), "home", "vcap", "app", ".cloudfoundry", SENTINEL)
 	exists, err := FileExists(sentinalPath)
 	if err != nil {
 		logger.Error("Problem resolving V3 sentinal file: %v", err)
