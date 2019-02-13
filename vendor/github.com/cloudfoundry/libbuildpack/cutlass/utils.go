@@ -1,12 +1,13 @@
 package cutlass
 
 import (
-	"github.com/cloudfoundry/libbuildpack"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/cloudfoundry/libbuildpack"
 )
 
 func CopyFixture(srcDir string) (string, error) {

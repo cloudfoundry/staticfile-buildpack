@@ -10,6 +10,7 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/onsi/ginkgo v1.7.0
 	github.com/onsi/gomega v1.4.3
+	github.com/pkg/errors v0.8.1
 	github.com/tidwall/gjson v1.1.3
 	github.com/tidwall/match v1.0.1 // indirect
 	golang.org/x/net v0.0.0-20181220203305-927f97764cc3 // indirect
