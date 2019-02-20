@@ -12,6 +12,12 @@ import (
 const dateFormat = "2006-01-02"
 const thirtyDays = time.Hour * 24 * 30
 
+const (
+	CFLINUXFS2    = "cflinuxfs2"
+	ATTENTION_MSG = "⚠️️️ 🚨️️ ⚠️ 🚨️️"
+	WARNING_MSG   = "This application is being deployed on cflinuxfs2 which is being deprecated in April, 2019.\nPlease migrate this application to cflinuxfs3.\nFor more information about changing the stack, see https://docs.cloudfoundry.org/devguide/deploy-apps/stacks.html️"
+)
+
 type Dependency struct {
 	Name    string `yaml:"name"`
 	Version string `yaml:"version"`
@@ -179,6 +185,10 @@ func (m *Manifest) Version() (string, error) {
 
 func (m *Manifest) CheckStackSupport() error {
 	requiredStack := os.Getenv("CF_STACK")
+
+	if requiredStack == CFLINUXFS2 {
+		m.log.Warning("\n" + ATTENTION_MSG + "\n" + WARNING_MSG + "\n" + ATTENTION_MSG)
+	}
 
 	if m.manifestSupportsStack(requiredStack) {
 		return nil
