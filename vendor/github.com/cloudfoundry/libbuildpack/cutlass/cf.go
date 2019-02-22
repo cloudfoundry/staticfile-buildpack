@@ -147,7 +147,12 @@ func DeleteBuildpack(language string) error {
 func UpdateBuildpack(language, file, stack string) error {
 	updateBuildpackArgs := []string{"update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file, "--enable"}
 
-	if stack != "" {
+	stackAssociationSupported, err := ApiGreaterThan("2.113.0")
+	if err != nil {
+		return err
+	}
+
+	if stack != "" && stackAssociationSupported {
 		updateBuildpackArgs = append(updateBuildpackArgs, "-s", stack)
 	}
 
