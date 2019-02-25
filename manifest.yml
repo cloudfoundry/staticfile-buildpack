@@ -11,6 +11,7 @@ dependencies:
   cf_stacks:
   - cflinuxfs2
   source: http://nginx.org/download/nginx-1.15.8.tar.gz
+  source_sha256: a8bdafbca87eb99813ae4fcac1ad0875bf725ce19eb265d28268c309b2b40787
 - name: nginx
   version: 1.15.8
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.8-linux-x64-cflinuxfs3-6f865593.tgz
@@ -18,6 +19,7 @@ dependencies:
   cf_stacks:
   - cflinuxfs3
   source: http://nginx.org/download/nginx-1.15.8.tar.gz
+  source_sha256: a8bdafbca87eb99813ae4fcac1ad0875bf725ce19eb265d28268c309b2b40787
 pre_package: scripts/build.sh
 include_files:
 - CHANGELOG
