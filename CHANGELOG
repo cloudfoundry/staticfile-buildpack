@@ -1,3 +1,19 @@
+v1.4.40 Mar 01, 2019
+=====================
+
+* Add nginx 1.15.9, remove nginx 1.15.8
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/164249501)
+
+* Add source and source_sha256 to buildpack manifest
+  (https://www.pivotaltracker.com/story/show/163711928)
+
+* Serve .js files as application/javascript
+  (https://www.pivotaltracker.com/story/show/161478383)
+
+* Update go used to compile buildpack from source to 1.11.5
+  (https://www.pivotaltracker.com/story/show/163701450)
+
 v1.4.39 Jan 23, 2019
 =====================
 
