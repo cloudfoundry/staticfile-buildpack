@@ -2,7 +2,7 @@
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20190222173858-990e66f68afd
+# github.com/cloudfoundry/libbuildpack v0.0.0-20190305200151-930a1dabf62a
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/bratshelper
 github.com/cloudfoundry/libbuildpack/cutlass

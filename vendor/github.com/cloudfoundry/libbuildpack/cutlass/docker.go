@@ -12,7 +12,12 @@ import (
 )
 
 func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, bool, []string, error) {
-	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) && /buildpack/bin/detect /tmp/staged && echo 'Detect completed' && /buildpack/bin/compile /tmp/staged /tmp/cache && echo 'Compile completed'  && /buildpack/bin/release /tmp/staged /tmp/cache && echo 'Release completed' && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
+	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) " +
+		"&& /buildpack/0/bin/detect /tmp/staged && echo 'Detect completed' " +
+		"&& /buildpack/0/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed' " +
+		"&& /buildpack/0/bin/finalize /tmp/staged /tmp/cache /buildpack 0 && echo 'Finalize completed' " +
+		"&& /buildpack/0/bin/release /tmp/staged /tmp/cache && echo 'Release completed' " +
+		"&& sleep 1 && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 
 	output, err := executeDockerFile(bp_dir, fixture_path, buildpack_path, envs, network_command)
 	if err != nil {
@@ -96,9 +101,9 @@ func dockerfile(fixture_path, buildpack_path string, envs []string, network_comm
 	out = out +
 		"ADD " + fixture_path + " /tmp/staged/\n" +
 		"ADD " + buildpack_path + " /tmp/\n" +
-		"RUN mkdir -p /buildpack\n" +
+		"RUN mkdir -p /buildpack/0\n" +
 		"RUN mkdir -p /tmp/cache\n" +
-		"RUN unzip /tmp/" + filepath.Base(buildpack_path) + " -d /buildpack\n" +
+		"RUN unzip /tmp/" + filepath.Base(buildpack_path) + " -d /buildpack/0\n" +
 		"# HACK around https://github.com/dotcloud/docker/issues/5490\n" +
 		"RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump\n" +
 		"RUN " + network_command + "\n"
