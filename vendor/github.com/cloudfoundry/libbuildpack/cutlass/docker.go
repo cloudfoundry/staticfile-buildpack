@@ -13,10 +13,10 @@ import (
 
 func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, bool, []string, error) {
 	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) " +
-		"&& /buildpack/0/bin/detect /tmp/staged && echo 'Detect completed' " +
-		"&& /buildpack/0/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed' " +
-		"&& /buildpack/0/bin/finalize /tmp/staged /tmp/cache /buildpack 0 && echo 'Finalize completed' " +
-		"&& /buildpack/0/bin/release /tmp/staged /tmp/cache && echo 'Release completed' " +
+		"&& /buildpack/bin/detect /tmp/staged && echo 'Detect completed' " +
+		"&& /buildpack/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed' " +
+		"&& /buildpack/bin/finalize /tmp/staged /tmp/cache /buildpack 0 && echo 'Finalize completed' " +
+		"&& /buildpack/bin/release /tmp/staged /tmp/cache && echo 'Release completed' " +
 		"&& sleep 1 && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 
 	output, err := executeDockerFile(bp_dir, fixture_path, buildpack_path, envs, network_command)
@@ -25,7 +25,7 @@ func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string)
 	}
 
 	var internet_traffic, logs []string
-	detected, compiled, released := false, false, false
+	var detected, released, supplied, finalized bool
 	for _, line := range strings.Split(output, "\n") {
 		if idx := strings.Index(line, "internet traffic: "); idx >= 0 && idx < 10 {
 			internet_traffic = append(internet_traffic, line[(idx+18):])
@@ -33,8 +33,10 @@ func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string)
 			logs = append(logs, line)
 			if strings.Contains(line, "Detect completed") {
 				detected = true
-			} else if strings.Contains(line, "Compile completed") {
-				compiled = true
+			} else if strings.Contains(line, "Supply completed") {
+				supplied = true
+			} else if strings.Contains(line, "Finalize completed") {
+				finalized = true
 			} else if strings.Contains(line, "Release completed") {
 				released = true
 			}
@@ -42,7 +44,9 @@ func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string)
 
 	}
 
-	return internet_traffic, detected && compiled && released, logs, nil
+	built := detected && supplied && finalized && released
+
+	return internet_traffic, built, logs, nil
 }
 
 func UniqueDestination(traffic []string, destination string) error {
@@ -103,7 +107,7 @@ func dockerfile(fixture_path, buildpack_path string, envs []string, network_comm
 		"ADD " + buildpack_path + " /tmp/\n" +
 		"RUN mkdir -p /buildpack/0\n" +
 		"RUN mkdir -p /tmp/cache\n" +
-		"RUN unzip /tmp/" + filepath.Base(buildpack_path) + " -d /buildpack/0\n" +
+		"RUN unzip /tmp/" + filepath.Base(buildpack_path) + " -d /buildpack\n" +
 		"# HACK around https://github.com/dotcloud/docker/issues/5490\n" +
 		"RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump\n" +
 		"RUN " + network_command + "\n"
