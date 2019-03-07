@@ -24,6 +24,42 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+func MoveDirectory(srcDir, destDir string) error {
+	destExists, _ := FileExists(destDir)
+	if !destExists {
+		return os.Rename(srcDir, destDir)
+	}
+
+	files, err := ioutil.ReadDir(srcDir)
+	if err != nil {
+		return err
+	}
+	for _, f := range files {
+		src := filepath.Join(srcDir, f.Name())
+		dest := filepath.Join(destDir, f.Name())
+
+		if exists, err := FileExists(dest); err != nil {
+			return err
+		} else if !exists {
+			if m := f.Mode(); m&os.ModeSymlink != 0 {
+				if err = moveSymlinks(src, dest); err != nil {
+					return err
+				}
+			}
+			if err = os.Rename(src, dest); err != nil {
+				return err
+			}
+		} else {
+			if f.IsDir() {
+				if err = MoveDirectory(src, dest); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // CopyDirectory copies srcDir to destDir
 func CopyDirectory(srcDir, destDir string) error {
 	destExists, _ := FileExists(destDir)
@@ -41,12 +77,8 @@ func CopyDirectory(srcDir, destDir string) error {
 		dest := filepath.Join(destDir, f.Name())
 
 		if m := f.Mode(); m&os.ModeSymlink != 0 {
-			target, err := os.Readlink(src)
-			if err != nil {
-				return fmt.Errorf("Error while reading symlink '%s': %v", src, err)
-			}
-			if err := os.Symlink(target, dest); err != nil {
-				return fmt.Errorf("Error while creating '%s' as symlink to '%s': %v", dest, target, err)
+			if err = moveSymlinks(src, dest); err != nil {
+				return err
 			}
 		} else if f.IsDir() {
 			err = os.MkdirAll(dest, f.Mode())
@@ -71,6 +103,18 @@ func CopyDirectory(srcDir, destDir string) error {
 		}
 	}
 
+	return nil
+}
+
+
+func moveSymlinks(src, dest string) error {
+	target, err := os.Readlink(src)
+	if err != nil {
+		return fmt.Errorf("Error while reading symlink '%s': %v", src, err)
+	}
+	if err := os.Symlink(target, dest); err != nil {
+		return fmt.Errorf("Error while creating '%s' as symlink to '%s': %v", dest, target, err)
+	}
 	return nil
 }
 
