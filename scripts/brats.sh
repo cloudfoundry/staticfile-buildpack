@@ -12,4 +12,4 @@ export CF_STACK=${CF_STACK:-cflinuxfs2}
 cd src/*/brats
 
 echo "Run Buildpack Runtime Acceptance Tests"
-ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES -compilers=1
+ginkgo -r -mod=vendor --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES -compilers=1
