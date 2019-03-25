@@ -20,6 +20,7 @@ var _ = Describe("deploy a staticfile app", func() {
 
 	BeforeEach(func() {
 		app = cutlass.New(filepath.Join(bpDir, "fixtures", "reverse_proxy"))
+		app.Buildpacks = []string{"staticfile_buildpack"}
 		PushAppAndConfirm(app)
 	})
 

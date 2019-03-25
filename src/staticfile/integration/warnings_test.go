@@ -21,6 +21,7 @@ var _ = Describe("deploy has nginx/conf directory", func() {
 	Context("app has nginx include conf file", func() {
 		BeforeEach(func() {
 			app = cutlass.New(filepath.Join(bpDir, "fixtures", "nginx_conf"))
+			app.Buildpacks = []string{"staticfile_buildpack"}
 			PushAppAndConfirm(app)
 		})
 		It("warns user to set root", func() {
