@@ -1,3 +1,10 @@
+v1.4.41 Apr 02, 2019
+=====================
+
+* Add nginx 1.15.10, remove nginx 1.15.9
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/164899138)
+
 v1.4.40 Mar 01, 2019
 =====================
 
