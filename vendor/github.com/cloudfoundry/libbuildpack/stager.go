@@ -28,10 +28,10 @@ func NewStager(args []string, logger *Logger, manifest *Manifest) *Stager {
 	depsIdx := ""
 	profileDir := ""
 
-	sentinalPath := filepath.Join(string(filepath.Separator), "home", "vcap", "app", ".cloudfoundry", SENTINEL)
-	exists, err := FileExists(sentinalPath)
+	sentinelPath := filepath.Join(string(filepath.Separator), "home", "vcap", "app", ".cloudfoundry", SENTINEL)
+	exists, err := FileExists(sentinelPath)
 	if err != nil {
-		logger.Error("Problem resolving V3 sentinal file: %v", err)
+		logger.Error("Problem resolving V3 sentinel file: %v", err)
 	} else if exists {
 		panic("ERROR: You are running a V2 buildpack after a V3 buildpack. This is unsupported.")
 	}

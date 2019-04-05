@@ -156,18 +156,22 @@ func (m *Manifest) CheckBuildpackVersion(cacheDir string) {
 	return
 }
 
-func (m *Manifest) StoreBuildpackMetadata(cacheDir string) {
+func (m *Manifest) StoreBuildpackMetadata(cacheDir string) error {
 	version, err := m.Version()
 	if err != nil {
-		return
+		return err
 	}
 
 	md := BuildpackMetadata{Language: m.Language(), Version: version}
 
-	if exists, _ := FileExists(cacheDir); exists {
-		y := &YAML{}
-		_ = y.Write(filepath.Join(cacheDir, "BUILDPACK_METADATA"), &md)
+	if exists, err := FileExists(cacheDir); err != nil {
+		return err
+	} else if !exists {
+		return nil
 	}
+
+	y := &YAML{}
+	return y.Write(filepath.Join(cacheDir, "BUILDPACK_METADATA"), &md)
 }
 
 func (m *Manifest) Language() string {

@@ -106,7 +106,6 @@ func CopyDirectory(srcDir, destDir string) error {
 	return nil
 }
 
-
 func moveSymlinks(src, dest string) error {
 	target, err := os.Readlink(src)
 	if err != nil {
