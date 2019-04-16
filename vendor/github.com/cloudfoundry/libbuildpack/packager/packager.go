@@ -29,7 +29,7 @@ func CompileExtensionPackage(bpDir, version string, cached bool, stack string) (
 	if err != nil {
 		return "", fmt.Errorf("Failed to get the absolute path of %s: %v", bpDir, err)
 	}
-	dir, err := copyDirectory(bpDir)
+	dir, err := CopyDirectory(bpDir)
 	if err != nil {
 		return "", fmt.Errorf("Failed to copy %s: %v", bpDir, err)
 	}
@@ -143,10 +143,11 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 	if err != nil {
 		return "", err
 	}
-	dir, err := copyDirectory(bpDir)
+	dir, err := CopyDirectory(bpDir)
 	if err != nil {
 		return "", err
 	}
+	defer os.RemoveAll(dir)
 
 	err = ioutil.WriteFile(filepath.Join(dir, "VERSION"), []byte(version), 0644)
 	if err != nil {
@@ -345,7 +346,7 @@ func ZipFiles(filename string, files []File) error {
 	return nil
 }
 
-func copyDirectory(srcDir string) (string, error) {
+func CopyDirectory(srcDir string) (string, error) {
 	destDir, err := ioutil.TempDir("", "buildpack-packager")
 	if err != nil {
 		return "", err

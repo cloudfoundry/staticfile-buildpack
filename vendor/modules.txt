@@ -4,7 +4,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20190405154814-5050d4f28264
+# github.com/cloudfoundry/libbuildpack v0.0.0-20190416180621-e7ae8806c8cc
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/bratshelper
 github.com/cloudfoundry/libbuildpack/cutlass
