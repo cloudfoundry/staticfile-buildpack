@@ -14,7 +14,7 @@ const thirtyDays = time.Hour * 24 * 30
 
 const (
 	CFLINUXFS2    = "cflinuxfs2"
-	ATTENTION_MSG = "⚠️️️ 🚨️️ ⚠️ 🚨️️"
+	ATTENTION_MSG = "!! !!"
 	WARNING_MSG   = "This application is being deployed on cflinuxfs2 which is being deprecated in April, 2019.\nPlease migrate this application to cflinuxfs3.\nFor more information about changing the stack, see https://docs.cloudfoundry.org/devguide/deploy-apps/stacks.html"
 )
 
