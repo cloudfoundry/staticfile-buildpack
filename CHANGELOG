@@ -1,3 +1,12 @@
+v1.4.42 Apr 23, 2019
+=====================
+
+* Remove warning logs causing bosh cli error
+
+* Add nginx 1.15.12, remove nginx 1.15.10
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/165387664)
+
 v1.4.41 Apr 02, 2019
 =====================
 
