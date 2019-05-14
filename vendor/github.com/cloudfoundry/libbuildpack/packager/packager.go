@@ -122,7 +122,7 @@ func downloadDependency(dependency Dependency, cacheDir string) (File, error) {
 	}
 
 	if _, err := os.Stat(filepath.Join(cacheDir, file)); err != nil {
-		if err := downloadFromURI(dependency.URI, filepath.Join(cacheDir, file)); err != nil {
+		if err := DownloadFromURI(dependency.URI, filepath.Join(cacheDir, file)); err != nil {
 			return File{}, err
 		}
 	}
@@ -234,7 +234,7 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 	return zipFile, err
 }
 
-func downloadFromURI(uri, fileName string) error {
+func DownloadFromURI(uri, fileName string) error {
 	err := os.MkdirAll(filepath.Dir(fileName), 0755)
 	if err != nil {
 		return err

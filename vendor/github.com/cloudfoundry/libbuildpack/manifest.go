@@ -266,7 +266,7 @@ func fetchCachedBuildpackDependency(entry *ManifestEntry, outputFile, manifestRo
 }
 
 func deleteBadFile(entry *ManifestEntry, outputFile string) error {
-	if err := checkSha256(outputFile, entry.SHA256); err != nil {
+	if err := CheckSha256(outputFile, entry.SHA256); err != nil {
 		os.Remove(outputFile)
 		return err
 	}

@@ -318,7 +318,7 @@ func filterURI(rawURL string) (string, error) {
 	return safeURL, nil
 }
 
-func checkSha256(filePath, expectedSha256 string) error {
+func CheckSha256(filePath, expectedSha256 string) error {
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
