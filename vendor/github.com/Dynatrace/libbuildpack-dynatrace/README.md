@@ -25,12 +25,13 @@ The Hook will look for credentials in the configurations for existing services (
 
 We support the following configuration fields,
 
-| Key           | Type    | Description                                                                 | Required | Default         |
-| ------------- | ------- | --------------------------------------------------------------------------- | -------- | --------------- |
-| environmentid | string  | The ID for the Dynatrace environment.                                       | Yes      | N/A             |
-| apitoken      | string  | The API Token for the Dynatrace environment.                                | Yes      | N/A             |
-| apiurl        | string  | Overrides the default Dynatrace API URL to connect to.                      | No       | Default API URL |
-| skiperrors    | boolean | If true, the deployment doesn't fail if the Dynatrace agent download fails. | No       | false           |
+| Key           | Type    | Description                                                                                 | Required | Default         |
+| ------------- | ------- | ------------------------------------------------------------------------------------------- | -------- | --------------- |
+| environmentid | string  | The ID for the Dynatrace environment.                                                       | Yes      | N/A             |
+| apitoken      | string  | The API Token for the Dynatrace environment.                                                | Yes      | N/A             |
+| apiurl        | string  | Overrides the default Dynatrace API URL to connect to.                                      | No       | Default API URL |
+| skiperrors    | boolean | If true, the deployment doesn't fail if the Dynatrace agent download fails.                 | No       | false           |
+| networkzone      | string  | If set, agent is configured to choose communication endpoints located at the field's value. | No       | empty           |
 
 For example,
 

@@ -1,4 +1,4 @@
-# github.com/Dynatrace/libbuildpack-dynatrace v1.1.0
+# github.com/Dynatrace/libbuildpack-dynatrace v1.2.1
 github.com/Dynatrace/libbuildpack-dynatrace
 # github.com/Masterminds/semver v1.4.2
 github.com/Masterminds/semver
