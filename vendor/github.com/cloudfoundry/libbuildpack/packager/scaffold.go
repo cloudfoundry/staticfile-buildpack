@@ -9,7 +9,7 @@ import (
 	"text/template"
 
 	"github.com/cloudfoundry/libbuildpack"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type sha struct {

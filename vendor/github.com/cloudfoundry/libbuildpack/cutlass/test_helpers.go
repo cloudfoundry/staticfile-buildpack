@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -17,6 +19,10 @@ import (
 type VersionedBuildpackPackage struct {
 	Version string
 	File    string
+}
+
+var manifest struct {
+	Language string `yaml:"language"`
 }
 
 func FindRoot() (string, error) {
@@ -108,15 +114,60 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 	buildpackVersion := strings.TrimSpace(string(data))
 	buildpackVersion = fmt.Sprintf("%s.%s", buildpackVersion, time.Now().Format("20060102150405"))
 
-	var manifest struct {
-		Language string `yaml:"language"`
-	}
 	err = libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest)
 	if err != nil {
 		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to load manifest.yml file: %v", err)
 	}
 
 	return PackageUniquelyVersionedBuildpackExtra(strings.Replace(manifest.Language, "-", "_", -1), buildpackVersion, stack, Cached, stackAssociationSupported)
+}
+
+func PackageShimmedBuildpack(stack string) (VersionedBuildpackPackage, error) {
+	bpDir, err := FindRoot()
+	if err != nil {
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to find root: %v", err)
+	}
+
+	data, err := ioutil.ReadFile(filepath.Join(bpDir, "VERSION"))
+	if err != nil {
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to read VERSION file: %v", err)
+	}
+	version := strings.TrimSpace(string(data))
+	version = fmt.Sprintf("%s.%s", version, time.Now().Format("20060102150405"))
+
+	shimmerPath := filepath.Join(bpDir, ".bin", "cnb2cf")
+	args := []string{"package", "-stack", stack, "-version", version, "-dev"}
+	if Cached {
+		args = append(args, "-cached")
+	}
+	cmd := exec.Command(shimmerPath, args...)
+	cmd.Dir = bpDir
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return VersionedBuildpackPackage{}, err
+	}
+
+	r := regexp.MustCompile(`Packaged Shimmed Buildpack at: [\w-\.^]*.zip`)
+	matches := r.FindAllString(string(out), -1)
+	match := matches[len(matches)-1]
+	fileName := strings.Split(match, ": ")[1]
+	filePath := filepath.Join(bpDir, fileName)
+
+	err = libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest)
+	if err != nil {
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to load manifest.yml file: %v", err)
+	}
+	name := strings.Replace(manifest.Language, "-", "_", -1)
+
+	err = CreateOrUpdateBuildpack(name, filePath, stack)
+	if err != nil {
+		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to create or update buildpack: %v", err)
+	}
+
+	return VersionedBuildpackPackage{
+		Version: version,
+		File:    filePath,
+	}, nil
 }
 
 func CopyCfHome() error {

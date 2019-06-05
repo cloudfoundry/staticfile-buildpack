@@ -9,19 +9,21 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 func InternetTraffic(bp_dir, fixture_path, buildpack_path string, envs []string) ([]string, bool, []string, error) {
 	network_command := "(sudo tcpdump -n -i eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) " +
 		"&& /buildpack/bin/detect /tmp/staged && echo 'Detect completed' " +
 		"&& /buildpack/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed' " +
-		"&& /buildpack/bin/finalize /tmp/staged /tmp/cache /buildpack 0 && echo 'Finalize completed' " +
-		"&& /buildpack/bin/release /tmp/staged /tmp/cache && echo 'Release completed' " +
+		"&& /buildpack/bin/finalize /tmp/staged /tmp/cache /buildpack 0 /tmp && echo 'Finalize completed' " +
+		"&& /buildpack/bin/release /tmp/staged && echo 'Release completed' " +
 		"&& sleep 1 && pkill tcpdump; tcpdump -nr /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 
 	output, err := executeDockerFile(bp_dir, fixture_path, buildpack_path, envs, network_command)
 	if err != nil {
-		return nil, false, nil, err
+		return nil, false, nil, errors.Wrapf(err, "failed to build and run docker image: %s", output)
 	}
 
 	var internet_traffic, logs []string
@@ -64,7 +66,7 @@ func executeDockerFile(bp_dir, fixture_path, buildpack_path string, envs []strin
 	var err error
 	buildpack_path, err = filepath.Rel(bp_dir, buildpack_path)
 
-	docker_image_name := "internet_traffic_test"
+	docker_image_name := "internet_traffic_test" + RandStringRunes(8)
 
 	// docker_env_vars += get_app_env_vars(fixture_path)
 	dockerfile_contents := dockerfile(fixture_path, buildpack_path, envs, network_command)
@@ -78,6 +80,14 @@ func executeDockerFile(bp_dir, fixture_path, buildpack_path string, envs []strin
 	defer exec.Command("docker", "rmi", "-f", docker_image_name).Output()
 
 	cmd := exec.Command("docker", "build", "--rm", "--no-cache", "-t", docker_image_name, "-f", dockerfile_name, ".")
+	cmd.Dir = bp_dir
+	cmd.Stderr = DefaultStdoutStderr
+	if output, err := cmd.Output(); err != nil {
+		return "", errors.Wrapf(err, "failed to docker build: %s", string(output))
+
+	}
+
+	cmd = exec.Command("docker", "run", "--net", "none", "--rm", "-t", docker_image_name, "bash", "-c", network_command)
 	cmd.Dir = bp_dir
 	cmd.Stderr = DefaultStdoutStderr
 	output, err := cmd.Output()
@@ -109,7 +119,6 @@ func dockerfile(fixture_path, buildpack_path string, envs []string, network_comm
 		"RUN mkdir -p /tmp/cache\n" +
 		"RUN unzip /tmp/" + filepath.Base(buildpack_path) + " -d /buildpack\n" +
 		"# HACK around https://github.com/dotcloud/docker/issues/5490\n" +
-		"RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump\n" +
-		"RUN " + network_command + "\n"
+		"RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump\n"
 	return out
 }
