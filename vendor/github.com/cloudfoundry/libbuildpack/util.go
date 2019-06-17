@@ -335,8 +335,7 @@ func CheckSha256(filePath, expectedSha256 string) error {
 }
 
 func downloadFile(url, destFile string) error {
-	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyFromEnvironment}}
-	resp, err := client.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
