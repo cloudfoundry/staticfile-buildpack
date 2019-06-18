@@ -55,9 +55,9 @@ include_files:
 dependency_deprecation_dates:
 - version_line: 1.15.x
   name: nginx
-  deprecation_date: 2019-05-21
-  deprecation_link: https://nginx.org/
+  date: 2019-05-21
+  link: https://nginx.org/
 - version_line: 1.17.x
   name: nginx
-  deprecation_date: 2020-05-01
-  deprecation_link: https://nginx.org/
+  date: 2020-05-01
+  link: https://nginx.org/
