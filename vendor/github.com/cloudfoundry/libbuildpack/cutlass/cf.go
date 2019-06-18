@@ -1,6 +1,7 @@
 package cutlass
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -415,7 +416,12 @@ func (a *App) Get(path string, headers map[string]string) (string, map[string][]
 	if err != nil {
 		return "", map[string][]string{}, err
 	}
-	client := &http.Client{}
+	insecureSkipVerify, _ := os.LookupEnv("CUTLASS_SKIP_TLS_VERIFY")
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify == "true"},
+		},
+	}
 	if headers["NoFollow"] == "true" {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
