@@ -6,16 +6,16 @@ default_versions:
 dependencies:
 - name: nginx
   version: 1.15.12
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.12-linux-x64-cflinuxfs2-75502fb7.tgz
-  sha256: 75502fb722d0a92606e8c5fa3ad7f6ad7b3d127ead405cd65d87b54675762539
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.12-linux-x64-cflinuxfs2-d52563a2.tgz
+  sha256: d52563a2448cf7cca1ca685bde33515ccfbd96eaa130331c141095b1b48ae028
   cf_stacks:
   - cflinuxfs2
   source: http://nginx.org/download/nginx-1.15.12.tar.gz
   source_sha256: 3d5b90aa17de1700709ae4ec6c4d73d87c888b06c510391bf7104b006fdb2abe
 - name: nginx
   version: 1.15.12
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.12-linux-x64-cflinuxfs3-dfc41505.tgz
-  sha256: dfc415052c0e52c8d019b64402070b52e3068d017de2ae9ca148c060dafae6a2
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.15.12-linux-x64-cflinuxfs3-4cbec356.tgz
+  sha256: 4cbec356df7e05fe606ea6fc843dc7ec664affb50bd528b5760e9bcc8771e909
   cf_stacks:
   - cflinuxfs3
   source: http://nginx.org/download/nginx-1.15.12.tar.gz
