@@ -29,6 +29,7 @@ type credentials struct {
 	APIToken      string
 	APIURL        string
 	SkipErrors    bool
+	NetworkZone   string
 }
 
 // Hook implements libbuildpack.Hook. It downloads and install the Dynatrace PaaS OneAgent.
@@ -71,13 +72,22 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 
 	h.Log.Info("Dynatrace service credentials found. Setting up Dynatrace PaaS agent.")
 
+	// Get buildpack version and language
+
+	lang := stager.BuildpackLanguage()
+	ver, err := stager.BuildpackVersion()
+	if err != nil {
+		h.Log.Warning("Failed to get buildpack version: %v", err)
+		ver = "unknown"
+	}
+
 	// Download installer...
 
 	installerFilePath := filepath.Join(os.TempDir(), "paasInstaller.sh")
 	url := h.getDownloadURL(creds)
 
 	h.Log.Info("Downloading '%s' to '%s'", url, installerFilePath)
-	if err = h.download(url, installerFilePath); err != nil {
+	if err = h.download(url, installerFilePath, ver, lang); err != nil {
 		if creds.SkipErrors {
 			h.Log.Warning("Error during installer download, skipping installation")
 			return nil
@@ -141,18 +151,16 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 	h.Log.Debug("Setting LD_PRELOAD...")
 	extra += fmt.Sprintf("\nexport LD_PRELOAD=${HOME}/%s", agentLibPath)
 
+	if creds.NetworkZone != "" {
+		h.Log.Debug("Setting DT_NETWORK_ZONE...")
+		extra += fmt.Sprintf("\nexport DT_NETWORK_ZONE=${DT_NETWORK_ZONE:-%s}", creds.NetworkZone)
+	}
+
 	// By default, OneAgent logs are printed to stderr. If the customer doesn't override this behavior through an
 	// environment variable, then we change the default output to stdout.
 	if os.Getenv("DT_LOGSTREAM") == "" {
 		h.Log.Debug("Setting DT_LOGSTREAM to stdout...")
 		extra += "\nexport DT_LOGSTREAM=stdout"
-	}
-
-	lang := stager.BuildpackLanguage()
-	ver, err := stager.BuildpackVersion()
-	if err != nil {
-		h.Log.Warning("Failed to get buildpack version: %v", err)
-		ver = "unknown"
 	}
 
 	h.Log.Debug("Preparing custom properties...")
@@ -204,6 +212,7 @@ func (h *Hook) getCredentials() *credentials {
 				APIToken:      queryString("apitoken"),
 				APIURL:        queryString("apiurl"),
 				SkipErrors:    queryString("skiperrors") == "true",
+				NetworkZone:   queryString("networkzone"),
 			}
 
 			if creds.EnvironmentID != "" && creds.APIToken != "" {
@@ -228,8 +237,12 @@ func (h *Hook) getCredentials() *credentials {
 }
 
 // download gets url, and stores it as filePath, retrying a few more times if the downloads fail.
-func (h *Hook) download(url, filePath string) error {
+func (h *Hook) download(url, filePath string, buildPackVersion string, language string) error {
 	const baseWaitTime = 3 * time.Second
+
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", language, buildPackVersion))
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -238,8 +251,8 @@ func (h *Hook) download(url, filePath string) error {
 	defer out.Close()
 
 	for i := 0; ; i++ {
-		var resp *http.Response
-		if resp, err = http.Get(url); err == nil {
+		resp, err := client.Do(req)
+		if err == nil {
 			// We truncate the file to make it empty, we also need to move the offset to the beginning. For errors
 			// here, these would be unexpected so we just fail the function without retrying.
 
