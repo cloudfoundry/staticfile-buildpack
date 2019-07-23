@@ -260,7 +260,7 @@ func extractTar(src io.Reader, destDir string) error {
 			if err := os.MkdirAll(path, hdr.FileInfo().Mode()); err != nil {
 				return err
 			}
-		} else if fi.Mode()&os.ModeSymlink != 0 {
+		} else if hdr.Typeflag == tar.TypeSymlink {
 			if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 				return err
 			}
@@ -287,6 +287,17 @@ func extractTar(src io.Reader, destDir string) error {
 			if err = os.Symlink(hdr.Linkname, path); err != nil {
 				return err
 			}
+		} else if hdr.Typeflag == tar.TypeLink {
+			originalPath := filepath.Join(destDir, cleanPath(hdr.Linkname))
+			file, err := os.Open(originalPath)
+			if err != nil {
+				return err
+			}
+
+			if err := writeToFile(file, path, hdr.FileInfo().Mode()); err != nil {
+				return err
+			}
+
 		} else {
 			if err := writeToFile(tr, path, hdr.FileInfo().Mode()); err != nil {
 				return err

@@ -3,7 +3,7 @@ module github.com/cloudfoundry/staticfile-buildpack
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.2.1
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/libbuildpack v0.0.0-20190708161550-16cf920add31
+	github.com/cloudfoundry/libbuildpack v0.0.0-20190723214209-feab82226beb
 	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
