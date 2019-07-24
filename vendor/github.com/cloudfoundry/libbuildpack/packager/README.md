@@ -2,7 +2,8 @@
 
 ```
 go get github.com/cloudfoundry/libbuildpack
-cd ~/go/src/github.com/cloudfoundry/libbuildpack/packager/buildpack-packager && go install
+cd ~/go/src/github.com/cloudfoundry/libbuildpack && GO111MODULE=on go mod download
+cd packager/buildpack-packager &&  GO111MODULE=on go install
 ```
 
 ## How to regenerate bindata.go
