@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -21,7 +22,7 @@ import (
 var DefaultMemory string = ""
 var DefaultDisk string = ""
 var Cached bool = false
-var DefaultStdoutStderr = &bytes.Buffer{}
+var DefaultStdoutStderr io.Writer = &bytes.Buffer{}
 
 type cfConfig struct {
 	SpaceFields struct {
@@ -383,10 +384,11 @@ func (a *App) Push() error {
 	}
 
 	command := exec.Command("cf", "start", a.Name)
-	command.Stdout = DefaultStdoutStderr
-	command.Stderr = DefaultStdoutStderr
+	buf := &bytes.Buffer{}
+	command.Stdout = buf
+	command.Stderr = buf
 	if err := command.Run(); err != nil {
-		return fmt.Errorf("err: %s\n\nlogs: %s", err, DefaultStdoutStderr.String())
+		return fmt.Errorf("err: %s\n\nlogs: %s", err, buf)
 	}
 	return nil
 }
