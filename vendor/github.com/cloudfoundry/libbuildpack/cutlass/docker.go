@@ -56,33 +56,18 @@ func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, e
 		"&& sleep 1 && pkill tcpdump; tcpdump -r %s /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
 	networkCommand = fmt.Sprintf(networkCommand, flags, flags)
 
-	output, err := executeDockerFile(fixturePath, buildpackPath, networkName, networkCommand, envs)
+	dockerfilePath, err := createDockerfile(fixturePath, buildpackPath, envs)
+	if err != nil {
+		return nil, false, nil, errors.Wrapf(err, "failed to create dockerfile: %s", dockerfilePath)
+	}
+	defer os.Remove(dockerfilePath)
+
+	output, err := ExecuteDockerFile(dockerfilePath, networkName, networkCommand)
 	if err != nil {
 		return nil, false, nil, errors.Wrapf(err, "failed to build and run docker image: %s", output)
 	}
 
-	var internetTraffic, logs []string
-	var detected, released, supplied, finalized bool
-	for _, line := range strings.Split(output, "\n") {
-		if idx := strings.Index(line, "internet traffic: "); idx >= 0 && idx < 10 {
-			internetTraffic = append(internetTraffic, line[(idx+18):])
-		} else {
-			logs = append(logs, line)
-			if strings.Contains(line, "Detect completed") {
-				detected = true
-			} else if strings.Contains(line, "Supply completed") {
-				supplied = true
-			} else if strings.Contains(line, "Finalize completed") {
-				finalized = true
-			} else if strings.Contains(line, "Release completed") {
-				released = true
-			}
-		}
-	}
-
-	built := detected && supplied && finalized && released
-
-	return internetTraffic, built, logs, nil
+	return ParseTrafficAndLogs(output)
 }
 
 // TODO: Delete after all buildpacks use EnsureUsesProxy
@@ -154,23 +139,15 @@ func DeleteContainer(containerName string) error {
 	return nil
 }
 
-func executeDockerFile(fixturePath, buildpackPath string, networkName string, networkCommand string, envs []string) (string, error) {
-	var err error
-	bpDir := filepath.Dir(buildpackPath)
-	buildpackPath, err = filepath.Rel(bpDir, buildpackPath)
-
+func ExecuteDockerFile(dockerfilePath, networkName, networkCommand string) (string, error) {
 	dockerImageName := "internet_traffic_test" + RandStringRunes(8)
-	dockerfileContents := dockerfile(fixturePath, buildpackPath, envs)
-	dockerfileName := fmt.Sprintf("itf.Dockerfile.%v", rand.Int())
-	err = ioutil.WriteFile(filepath.Join(bpDir, dockerfileName), []byte(dockerfileContents), 0755)
-	if err != nil {
-		return "", err
-	}
-	defer os.Remove(filepath.Join(bpDir, dockerfileName))
 	defer exec.Command("docker", "rmi", "-f", dockerImageName).Output()
 
+	dockerfileName := filepath.Base(dockerfilePath)
+	dockerfileDir := filepath.Dir(dockerfilePath)
+
 	cmd := exec.Command("docker", "build", "--rm", "--no-cache", "-t", dockerImageName, "-f", dockerfileName, ".")
-	cmd.Dir = bpDir
+	cmd.Dir = dockerfileDir
 	cmd.Stderr = DefaultStdoutStderr
 	if output, err := cmd.Output(); err != nil {
 		return "", errors.Wrapf(err, "failed to docker build: %s", string(output))
@@ -178,11 +155,46 @@ func executeDockerFile(fixturePath, buildpackPath string, networkName string, ne
 	}
 
 	cmd = exec.Command("docker", "run", "--network", networkName, "--rm", "-t", dockerImageName, "bash", "-c", networkCommand)
-	cmd.Dir = bpDir
+	cmd.Dir = dockerfileDir
 	cmd.Stderr = DefaultStdoutStderr
 	output, err := cmd.Output()
 
 	return string(output), err
+}
+
+func ParseTrafficAndLogs(output string) ([]string, bool, []string, error) {
+	var internetTraffic, logs []string
+	var detected, released, supplied, finalized bool
+	for _, line := range strings.Split(output, "\n") {
+		if idx := strings.Index(line, "internet traffic: "); idx >= 0 && idx < 10 {
+			internetTraffic = append(internetTraffic, line[(idx+18):])
+		} else {
+			logs = append(logs, line)
+			if strings.Contains(line, "Detect completed") {
+				detected = true
+			} else if strings.Contains(line, "Supply completed") {
+				supplied = true
+			} else if strings.Contains(line, "Finalize completed") {
+				finalized = true
+			} else if strings.Contains(line, "Release completed") {
+				released = true
+			}
+		}
+	}
+
+	built := detected && supplied && finalized && released
+	return internetTraffic, built, logs, nil
+}
+
+func createDockerfile(fixturePath, buildpackPath string, envs []string) (string, error) {
+	bpDir := filepath.Dir(buildpackPath)
+	bpName := filepath.Base(buildpackPath)
+
+	dockerfileContents := dockerfile(fixturePath, bpName, envs)
+	dockerfileName := fmt.Sprintf("itf.Dockerfile.%v", rand.Int())
+	dockerfilePath := filepath.Join(bpDir, dockerfileName)
+	err := ioutil.WriteFile(dockerfilePath, []byte(dockerfileContents), 0755)
+	return dockerfilePath, err
 }
 
 func dockerfile(fixturePath, buildpackPath string, envs []string) string {
