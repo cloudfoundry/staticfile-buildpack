@@ -1,3 +1,22 @@
+v1.4.44 Aug 27, 2019
+=====================
+
+* Add nginx 1.17.3, remove nginx 1.17.0
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/167876323)
+  (https://www.pivotaltracker.com/story/show/167456240)
+  (https://www.pivotaltracker.com/story/show/166900660)
+
+* Merge pull request #158 from seymurfarziyev/develop
+  downloaded and installed libbuildpack-dynatrace release v1.2.1
+
+* fix wrong key names in deprecation dates
+
+* Fix misformatted deprecation date
+
+* downloaded and installed libbuildpack-dynatrace release v1.2.1
+
+
 v1.4.43 Jun 05, 2019
 =====================
 
