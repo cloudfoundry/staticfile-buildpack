@@ -113,6 +113,7 @@ http {
 
       {{if .DirectoryIndex}}
         autoindex on;
+        absolute_redirect off;
       {{end}}
 
       {{if .BasicAuth}}
