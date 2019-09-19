@@ -131,7 +131,7 @@ func (s *Stager) LinkDirectoryInDepDir(destDir, depSubDir string) error {
 func (s *Stager) CheckBuildpackValid() error {
 	version, err := s.manifest.Version()
 	if err != nil {
-		s.log.Error("Could not determine buildpack version: %s", err.Error())
+		s.log.Error("Could not determine buildpack version: %s", err)
 		return err
 	}
 
@@ -139,7 +139,7 @@ func (s *Stager) CheckBuildpackValid() error {
 
 	err = s.manifest.CheckStackSupport()
 	if err != nil {
-		s.log.Error("Stack not supported by buildpack: %s", err.Error())
+		s.log.Error("Stack not supported by buildpack: %s", err)
 		return err
 	}
 

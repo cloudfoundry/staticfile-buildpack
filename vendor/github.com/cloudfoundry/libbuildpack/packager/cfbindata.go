@@ -61,9 +61,6 @@ func OurRestoreAsset(dir, name string, funcMap template.FuncMap, shas map[string
 		oldSha256 = checksumHex(oldContents)
 	}
 
-	if name == "bin/supply" {
-		fmt.Println(name, oldSha256, shas[name])
-	}
 	if !force && shas[name] != "" && shas[name] != oldSha256 {
 		fmt.Fprintf(Stdout, "***Ignoring %s because it has been modified***\n", name)
 		return nil

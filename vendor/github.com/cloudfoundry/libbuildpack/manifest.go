@@ -339,7 +339,7 @@ func (m *Manifest) IsCached() bool {
 
 	isCached, err := FileExists(dependenciesDir)
 	if err != nil {
-		m.log.Warning("Error determining if buildpack is cached: %s", err.Error())
+		m.log.Warning("Error determining if buildpack is cached: %s", err)
 	}
 
 	return isCached

@@ -17,7 +17,6 @@ type sha struct {
 }
 
 func generateAssets(bpDir, languageName string, force bool) error {
-
 	language := func() string {
 		return languageName
 	}
@@ -118,14 +117,15 @@ func readShaYML(bpDir string) (map[string]string, error) {
 	return map[string]string{}, nil
 }
 
-func readManifest(bpDir string) (*Manifest, error) {
-	manifest := &Manifest{}
+func readManifest(bpDir string) (Manifest, error) {
 	data, err := ioutil.ReadFile(filepath.Join(bpDir, "manifest.yml"))
 	if err != nil {
-		return nil, err
+		return Manifest{}, err
 	}
-	if err := yaml.Unmarshal(data, manifest); err != nil {
-		return nil, err
+
+	var manifest Manifest
+	if err := yaml.Unmarshal(data, &manifest); err != nil {
+		return Manifest{}, err
 	}
 
 	return manifest, nil

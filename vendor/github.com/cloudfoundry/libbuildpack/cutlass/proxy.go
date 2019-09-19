@@ -27,7 +27,7 @@ CMD ["/proxy-linux"]
 func main() {
 	p, err := NewProxy()
 	if err != nil {
-		fmt.Println("Errored out:", err.Error())
+		fmt.Printf("Errored out: %s\n", err)
 	}
 	defer p.Close()
 
