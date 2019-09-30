@@ -1,3 +1,24 @@
+v1.4.45 Sep 30, 2019
+=====================
+
+* Remove nginx for cflinuxfs2
+   - Fixes #159
+  (https://www.pivotaltracker.com/story/show/166710436)
+
+* Includes new secure_app fixture that gets an A+ from Mozilla Observatory
+  (https://www.pivotaltracker.com/story/show/165481690)
+
+* Add nginx 1.17.4, remove nginx 1.17.3
+  for stack(s) cflinuxfs2, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/168729882)
+
+* add absolute_redirect off; to prevent directory redirects from https to http
+  (https://www.pivotaltracker.com/story/show/168343288)
+
+* Removes nginx 1.15.x because it is depricated
+  (https://www.pivotaltracker.com/story/show/167241884)
+
+
 v1.4.44 Aug 27, 2019
 =====================
 
