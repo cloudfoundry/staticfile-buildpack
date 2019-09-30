@@ -6,14 +6,6 @@ default_versions:
 dependencies:
 - name: nginx
   version: 1.17.4
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.17.4-linux-x64-cflinuxfs2-4b132df9.tgz
-  sha256: 4b132df9e92c0936c8ee3de5982b851d0e1372fdb6428057d181364ffc67bc6e
-  cf_stacks:
-  - cflinuxfs2
-  source: http://nginx.org/download/nginx-1.17.4.tar.gz
-  source_sha256: 62854b365e66670ef4f1f8cc79124f914551444da974207cd5fe22d85710e555
-- name: nginx
-  version: 1.17.4
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-1.17.4-linux-x64-cflinuxfs3-ed4aa971.tgz
   sha256: ed4aa971a29a4bc804976e1eb65d72f069a48afd7f11738b4674da675b25285f
   cf_stacks:
