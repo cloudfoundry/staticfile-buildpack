@@ -3,13 +3,14 @@ package integration_test
 import (
 	"crypto/tls"
 	"fmt"
+	"net/http"
+	"os/exec"
+	"path/filepath"
+
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/tidwall/gjson"
-	"net/http"
-	"os/exec"
-	"path/filepath"
 )
 
 var _ = Describe("deploy a staticfile app with visitable directories", func() {
@@ -36,7 +37,7 @@ var _ = Describe("deploy a staticfile app with visitable directories", func() {
 })
 
 func GetResponse(a *cutlass.App, path string) (*http.Response, error) {
-	url, err := GetHttpsUrl(a,path)
+	url, err := GetHttpsUrl(a, path)
 	if err != nil {
 		return new(http.Response), err
 	}
