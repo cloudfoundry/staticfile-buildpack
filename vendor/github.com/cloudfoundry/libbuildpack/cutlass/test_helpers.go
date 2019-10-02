@@ -176,7 +176,7 @@ func packageShim(bpDir, stack string) (bpFilePath string, version string, name s
 	version = fmt.Sprintf("%s.%s", version, time.Now().Format("20060102150405"))
 
 	shimmerPath := filepath.Join(bpDir, ".bin", "cnb2cf")
-	args := []string{"package", "-stack", stack, "-version", version, "-dev"}
+	args := []string{"package", "-stack", stack, "-version", version, "-manifestpath", "shim.toml", "-dev"}
 	if Cached {
 		args = append(args, "-cached")
 	}
