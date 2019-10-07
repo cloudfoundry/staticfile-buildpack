@@ -15,10 +15,10 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/yaml.v2"
-
+	"code.cloudfoundry.org/lager"
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/packager"
+	"gopkg.in/yaml.v2"
 )
 
 type VersionedBuildpackPackage struct {
@@ -128,6 +128,8 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 }
 
 func PackageShimmedBuildpack(stack string) (VersionedBuildpackPackage, error) {
+	DefaultLogger.Debug("package-shimmed-buildpack")
+
 	var (
 		name, version, bpDir string
 		err                  error
@@ -168,6 +170,8 @@ func PackageShimmedBuildpack(stack string) (VersionedBuildpackPackage, error) {
 }
 
 func packageShim(bpDir, stack string) (bpFilePath string, version string, name string, err error) {
+	session := DefaultLogger.Session("package-shim")
+
 	data, err := ioutil.ReadFile(filepath.Join(bpDir, "VERSION"))
 	if err != nil {
 		return "", "", "", fmt.Errorf("Failed to read VERSION file: %v", err)
@@ -180,15 +184,21 @@ func packageShim(bpDir, stack string) (bpFilePath string, version string, name s
 	if Cached {
 		args = append(args, "-cached")
 	}
+
+	session.Debug("executing", lager.Data{"path": shimmerPath, "args": args, "dir": bpDir})
+
+	buffer := bytes.NewBuffer(nil)
 	cmd := exec.Command(shimmerPath, args...)
 	cmd.Dir = bpDir
-	out, err := cmd.CombinedOutput()
+	cmd.Stdout = buffer
+	cmd.Stderr = buffer
+	err = cmd.Run()
 	if err != nil {
 		return "", "", "", err
 	}
 
 	r := regexp.MustCompile(`Packaged Shimmed Buildpack at: [\w-\.^]*.zip`)
-	matches := r.FindAllString(string(out), -1)
+	matches := r.FindAllString(buffer.String(), -1)
 	match := matches[len(matches)-1]
 	fileName := strings.Split(match, ": ")[1]
 	bpFilePath = filepath.Join(bpDir, fileName)

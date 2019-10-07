@@ -1,6 +1,7 @@
 module github.com/cloudfoundry/libbuildpack
 
 require (
+	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Masterminds/semver v1.5.0
 	github.com/blang/semver v3.5.1+incompatible

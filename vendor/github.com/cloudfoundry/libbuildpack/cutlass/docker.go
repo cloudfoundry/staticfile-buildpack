@@ -2,6 +2,7 @@ package cutlass
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -10,6 +11,9 @@ import (
 	"regexp"
 	"strings"
 
+	"code.cloudfoundry.org/lager"
+	"github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack/cutlass/docker"
 	"github.com/pkg/errors"
 )
 
@@ -42,25 +46,75 @@ func EnsureUsesProxy(fixturePath, buildpackPath string) error {
 }
 
 func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, envs []string, resolve bool) ([]string, bool, []string, error) {
+	data := lager.Data{"network": networkName, "fixture": fixturePath, "buildpack": buildpackPath, "envs": envs, "resolve": resolve}
+	session := DefaultLogger.Session("internet-traffic-for-network", data)
+
+	session.Debug("preparing-docker-build-context")
+	tmpDir, err := ioutil.TempDir("", "docker-context")
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to create docker context directory: %s", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	buildpackCopy, err := os.Create(filepath.Join(tmpDir, "buildpack"))
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to create buildpack copy: %s", err)
+	}
+
+	buildpackOriginal, err := os.Open(buildpackPath)
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to open buildpack original: %s", err)
+	}
+
+	_, err = io.Copy(buildpackCopy, buildpackOriginal)
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to copy buildpack: %s", err)
+	}
+
+	fixtureDir := filepath.Join(tmpDir, "fixture")
+	err = os.Mkdir(fixtureDir, 0755)
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to create fixture directory: %s", err)
+	}
+
+	err = libbuildpack.CopyDirectory(fixturePath, fixtureDir)
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to copy fixture directory: %s", err)
+	}
+
+	dockerfile := docker.BuildStagingDockerfile(session, "fixture", "buildpack", envs)
+
+	session.Debug("creating-dockerfile")
+	file, err := os.Create(filepath.Join(tmpDir, fmt.Sprintf("itf.Dockerfile.%d", rand.Int())))
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to create dockerfile: %s", err)
+	}
+	defer file.Close()
+
+	session.Debug("writing-dockerfile")
+	_, err = io.Copy(file, dockerfile)
+	if err != nil {
+		return nil, false, nil, fmt.Errorf("failed to create dockerfile: %s", err)
+	}
+
+	dockerfilePath := file.Name()
+
 	// TODO: Take this out, after refactor all proxy tests to use EnsureUsesProxy
+	networkCommands := []string{
+		"(sudo tcpdump -i %s eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &)",
+		"/buildpack/bin/detect /tmp/staged && echo 'Detect completed'",
+		"/buildpack/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed'",
+		"/buildpack/bin/finalize /tmp/staged /tmp/cache /buildpack 0 /tmp && echo 'Finalize completed'",
+		"/buildpack/bin/release /tmp/staged && echo 'Release completed'",
+		"sleep 1",
+		"pkill tcpdump; tcpdump -r %s /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true",
+	}
+
 	var flags string
 	if !resolve {
 		flags = "-n"
 	}
-
-	networkCommand := "(sudo tcpdump -i %s eth0 not udp port 53 and not udp port 1900 and not udp port 5353 and ip -t -Uw /tmp/dumplog &) " +
-		"&& /buildpack/bin/detect /tmp/staged && echo 'Detect completed' " +
-		"&& /buildpack/bin/supply /tmp/staged /tmp/cache /buildpack 0 && echo 'Supply completed' " +
-		"&& /buildpack/bin/finalize /tmp/staged /tmp/cache /buildpack 0 /tmp && echo 'Finalize completed' " +
-		"&& /buildpack/bin/release /tmp/staged && echo 'Release completed' " +
-		"&& sleep 1 && pkill tcpdump; tcpdump -r %s /tmp/dumplog | sed -e 's/^/internet traffic: /' 2>&1 || true"
-	networkCommand = fmt.Sprintf(networkCommand, flags, flags)
-
-	dockerfilePath, err := createDockerfile(fixturePath, buildpackPath, envs)
-	if err != nil {
-		return nil, false, nil, errors.Wrapf(err, "failed to create dockerfile: %s", dockerfilePath)
-	}
-	defer os.Remove(dockerfilePath)
+	networkCommand := fmt.Sprintf(strings.Join(networkCommands, " && "), flags, flags)
 
 	output, err := ExecuteDockerFile(dockerfilePath, networkName, networkCommand)
 	if err != nil {
@@ -72,6 +126,9 @@ func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, e
 
 // TODO: Delete after all buildpacks use EnsureUsesProxy
 func InternetTraffic(bpDir, fixturePath, buildpackPath string, envs []string) ([]string, bool, []string, error) {
+	data := lager.Data{"buildpack-dir": bpDir, "fixture": fixturePath, "buildpack": buildpackPath, "envs": envs}
+	DefaultLogger.Debug("internet-traffic", data)
+
 	return InternetTrafficForNetwork("bridge", fixturePath, buildpackPath, envs, false)
 }
 
@@ -139,30 +196,44 @@ func DeleteContainer(containerName string) error {
 	return nil
 }
 
-func ExecuteDockerFile(dockerfilePath, networkName, networkCommand string) (string, error) {
-	dockerImageName := "internet_traffic_test" + RandStringRunes(8)
-	defer exec.Command("docker", "rmi", "-f", dockerImageName).Output()
+func ExecuteDockerFile(path, network, command string) (string, error) {
+	data := lager.Data{"path": path, "network": network, "command": command}
+	session := DefaultLogger.Session("execute-dockerfile", data)
+	image := "internet_traffic_test" + RandStringRunes(8)
 
-	dockerfileName := filepath.Base(dockerfilePath)
-	dockerfileDir := filepath.Dir(dockerfilePath)
+	session.Debug("creating-cli")
+	cli := docker.NewCLI(docker.NewDockerExecutable(session))
 
-	cmd := exec.Command("docker", "build", "--rm", "--no-cache", "-t", dockerImageName, "-f", dockerfileName, ".")
-	cmd.Dir = dockerfileDir
-	cmd.Stderr = DefaultStdoutStderr
-	if output, err := cmd.Output(); err != nil {
-		return "", errors.Wrapf(err, "failed to docker build: %s", string(output))
+	defer cli.RemoveImage(image, docker.RemoveImageOptions{Force: true})
 
+	session.Debug("building-image-cli")
+	stdout, _, err := cli.Build(docker.BuildOptions{
+		Remove:  true,
+		NoCache: true,
+		Tag:     image,
+		File:    path,
+		Context: filepath.Dir(path),
+	})
+	if err != nil {
+		return stdout, err
 	}
 
-	cmd = exec.Command("docker", "run", "--network", networkName, "--rm", "-t", dockerImageName, "bash", "-c", networkCommand)
-	cmd.Dir = dockerfileDir
-	cmd.Stderr = DefaultStdoutStderr
-	output, err := cmd.Output()
+	session.Debug("running-image-cli")
+	stdout, _, err = cli.Run(image, docker.RunOptions{
+		Network: network,
+		Remove:  true,
+		TTY:     true,
+		Command: command,
+	})
+	if err != nil {
+		return stdout, err
+	}
 
-	return string(output), err
+	return stdout, nil
 }
 
 func ParseTrafficAndLogs(output string) ([]string, bool, []string, error) {
+	DefaultLogger.Debug("parse-traffic-and-logs")
 	var internetTraffic, logs []string
 	var detected, released, supplied, finalized bool
 	for _, line := range strings.Split(output, "\n") {
@@ -184,43 +255,4 @@ func ParseTrafficAndLogs(output string) ([]string, bool, []string, error) {
 
 	built := detected && supplied && finalized && released
 	return internetTraffic, built, logs, nil
-}
-
-func createDockerfile(fixturePath, buildpackPath string, envs []string) (string, error) {
-	bpDir := filepath.Dir(buildpackPath)
-	bpName := filepath.Base(buildpackPath)
-
-	dockerfileContents := dockerfile(fixturePath, bpName, envs)
-	dockerfileName := fmt.Sprintf("itf.Dockerfile.%v", rand.Int())
-	dockerfilePath := filepath.Join(bpDir, dockerfileName)
-	err := ioutil.WriteFile(dockerfilePath, []byte(dockerfileContents), 0755)
-	return dockerfilePath, err
-}
-
-func dockerfile(fixturePath, buildpackPath string, envs []string) string {
-	cfStack := os.Getenv("CF_STACK")
-	if cfStack == "" {
-		cfStack = "cflinuxfs3"
-	}
-
-	stackDockerImage := os.Getenv("CF_STACK_DOCKER_IMAGE")
-	if stackDockerImage == "" {
-		stackDockerImage = fmt.Sprintf("cloudfoundry/%s", cfStack)
-	}
-
-	out := fmt.Sprintf("FROM %s\n"+
-		"ENV CF_STACK %s\n"+
-		"ENV VCAP_APPLICATION {}\n", stackDockerImage, cfStack)
-	for _, env := range envs {
-		out = out + "ENV " + env + "\n"
-	}
-	out = out +
-		"ADD " + fixturePath + " /tmp/staged/\n" +
-		"ADD " + buildpackPath + " /tmp/\n" +
-		"RUN mkdir -p /buildpack/0\n" +
-		"RUN mkdir -p /tmp/cache\n" +
-		"RUN unzip /tmp/" + filepath.Base(buildpackPath) + " -d /buildpack\n" +
-		"# HACK around https://github.com/dotcloud/docker/issues/5490\n" +
-		"RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump\n"
-	return out
 }

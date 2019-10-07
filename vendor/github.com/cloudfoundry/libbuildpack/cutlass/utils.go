@@ -3,6 +3,7 @@ package cutlass
 import (
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -59,4 +60,14 @@ func writeToFile(source io.Reader, destFile string, mode os.FileMode) error {
 	}
 
 	return nil
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
+
+func RandStringRunes(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
