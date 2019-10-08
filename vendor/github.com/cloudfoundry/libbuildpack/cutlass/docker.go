@@ -118,7 +118,7 @@ func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, e
 
 	output, err := ExecuteDockerFile(dockerfilePath, networkName, networkCommand)
 	if err != nil {
-		return nil, false, nil, errors.Wrapf(err, "failed to build and run docker image: %s", output)
+		return nil, false, nil, errors.Wrapf(err, "failed to build and run docker image: %s\n%s", err, output)
 	}
 
 	return ParseTrafficAndLogs(output)
