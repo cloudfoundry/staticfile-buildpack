@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("deploy an app that shows the directory index", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "directory_index"))
+		app = cutlass.New(Fixtures("directory_index"))
 	})
 
 	It("runs", func() {

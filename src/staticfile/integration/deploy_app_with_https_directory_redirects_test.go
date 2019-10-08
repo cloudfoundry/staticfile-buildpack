@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	. "github.com/onsi/ginkgo"
@@ -23,7 +22,7 @@ var _ = Describe("deploy a staticfile app with visitable directories", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "no_trailing_slash"))
+		app = cutlass.New(Fixtures("no_trailing_slash"))
 	})
 
 	It("redirects to https directory when path doesn't end with a slash", func() {

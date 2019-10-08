@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("pushing a static app with dummy file in root", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "public_unspecified"))
+		app = cutlass.New(Fixtures("public_unspecified"))
 		PushAppAndConfirm(app)
 	})
 

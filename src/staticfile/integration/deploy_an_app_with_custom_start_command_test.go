@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("a staticfile app with a custom start command that uses boot.sh
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "custom_start_command"))
+		app = cutlass.New(Fixtures("custom_start_command"))
 	})
 
 	It("runs", func() {

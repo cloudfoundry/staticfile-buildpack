@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -20,7 +18,7 @@ var _ = Describe("deploy has nginx/conf directory", func() {
 
 	Context("app has nginx include conf file", func() {
 		BeforeEach(func() {
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "nginx_conf"))
+			app = cutlass.New(Fixtures("nginx_conf"))
 			app.Buildpacks = []string{"staticfile_buildpack"}
 			PushAppAndConfirm(app)
 		})
@@ -32,7 +30,7 @@ var _ = Describe("deploy has nginx/conf directory", func() {
 
 	Context("app as nginx.conf file", func() {
 		BeforeEach(func() {
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "deprecated_nginx_conf"))
+			app = cutlass.New(Fixtures("deprecated_nginx_conf"))
 			PushAppAndConfirm(app)
 		})
 		It("warns user not to override nginx.conf", func() {

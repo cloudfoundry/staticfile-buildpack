@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -24,7 +22,7 @@ var _ = Describe("running supply buildpacks before the staticfile buildpack", fu
 				Skip("API version does not have multi-buildpack support")
 			}
 
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "fake_supply_staticfile_app"))
+			app = cutlass.New(Fixtures("fake_supply_staticfile_app"))
 			app.Buildpacks = []string{
 				"https://github.com/cloudfoundry/dotnet-core-buildpack#master",
 				"staticfile_buildpack",

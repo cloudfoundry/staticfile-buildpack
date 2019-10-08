@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("deploy an app using hsts", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "with_hsts"))
+		app = cutlass.New(Fixtures("with_hsts"))
 	})
 
 	It("provides the Strict-Transport-Security header", func() {

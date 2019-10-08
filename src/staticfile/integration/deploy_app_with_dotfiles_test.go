@@ -33,7 +33,7 @@ var _ = Describe("deploy a an app with dot files", func() {
 		Expect(staticfile_contents).ToNot(BeEmpty())
 
 		var err error
-		appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", app_name))
+		appDir, err = cutlass.CopyFixture(Fixtures(app_name))
 		Expect(err).To(BeNil())
 		app = cutlass.New(appDir)
 		ioutil.WriteFile(filepath.Join(appDir, "Staticfile"), []byte(staticfile_contents), 0644)

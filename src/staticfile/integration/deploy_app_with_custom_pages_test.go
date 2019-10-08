@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("a staticfile app with custom error pages", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "custom_error"))
+		app = cutlass.New(Fixtures("custom_error"))
 		app.Buildpacks = []string{"staticfile_buildpack"}
 	})
 

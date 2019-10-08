@@ -20,7 +20,7 @@ var _ = Describe("deploy a basic auth app", func() {
 	})
 
 	It("the app uses Staticfile.auth", func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "basic_auth"))
+		app = cutlass.New(Fixtures("basic_auth"))
 		PushAppAndConfirm(app)
 
 		By("uses the provided credentials for authorization", func() {
@@ -51,7 +51,7 @@ var _ = Describe("deploy a basic auth app", func() {
 		var appDir string
 		BeforeEach(func() {
 			var err error
-			appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "basic_auth"))
+			appDir, err = cutlass.CopyFixture(Fixtures("basic_auth"))
 			Expect(err).To(BeNil())
 
 			Expect(os.Remove(filepath.Join(appDir, "Staticfile"))).To(Succeed())

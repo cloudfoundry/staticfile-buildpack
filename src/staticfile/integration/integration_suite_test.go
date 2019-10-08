@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
@@ -96,4 +97,12 @@ func ApiHasStackAssociation() bool {
 	supported, err := cutlass.ApiGreaterThan("2.113.0")
 	Expect(err).NotTo(HaveOccurred())
 	return supported
+}
+
+func Fixtures(names ...string) string {
+	root, err := cutlass.FindRoot()
+	Expect(err).NotTo(HaveOccurred())
+
+	names = append([]string{root, "fixtures"}, names...)
+	return filepath.Join(names...)
 }

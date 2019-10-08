@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -19,7 +17,7 @@ var _ = Describe("deploy a pushstate and reverse proxy app", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "pushstate_and_proxy_pass"))
+		app = cutlass.New(Fixtures("pushstate_and_proxy_pass"))
 		PushAppAndConfirm(app)
 	})
 

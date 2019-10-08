@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	. "github.com/onsi/ginkgo"
@@ -20,7 +18,7 @@ var _ = Describe("deploy includes headers", func() {
 
 	Context("with a public folder", func() {
 		BeforeEach(func() {
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "include_headers_public"))
+			app = cutlass.New(Fixtures("include_headers_public"))
 			PushAppAndConfirm(app)
 		})
 
@@ -34,7 +32,7 @@ var _ = Describe("deploy includes headers", func() {
 
 	Context("with a dist folder", func() {
 		BeforeEach(func() {
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "include_headers_dist"))
+			app = cutlass.New(Fixtures("include_headers_dist"))
 			PushAppAndConfirm(app)
 		})
 
@@ -48,7 +46,7 @@ var _ = Describe("deploy includes headers", func() {
 
 	Context("with a root folder", func() {
 		BeforeEach(func() {
-			app = cutlass.New(filepath.Join(bpDir, "fixtures", "include_headers_root_pwd"))
+			app = cutlass.New(Fixtures("include_headers_root_pwd"))
 			PushAppAndConfirm(app)
 		})
 

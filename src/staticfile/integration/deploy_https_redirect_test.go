@@ -1,8 +1,6 @@
 package integration_test
 
 import (
-	"path/filepath"
-
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	"fmt"
@@ -23,7 +21,7 @@ var _ = Describe("deploy a staticfile app", func() {
 	})
 	JustBeforeEach(func() {
 		Expect(app_name).ToNot(BeEmpty())
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", app_name))
+		app = cutlass.New(Fixtures(app_name))
 		PushAppAndConfirm(app)
 	})
 

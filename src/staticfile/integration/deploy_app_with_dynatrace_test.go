@@ -2,7 +2,6 @@ package integration_test
 
 import (
 	"os/exec"
-	"path/filepath"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
@@ -15,7 +14,7 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 	var createdServices []string
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "logenv"))
+		app = cutlass.New(Fixtures("logenv"))
 		app.SetEnv("BP_DEBUG", "true")
 		PushAppAndConfirm(app)
 

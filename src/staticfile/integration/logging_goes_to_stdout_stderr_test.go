@@ -2,7 +2,6 @@ package integration_test
 
 import (
 	"os/exec"
-	"path/filepath"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
@@ -20,7 +19,7 @@ var _ = Describe("nginx logs go to stdout and stderr", func() {
 	})
 
 	BeforeEach(func() {
-		app = cutlass.New(filepath.Join(bpDir, "fixtures", "staticfile_app"))
+		app = cutlass.New(Fixtures("staticfile_app"))
 		PushAppAndConfirm(app)
 	})
 
