@@ -9,14 +9,13 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
-	"code.cloudfoundry.org/lager"
 	"github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack/cutlass/execution"
+	"github.com/cloudfoundry/libbuildpack/cutlass/glow"
 	"github.com/cloudfoundry/libbuildpack/packager"
 	"gopkg.in/yaml.v2"
 )
@@ -127,34 +126,37 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 	return PackageUniquelyVersionedBuildpackExtra(strings.Replace(manifest.Language, "-", "_", -1), buildpackVersion, stack, Cached, stackAssociationSupported)
 }
 
-func PackageShimmedBuildpack(stack string) (VersionedBuildpackPackage, error) {
-	DefaultLogger.Debug("package-shimmed-buildpack")
-
+func PackageShimmedBuildpack(bpDir, stack string) (VersionedBuildpackPackage, error) {
 	var (
-		name, version, bpDir string
-		err                  error
+		name    string
+		version string
+		err     error
 	)
 
-	bpDir, err = FindRoot()
-	if err != nil {
-		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to find root: %v", err)
-	}
+	DefaultLogger.Debug("package-shimmed-buildpack")
 
 	bpFilePath := os.Getenv("BUILDPACK_FILE")
 	if bpFilePath == "" {
-		bpFilePath, version, name, err = packageShim(bpDir, stack)
-		if err != nil {
-			return VersionedBuildpackPackage{}, err
-		}
-	} else {
-		if !filepath.IsAbs(bpFilePath) {
-			bpFilePath = filepath.Join(bpDir, bpFilePath)
-		}
+		session := DefaultLogger.Session("package-shim")
 
-		version, name, err = extractVersionAndNameFromPackagedBuildpack(bpFilePath)
+		cnb2cf := execution.NewExecutable(glow.ExecutableName, session)
+		cli := glow.NewCLI(cnb2cf)
+		archiver := glow.NewArchiver(cli)
+
+		timestamp := time.Now().Format("20060102150405")
+		bpFilePath, err = archiver.Archive(bpDir, stack, timestamp, Cached)
 		if err != nil {
-			return VersionedBuildpackPackage{}, err
+			return VersionedBuildpackPackage{}, fmt.Errorf("failed to package shimmed buildpack: %s", err)
 		}
+	}
+
+	if !filepath.IsAbs(bpFilePath) {
+		bpFilePath = filepath.Join(bpDir, bpFilePath)
+	}
+
+	version, name, err = extractVersionAndNameFromPackagedBuildpack(bpFilePath)
+	if err != nil {
+		return VersionedBuildpackPackage{}, err
 	}
 
 	name = strings.Replace(name, "-", "_", -1)
@@ -167,49 +169,6 @@ func PackageShimmedBuildpack(stack string) (VersionedBuildpackPackage, error) {
 		Version: version,
 		File:    bpFilePath,
 	}, nil
-}
-
-func packageShim(bpDir, stack string) (bpFilePath string, version string, name string, err error) {
-	session := DefaultLogger.Session("package-shim")
-
-	data, err := ioutil.ReadFile(filepath.Join(bpDir, "VERSION"))
-	if err != nil {
-		return "", "", "", fmt.Errorf("Failed to read VERSION file: %v", err)
-	}
-	version = strings.TrimSpace(string(data))
-	version = fmt.Sprintf("%s.%s", version, time.Now().Format("20060102150405"))
-
-	shimmerPath := filepath.Join(bpDir, ".bin", "cnb2cf")
-	args := []string{"package", "-stack", stack, "-version", version, "-manifestpath", "shim.toml", "-dev"}
-	if Cached {
-		args = append(args, "-cached")
-	}
-
-	session.Debug("executing", lager.Data{"path": shimmerPath, "args": args, "dir": bpDir})
-
-	buffer := bytes.NewBuffer(nil)
-	cmd := exec.Command(shimmerPath, args...)
-	cmd.Dir = bpDir
-	cmd.Stdout = buffer
-	cmd.Stderr = buffer
-	err = cmd.Run()
-	if err != nil {
-		return "", "", "", err
-	}
-
-	r := regexp.MustCompile(`Packaged Shimmed Buildpack at: [\w-\.^]*.zip`)
-	matches := r.FindAllString(buffer.String(), -1)
-	match := matches[len(matches)-1]
-	fileName := strings.Split(match, ": ")[1]
-	bpFilePath = filepath.Join(bpDir, fileName)
-
-	err = libbuildpack.NewYAML().Load(filepath.Join(bpDir, "manifest.yml"), &manifest)
-	if err != nil {
-		return "", "", "", fmt.Errorf("Failed to load manifest.yml file: %v", err)
-	}
-	name = manifest.Language
-
-	return bpFilePath, version, name, nil
 }
 
 func extractVersionAndNameFromPackagedBuildpack(bpFilePath string) (version string, name string, err error) {

@@ -1,5 +1,14 @@
 package docker
 
+import "github.com/cloudfoundry/libbuildpack/cutlass/execution"
+
+const ExecutableName = "docker"
+
+//go:generate faux --interface Executable --output fakes/executable.go
+type Executable interface {
+	Execute(options execution.Options, args ...string) (stdout, stderr string, err error)
+}
+
 type CLI struct {
 	executable Executable
 }
@@ -20,7 +29,7 @@ type BuildOptions struct {
 
 func (c CLI) Build(options BuildOptions) (string, string, error) {
 	args := []string{"build"}
-	var execOptions ExecuteOptions
+	var execOptions execution.Options
 
 	if options.Remove {
 		args = append(args, "--rm")
@@ -82,7 +91,7 @@ func (c CLI) Run(image string, options RunOptions) (string, string, error) {
 		args = append(args, "bash", "-c", options.Command)
 	}
 
-	stdout, stderr, err := c.executable.Execute(ExecuteOptions{}, args...)
+	stdout, stderr, err := c.executable.Execute(execution.Options{}, args...)
 	if err != nil {
 		return stdout, stderr, err
 	}
@@ -103,7 +112,7 @@ func (c CLI) RemoveImage(image string, options RemoveImageOptions) (string, stri
 
 	args = append(args, image)
 
-	stdout, stderr, err := c.executable.Execute(ExecuteOptions{}, args...)
+	stdout, stderr, err := c.executable.Execute(execution.Options{}, args...)
 	if err != nil {
 		return stdout, stderr, err
 	}

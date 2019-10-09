@@ -1359,6 +1359,7 @@ const (
 	NETLINK_XFRM                         = 0x6
 	NETNSA_MAX                           = 0x5
 	NETNSA_NSID_NOT_ASSIGNED             = -0x1
+	NFDBITS                              = 0x40
 	NFNETLINK_V0                         = 0x0
 	NFNLGRP_ACCT_QUOTA                   = 0x8
 	NFNLGRP_CONNTRACK_DESTROY            = 0x3
@@ -2586,7 +2587,7 @@ const (
 	TIPC_SUB_PORTS                       = 0x1
 	TIPC_SUB_SERVICE                     = 0x2
 	TIPC_TOP_SRV                         = 0x1
-	TIPC_WAIT_FOREVER                    = -0x1
+	TIPC_WAIT_FOREVER                    = 0xffffffff
 	TIPC_WITHDRAWN                       = 0x2
 	TIPC_ZONE_BITS                       = 0x8
 	TIPC_ZONE_CLUSTER_MASK               = 0xfffff000
