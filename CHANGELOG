@@ -1,3 +1,9 @@
+v1.5.0 Oct 10, 2019
+=====================
+
+* Remove cflinuxfs2 dependencies
+  (https://www.pivotaltracker.com/story/show/166710436)
+
 v1.4.45 Sep 30, 2019
 =====================
 
