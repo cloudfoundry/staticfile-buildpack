@@ -2,6 +2,7 @@ package execution
 
 import (
 	"bytes"
+	"io"
 	"os/exec"
 
 	"code.cloudfoundry.org/lager"
@@ -13,7 +14,10 @@ type Executable struct {
 }
 
 type Options struct {
-	Dir string
+	Dir    string
+	Env    []string
+	Stdout io.Writer
+	Stderr io.Writer
 }
 
 func NewExecutable(name string, logger lager.Logger) Executable {
@@ -27,15 +31,26 @@ func (e Executable) Execute(options Options, args ...string) (string, string, er
 	data := lager.Data{"options": options, "args": args, "path": e.name}
 	session := e.logger.Session("execute", data)
 
-	stdout := &bytes.Buffer{}
-	stderr := &bytes.Buffer{}
-
 	cmd := exec.Command(e.name, args...)
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
 
 	if options.Dir != "" {
 		cmd.Dir = options.Dir
+	}
+
+	if len(options.Env) > 0 {
+		cmd.Env = options.Env
+	}
+
+	stdout := &bytes.Buffer{}
+	cmd.Stdout = stdout
+	if options.Stdout != nil {
+		cmd.Stdout = io.MultiWriter(stdout, options.Stdout)
+	}
+
+	stderr := &bytes.Buffer{}
+	cmd.Stderr = stderr
+	if options.Stderr != nil {
+		cmd.Stderr = io.MultiWriter(stderr, options.Stderr)
 	}
 
 	session.Debug("running")
