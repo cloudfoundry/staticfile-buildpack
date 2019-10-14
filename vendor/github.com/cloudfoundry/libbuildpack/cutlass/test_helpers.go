@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/libbuildpack"
-	"github.com/cloudfoundry/libbuildpack/cutlass/execution"
 	"github.com/cloudfoundry/libbuildpack/cutlass/glow"
 	"github.com/cloudfoundry/libbuildpack/packager"
+	"github.com/cloudfoundry/packit"
 	"gopkg.in/yaml.v2"
 )
 
@@ -139,7 +139,7 @@ func PackageShimmedBuildpack(bpDir, stack string) (VersionedBuildpackPackage, er
 	if bpFilePath == "" {
 		session := DefaultLogger.Session("package-shim")
 
-		cnb2cf := execution.NewExecutable(glow.ExecutableName, session)
+		cnb2cf := packit.NewExecutable(glow.ExecutableName, session)
 		cli := glow.NewCLI(cnb2cf)
 		archiver := glow.NewArchiver(cli)
 

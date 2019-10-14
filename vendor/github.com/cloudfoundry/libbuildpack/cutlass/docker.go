@@ -14,7 +14,7 @@ import (
 	"code.cloudfoundry.org/lager"
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass/docker"
-	"github.com/cloudfoundry/libbuildpack/cutlass/execution"
+	"github.com/cloudfoundry/packit"
 	"github.com/pkg/errors"
 )
 
@@ -203,7 +203,7 @@ func ExecuteDockerFile(path, network, command string) (string, error) {
 	image := "internet_traffic_test" + RandStringRunes(8)
 
 	session.Debug("creating-cli")
-	cli := docker.NewCLI(execution.NewExecutable(docker.ExecutableName, session))
+	cli := docker.NewCLI(packit.NewExecutable(docker.ExecutableName, session))
 
 	defer cli.RemoveImage(image, docker.RemoveImageOptions{Force: true})
 
