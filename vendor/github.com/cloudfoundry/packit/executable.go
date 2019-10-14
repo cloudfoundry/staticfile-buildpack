@@ -1,4 +1,4 @@
-package execution
+package packit
 
 import (
 	"bytes"
@@ -13,7 +13,8 @@ type Executable struct {
 	logger lager.Logger
 }
 
-type Options struct {
+type Execution struct {
+	Args   []string
 	Dir    string
 	Env    []string
 	Stdout io.Writer
@@ -27,31 +28,31 @@ func NewExecutable(name string, logger lager.Logger) Executable {
 	}
 }
 
-func (e Executable) Execute(options Options, args ...string) (string, string, error) {
-	data := lager.Data{"options": options, "args": args, "path": e.name}
-	session := e.logger.Session("execute", data)
+func (e Executable) Execute(execution Execution) (string, string, error) {
+	cmd := exec.Command(e.name, execution.Args...)
 
-	cmd := exec.Command(e.name, args...)
-
-	if options.Dir != "" {
-		cmd.Dir = options.Dir
+	if execution.Dir != "" {
+		cmd.Dir = execution.Dir
 	}
 
-	if len(options.Env) > 0 {
-		cmd.Env = options.Env
+	if len(execution.Env) > 0 {
+		cmd.Env = execution.Env
 	}
 
 	stdout := &bytes.Buffer{}
 	cmd.Stdout = stdout
-	if options.Stdout != nil {
-		cmd.Stdout = io.MultiWriter(stdout, options.Stdout)
+	if execution.Stdout != nil {
+		cmd.Stdout = io.MultiWriter(stdout, execution.Stdout)
 	}
 
 	stderr := &bytes.Buffer{}
 	cmd.Stderr = stderr
-	if options.Stderr != nil {
-		cmd.Stderr = io.MultiWriter(stderr, options.Stderr)
+	if execution.Stderr != nil {
+		cmd.Stderr = io.MultiWriter(stderr, execution.Stderr)
 	}
+
+	data := lager.Data{"execution": execution, "path": e.name}
+	session := e.logger.Session("execute", data)
 
 	session.Debug("running")
 	err := cmd.Run()

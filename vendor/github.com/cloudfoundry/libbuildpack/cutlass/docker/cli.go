@@ -1,12 +1,12 @@
 package docker
 
-import "github.com/cloudfoundry/libbuildpack/cutlass/execution"
+import "github.com/cloudfoundry/packit"
 
 const ExecutableName = "docker"
 
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
-	Execute(options execution.Options, args ...string) (stdout, stderr string, err error)
+	Execute(packit.Execution) (stdout, stderr string, err error)
 }
 
 type CLI struct {
@@ -28,34 +28,35 @@ type BuildOptions struct {
 }
 
 func (c CLI) Build(options BuildOptions) (string, string, error) {
-	args := []string{"build"}
-	var execOptions execution.Options
+	execution := packit.Execution{
+		Args: []string{"build"},
+	}
 
 	if options.Remove {
-		args = append(args, "--rm")
+		execution.Args = append(execution.Args, "--rm")
 	}
 
 	if options.NoCache {
-		args = append(args, "--no-cache")
+		execution.Args = append(execution.Args, "--no-cache")
 	}
 
 	if options.Tag != "" {
-		args = append(args, "--tag", options.Tag)
+		execution.Args = append(execution.Args, "--tag", options.Tag)
 	}
 
 	if options.File != "" {
-		args = append(args, "--file", options.File)
+		execution.Args = append(execution.Args, "--file", options.File)
 	}
 
 	if options.Context == "" {
 		options.Context = "."
 	} else {
-		execOptions.Dir = options.Context
+		execution.Dir = options.Context
 	}
 
-	args = append(args, options.Context)
+	execution.Args = append(execution.Args, options.Context)
 
-	stdout, stderr, err := c.executable.Execute(execOptions, args...)
+	stdout, stderr, err := c.executable.Execute(execution)
 	if err != nil {
 		return stdout, stderr, err
 	}
@@ -71,27 +72,29 @@ type RunOptions struct {
 }
 
 func (c CLI) Run(image string, options RunOptions) (string, string, error) {
-	args := []string{"run"}
+	execution := packit.Execution{
+		Args: []string{"run"},
+	}
 
 	if options.Network != "" {
-		args = append(args, "--network", options.Network)
+		execution.Args = append(execution.Args, "--network", options.Network)
 	}
 
 	if options.Remove {
-		args = append(args, "--rm")
+		execution.Args = append(execution.Args, "--rm")
 	}
 
 	if options.TTY {
-		args = append(args, "--tty")
+		execution.Args = append(execution.Args, "--tty")
 	}
 
-	args = append(args, image)
+	execution.Args = append(execution.Args, image)
 
 	if options.Command != "" {
-		args = append(args, "bash", "-c", options.Command)
+		execution.Args = append(execution.Args, "bash", "-c", options.Command)
 	}
 
-	stdout, stderr, err := c.executable.Execute(execution.Options{}, args...)
+	stdout, stderr, err := c.executable.Execute(execution)
 	if err != nil {
 		return stdout, stderr, err
 	}
@@ -104,15 +107,17 @@ type RemoveImageOptions struct {
 }
 
 func (c CLI) RemoveImage(image string, options RemoveImageOptions) (string, string, error) {
-	args := []string{"image", "rm"}
-
-	if options.Force {
-		args = append(args, "--force")
+	execution := packit.Execution{
+		Args: []string{"image", "rm"},
 	}
 
-	args = append(args, image)
+	if options.Force {
+		execution.Args = append(execution.Args, "--force")
+	}
 
-	stdout, stderr, err := c.executable.Execute(execution.Options{}, args...)
+	execution.Args = append(execution.Args, image)
+
+	stdout, stderr, err := c.executable.Execute(execution)
 	if err != nil {
 		return stdout, stderr, err
 	}

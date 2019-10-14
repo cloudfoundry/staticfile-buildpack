@@ -27,10 +27,12 @@ github.com/cloudfoundry/cnb2cf v0.0.0-20191004212527-fe9acbf8d63f/go.mod h1:c/Jw
 github.com/cloudfoundry/dagger v0.0.0-20190821204652-0269a001ee97/go.mod h1:PXeUHc4d2vAVO/31jFE6uD09w/yFfzs4kcayAVEvnEI=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
 github.com/cloudfoundry/libbuildpack v0.0.0-20190724153911-afcbb4418ec3/go.mod h1:9dmLtgQ6GrLr2ryO9ioYGpbc5eYL+8JBWtPj0r7HaZY=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191011185732-ecde61bc83f7 h1:tXx+6jhTiUkA0jmFoBxUIYBIywVjeXunytRfQ8f7F+A=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191011185732-ecde61bc83f7/go.mod h1:QbNDwX8HpH3ZD1pPmFzt2RcpZToEn4qBHNuFBMnk0Ec=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191014143321-a88c7d8d3262 h1:Qdds1id5tDHML9vJH2lkDAq81t57KDC2wrdN+lOGq88=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191014143321-a88c7d8d3262/go.mod h1:S5diH4MvExvHoJ60ALHVnJ0RcDUDP9aLR7+kx5xPG9Y=
 github.com/cloudfoundry/libcfbuildpack v1.76.0/go.mod h1:QGm+nzixn579dvQNlS7ZQET541y2hEpZ0/5uNxkQ04Y=
 github.com/cloudfoundry/libcfbuildpack v1.89.0/go.mod h1:ufhp/bp0LxbDDwbf2Ms3Bf4x9YnLr9dkL1RTUYSdKg0=
+github.com/cloudfoundry/packit v0.0.0-20191014140300-f8d2e0b20a04 h1:IKq64UyPDs+HD8dDE7fRHC+W/Vw2L0J+GfPuTiTTo50=
+github.com/cloudfoundry/packit v0.0.0-20191014140300-f8d2e0b20a04/go.mod h1:m8hk5BTIclmOWMxv3aQKIU/0LA4FVe4XKC9o0VNsLow=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -6,15 +6,16 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20191011185732-ecde61bc83f7
+# github.com/cloudfoundry/libbuildpack v0.0.0-20191014143321-a88c7d8d3262
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/bratshelper
 github.com/cloudfoundry/libbuildpack/cutlass
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/packager
 github.com/cloudfoundry/libbuildpack/cutlass/docker
-github.com/cloudfoundry/libbuildpack/cutlass/execution
 github.com/cloudfoundry/libbuildpack/cutlass/glow
+# github.com/cloudfoundry/packit v0.0.0-20191014140300-f8d2e0b20a04
+github.com/cloudfoundry/packit
 # github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 github.com/elazarl/goproxy
 # github.com/golang/mock v1.3.1

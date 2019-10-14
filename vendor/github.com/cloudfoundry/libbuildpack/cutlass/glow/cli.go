@@ -1,12 +1,12 @@
 package glow
 
-import "github.com/cloudfoundry/libbuildpack/cutlass/execution"
+import "github.com/cloudfoundry/packit"
 
 const ExecutableName = "cnb2cf"
 
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
-	Execute(options execution.Options, args ...string) (stdout, stderr string, err error)
+	Execute(packit.Execution) (stdout, stderr string, err error)
 }
 
 type CLI struct {
@@ -27,25 +27,28 @@ type PackageOptions struct {
 }
 
 func (c CLI) Package(dir, stack string, options PackageOptions) (string, string, error) {
-	args := []string{"package", "-stack", stack}
+	execution := packit.Execution{
+		Args: []string{"package", "-stack", stack},
+		Dir:  dir,
+	}
 
 	if options.Cached {
-		args = append(args, "-cached")
+		execution.Args = append(execution.Args, "-cached")
 	}
 
 	if options.Dev {
-		args = append(args, "-dev")
+		execution.Args = append(execution.Args, "-dev")
 	}
 
 	if options.ManifestPath != "" {
-		args = append(args, "-manifestpath", options.ManifestPath)
+		execution.Args = append(execution.Args, "-manifestpath", options.ManifestPath)
 	}
 
 	if options.Version != "" {
-		args = append(args, "-version", options.Version)
+		execution.Args = append(execution.Args, "-version", options.Version)
 	}
 
-	stdout, stderr, err := c.executable.Execute(execution.Options{Dir: dir}, args...)
+	stdout, stderr, err := c.executable.Execute(execution)
 	if err != nil {
 		return stdout, stderr, err
 	}
