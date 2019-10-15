@@ -29,7 +29,12 @@ func NewExecutable(name string, logger lager.Logger) Executable {
 }
 
 func (e Executable) Execute(execution Execution) (string, string, error) {
-	cmd := exec.Command(e.name, execution.Args...)
+	path, err := exec.LookPath(e.name)
+	if err != nil {
+		return "", "", err
+	}
+
+	cmd := exec.Command(path, execution.Args...)
 
 	if execution.Dir != "" {
 		cmd.Dir = execution.Dir
@@ -51,11 +56,11 @@ func (e Executable) Execute(execution Execution) (string, string, error) {
 		cmd.Stderr = io.MultiWriter(stderr, execution.Stderr)
 	}
 
-	data := lager.Data{"execution": execution, "path": e.name}
+	data := lager.Data{"execution": execution, "path": path}
 	session := e.logger.Session("execute", data)
 
 	session.Debug("running")
-	err := cmd.Run()
+	err = cmd.Run()
 	if err != nil {
 		session.Error("errored", err)
 	}
