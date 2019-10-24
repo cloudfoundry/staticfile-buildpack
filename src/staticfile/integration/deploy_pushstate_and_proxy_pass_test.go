@@ -29,7 +29,7 @@ var _ = Describe("deploy a pushstate and reverse proxy app", func() {
 		})
 
 		By("proxies", func() {
-			Expect(app.GetBody("/api")).To(ContainSubstring("This domain is established to be used for illustrative examples in documents"))
+			Expect(app.GetBody("/api")).To(ContainSubstring("illustrative examples in documents"))
 		})
 	})
 })
