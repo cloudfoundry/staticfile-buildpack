@@ -126,8 +126,8 @@ func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, e
 }
 
 // TODO: Delete after all buildpacks use EnsureUsesProxy
-func InternetTraffic(bpDir, fixturePath, buildpackPath string, envs []string) ([]string, bool, []string, error) {
-	data := lager.Data{"buildpack-dir": bpDir, "fixture": fixturePath, "buildpack": buildpackPath, "envs": envs}
+func InternetTraffic(fixturePath, buildpackPath string, envs []string) ([]string, bool, []string, error) {
+	data := lager.Data{"fixture": fixturePath, "buildpack": buildpackPath, "envs": envs}
 	DefaultLogger.Debug("internet-traffic", data)
 
 	return InternetTrafficForNetwork("bridge", fixturePath, buildpackPath, envs, false)
