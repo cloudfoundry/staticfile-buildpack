@@ -125,7 +125,6 @@ var _ = Describe("deploy a staticfile app", func() {
 
 			It("does not call out over the internet", func() {
 				traffic, _, _, err := cutlass.InternetTraffic(
-					bpDir,
 					Fixtures("staticfile_app"),
 					bpFile,
 					[]string{},
@@ -155,7 +154,6 @@ var _ = Describe("deploy a staticfile app", func() {
 
 			It("uses a proxy during staging if present", func() {
 				traffic, _, _, err := cutlass.InternetTraffic(
-					bpDir,
 					Fixtures("staticfile_app"),
 					bpFile,
 					[]string{"HTTP_PROXY=" + proxy.URL, "HTTPS_PROXY=" + proxy.URL},
