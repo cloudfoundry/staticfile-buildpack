@@ -10,3 +10,5 @@ require (
 	github.com/onsi/gomega v1.7.0
 	github.com/tidwall/gjson v1.3.2
 )
+
+go 1.13
