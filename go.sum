@@ -10,8 +10,8 @@ github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF0
 github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191216160021-525a07d011c1 h1:l25tobvSHGzPXh6bO2ObJQpntGM1QhHbOCOYx8hErcc=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191216160021-525a07d011c1/go.mod h1:fFFSbW3zjFi3/yt7Q3tSh8w0KZPp4QKLQ+gLdxcgMEg=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191216171123-e5948ef6885e h1:AG6QF/vxG4gXd48eqki07enD/nANcsX0mm3+1gotUjQ=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191216171123-e5948ef6885e/go.mod h1:fFFSbW3zjFi3/yt7Q3tSh8w0KZPp4QKLQ+gLdxcgMEg=
 github.com/cloudfoundry/packit v0.0.0-20191015134313-760041110f18 h1:uPn7oTVLGfIoys0HkyFVAvyDOA3RyVH8qzUz/8wU35I=
 github.com/cloudfoundry/packit v0.0.0-20191015134313-760041110f18/go.mod h1:m8hk5BTIclmOWMxv3aQKIU/0LA4FVe4XKC9o0VNsLow=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

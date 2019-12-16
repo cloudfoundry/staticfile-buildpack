@@ -77,7 +77,12 @@ func (i *Installer) InstallDependency(dep Dependency, outputDir string) error {
 		return ExtractTarXz(tmpFile, outputDir)
 	}
 
-	return ExtractTarGz(tmpFile, outputDir)
+	if strings.HasSuffix(entry.URI, ".tar.gz") || strings.HasSuffix(entry.URI, ".tgz") {
+		return ExtractTarGz(tmpFile, outputDir)
+	}
+
+	basename := filepath.Base(entry.URI)
+	return CopyFile(tmpFile, filepath.Join(outputDir, basename))
 }
 
 func (i *Installer) warnNewerPatch(dep Dependency) error {

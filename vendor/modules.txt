@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20191216160021-525a07d011c1
+# github.com/cloudfoundry/libbuildpack v0.0.0-20191216171123-e5948ef6885e
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
