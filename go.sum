@@ -10,8 +10,8 @@ github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF0
 github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191107210012-50982838f2a1 h1:exj+DSdxVRxhH/hODwNH9FVLs7FWuWRrJ1nz2NZG1aY=
-github.com/cloudfoundry/libbuildpack v0.0.0-20191107210012-50982838f2a1/go.mod h1:fFFSbW3zjFi3/yt7Q3tSh8w0KZPp4QKLQ+gLdxcgMEg=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191216160021-525a07d011c1 h1:l25tobvSHGzPXh6bO2ObJQpntGM1QhHbOCOYx8hErcc=
+github.com/cloudfoundry/libbuildpack v0.0.0-20191216160021-525a07d011c1/go.mod h1:fFFSbW3zjFi3/yt7Q3tSh8w0KZPp4QKLQ+gLdxcgMEg=
 github.com/cloudfoundry/packit v0.0.0-20191015134313-760041110f18 h1:uPn7oTVLGfIoys0HkyFVAvyDOA3RyVH8qzUz/8wU35I=
 github.com/cloudfoundry/packit v0.0.0-20191015134313-760041110f18/go.mod h1:m8hk5BTIclmOWMxv3aQKIU/0LA4FVe4XKC9o0VNsLow=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -86,8 +86,8 @@ golang.org/x/sys v0.0.0-20181221143128-b4a75ba826a6/go.mod h1:STP8DvDyc/dI5b8T5h
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20191010194322-b09406accb47 h1:/XfQ9z7ib8eEJX2hdgFTZJ/ntt0swNk5oYBziWeTCvY=
 golang.org/x/sys v0.0.0-20191010194322-b09406accb47/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d h1:kCXqdOO2GMlu0vCsEMBXwj/b0E9wyFpNPBpuv/go/F8=
-golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20191210023423-ac6580df4449 h1:gSbV7h1NRL2G1xTg/owz62CST1oJBmxy4QpMMregXVQ=
+golang.org/x/sys v0.0.0-20191210023423-ac6580df4449/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2 h1:tW2bmiBqwgJj/UpqtC8EpXEZVYOwU0yG4iWbprSVAcs=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
