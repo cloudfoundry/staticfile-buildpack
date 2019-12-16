@@ -375,7 +375,7 @@ func CopyDirectory(srcDir string) (string, error) {
 				return fmt.Errorf("Error while creating '%s' as symlink to '%s': %v", dest, target, err)
 			}
 		} else if info.IsDir() {
-			err = os.MkdirAll(dest, info.Mode())
+			err = os.MkdirAll(dest, 0755)
 			if err != nil {
 				return err
 			}
@@ -391,14 +391,27 @@ func CopyDirectory(srcDir string) (string, error) {
 				return err
 			}
 
-			fh, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE|os.O_TRUNC, info.Mode())
+			fh, err := os.OpenFile(dest, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 			if err != nil {
 				return err
 			}
 
 			_, err = io.Copy(fh, src)
-			fh.Close()
-			return err
+			if err != nil {
+				return err
+			}
+
+			err = fh.Chmod(info.Mode())
+			if err != nil {
+				return err
+			}
+
+			err = fh.Close()
+			if err != nil {
+				return err
+			}
+
+			return nil
 		}
 		return nil
 	})
