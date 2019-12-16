@@ -1,12 +1,12 @@
 package docker
 
-import "github.com/cloudfoundry/packit"
+import "github.com/cloudfoundry/packit/pexec"
 
 const ExecutableName = "docker"
 
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
-	Execute(packit.Execution) (stdout, stderr string, err error)
+	Execute(pexec.Execution) (stdout, stderr string, err error)
 }
 
 type CLI struct {
@@ -28,7 +28,7 @@ type BuildOptions struct {
 }
 
 func (c CLI) Build(options BuildOptions) (string, string, error) {
-	execution := packit.Execution{
+	execution := pexec.Execution{
 		Args: []string{"build"},
 	}
 
@@ -72,7 +72,7 @@ type RunOptions struct {
 }
 
 func (c CLI) Run(image string, options RunOptions) (string, string, error) {
-	execution := packit.Execution{
+	execution := pexec.Execution{
 		Args: []string{"run"},
 	}
 
@@ -107,7 +107,7 @@ type RemoveImageOptions struct {
 }
 
 func (c CLI) RemoveImage(image string, options RemoveImageOptions) (string, string, error) {
-	execution := packit.Execution{
+	execution := pexec.Execution{
 		Args: []string{"image", "rm"},
 	}
 

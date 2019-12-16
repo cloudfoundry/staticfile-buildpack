@@ -1,4 +1,4 @@
-package packit
+package pexec
 
 import (
 	"bytes"
