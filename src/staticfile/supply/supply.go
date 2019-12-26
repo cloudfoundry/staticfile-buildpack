@@ -44,9 +44,10 @@ func (ss *Supplier) InstallNginx() error {
 	}
 	ss.Log.Info("Using nginx version %s", nginx.Version)
 
-	if err := ss.Installer.InstallDependency(nginx, ss.Stager.DepDir()); err != nil {
+	nginxDir := filepath.Join(ss.Stager.DepDir(), "nginx")
+	if err := ss.Installer.InstallDependency(nginx, nginxDir); err != nil {
 		return err
 	}
 
-	return ss.Stager.AddBinDependencyLink(filepath.Join(ss.Stager.DepDir(), "nginx", "sbin", "nginx"), "nginx")
+	return ss.Stager.AddBinDependencyLink(filepath.Join(nginxDir, "sbin", "nginx"), "nginx")
 }

@@ -74,7 +74,7 @@ var _ = Describe("Supply", func() {
 			dep := libbuildpack.Dependency{Name: "nginx", Version: "99.99"}
 
 			mockManifest.EXPECT().DefaultVersion("nginx").Return(dep, nil)
-			mockInstaller.EXPECT().InstallDependency(dep, depDir)
+			mockInstaller.EXPECT().InstallDependency(dep, filepath.Join(depDir, "nginx"))
 		})
 
 		It("Installs nginx to the depDir, creating a symlink in <depDir>/bin", func() {
