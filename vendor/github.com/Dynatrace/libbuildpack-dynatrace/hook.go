@@ -32,7 +32,7 @@ type credentials struct {
 	NetworkZone   string
 }
 
-// Hook implements libbuildpack.Hook. It downloads and install the Dynatrace PaaS OneAgent.
+// Hook implements libbuildpack.Hook. It downloads and install the Dynatrace OneAgent.
 type Hook struct {
 	libbuildpack.DefaultHook
 	Log     *libbuildpack.Logger
@@ -70,7 +70,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 		return nil
 	}
 
-	h.Log.Info("Dynatrace service credentials found. Setting up Dynatrace PaaS agent.")
+	h.Log.Info("Dynatrace service credentials found. Setting up Dynatrace OneAgent.")
 
 	// Get buildpack version and language
 
@@ -87,7 +87,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 	url := h.getDownloadURL(creds)
 
 	h.Log.Info("Downloading '%s' to '%s'", url, installerFilePath)
-	if err = h.download(url, installerFilePath, ver, lang); err != nil {
+	if err = h.download(url, installerFilePath, ver, lang, creds); err != nil {
 		if creds.SkipErrors {
 			h.Log.Warning("Error during installer download, skipping installation")
 			return nil
@@ -100,7 +100,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 	h.Log.Debug("Making %s executable...", installerFilePath)
 	os.Chmod(installerFilePath, 0755)
 
-	h.Log.BeginStep("Starting Dynatrace PaaS agent installer")
+	h.Log.BeginStep("Starting Dynatrace OneAgent installer")
 
 	if os.Getenv("BP_DEBUG") != "" {
 		err = h.Command.Execute("", os.Stdout, os.Stderr, installerFilePath, stager.BuildDir())
@@ -111,7 +111,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 		return err
 	}
 
-	h.Log.Info("Dynatrace PaaS agent installed.")
+	h.Log.Info("Dynatrace OneAgent installed.")
 
 	// Post-installation setup...
 
@@ -132,7 +132,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 		return err
 	}
 
-	h.Log.BeginStep("Setting up Dynatrace PaaS agent injection...")
+	h.Log.BeginStep("Setting up Dynatrace OneAgent injection...")
 	h.Log.Debug("Copy %s to %s", dynatraceEnvName, dynatraceEnvPath)
 	if err = libbuildpack.CopyFile(filepath.Join(stager.BuildDir(), installDir, dynatraceEnvName), dynatraceEnvPath); err != nil {
 		return err
@@ -171,7 +171,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 		return err
 	}
 
-	h.Log.Info("Dynatrace PaaS agent injection is set up.")
+	h.Log.Info("Dynatrace OneAgent injection is set up.")
 
 	return nil
 }
@@ -237,12 +237,13 @@ func (h *Hook) getCredentials() *credentials {
 }
 
 // download gets url, and stores it as filePath, retrying a few more times if the downloads fail.
-func (h *Hook) download(url, filePath string, buildPackVersion string, language string) error {
+func (h *Hook) download(url, filePath string, buildPackVersion string, language string, creds *credentials) error {
 	const baseWaitTime = 3 * time.Second
 
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", language, buildPackVersion))
+	req.Header.Set("Authorization", fmt.Sprintf("Api-Token %s", creds.APIToken))
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -308,7 +309,6 @@ func (h *Hook) getDownloadURL(c *credentials) string {
 	}
 
 	qv := make(url.Values)
-	qv.Add("Api-Token", c.APIToken)
 	qv.Add("bitness", "64")
 	for _, t := range h.IncludeTechnologies {
 		qv.Add("include", t)
@@ -318,7 +318,7 @@ func (h *Hook) getDownloadURL(c *credentials) string {
 	return u.String()
 }
 
-// findAgentPath reads the manifest file included in the PaaS agent package, and looks
+// findAgentPath reads the manifest file included in the OneAgent package, and looks
 // for the process agent file path.
 func (h *Hook) findAgentPath(installDir string) (string, error) {
 	// With these classes, we try to replicate the structure for the manifest.json file, so that we can parse it.
