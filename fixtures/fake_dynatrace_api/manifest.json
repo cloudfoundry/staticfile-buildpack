@@ -1,0 +1,12 @@
+{
+  "technologies": {
+    "process": {
+      "linux-x86-64": [
+        {
+          "path": "agent/lib64/liboneagentproc.so",
+          "binarytype": "primary"
+        }
+      ]
+    }
+  }
+}

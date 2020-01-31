@@ -1,7 +1,9 @@
 package integration_test
 
 import (
+	"fmt"
 	"os/exec"
+	"time"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
@@ -10,10 +12,24 @@ import (
 )
 
 var _ = Describe("CF Staticfile Buildpack", func() {
-	var app *cutlass.App
-	var createdServices []string
+	var (
+		app             *cutlass.App
+		createdServices []string
+		dynatraceAPI    *cutlass.App
+		dynatraceAPIURI string
+	)
 
 	BeforeEach(func() {
+		dynatraceAPI = cutlass.New(Fixtures("fake_dynatrace_api"))
+		dynatraceAPI.SetEnv("BP_DEBUG", "true")
+
+		Expect(dynatraceAPI.Push()).To(Succeed())
+		Eventually(func() ([]string, error) { return dynatraceAPI.InstanceStates() }, 60*time.Second).Should(Equal([]string{"RUNNING"}))
+
+		var err error
+		dynatraceAPIURI, err = dynatraceAPI.GetUrl("")
+		Expect(err).NotTo(HaveOccurred())
+
 		app = cutlass.New(Fixtures("logenv"))
 		app.SetEnv("BP_DEBUG", "true")
 		PushAppAndConfirm(app)
@@ -27,6 +43,11 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 			app = nil
 		}
 
+		if dynatraceAPI != nil {
+			dynatraceAPI.Destroy()
+		}
+		dynatraceAPI = nil
+
 		for _, service := range createdServices {
 			command := exec.Command("cf", "delete-service", "-f", service)
 			_, err := command.Output()
@@ -37,7 +58,7 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 	Context("deploying a staticfile app with Dynatrace agent with single credentials service", func() {
 		It("checks if Dynatrace injection was successful", func() {
 			serviceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", serviceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", serviceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, serviceName)
@@ -50,24 +71,24 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 			Expect(err).To(BeNil())
 
 			Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace PaaS agent."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace PaaS agent installer"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace OneAgent."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace OneAgent installer"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Copy dynatrace-env.sh"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent installed."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent injection is set up."))
 		})
 	})
 
 	Context("deploying a staticfile app with Dynatrace agent with two credentials services", func() {
 		It("checks if detection of second service with credentials works", func() {
 			credentialsServiceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", credentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", credentialsServiceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, credentialsServiceName)
 
 			duplicateCredentialsServiceName := "dynatrace-dupe-" + cutlass.RandStringRunes(20) + "-service"
-			command = exec.Command("cf", "cups", duplicateCredentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			command = exec.Command("cf", "cups", duplicateCredentialsServiceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err = command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, duplicateCredentialsServiceName)
@@ -90,7 +111,7 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 	Context("deploying a staticfile app with Dynatrace agent with failing agent download and ignoring errors", func() {
 		It("checks if skipping download errors works", func() {
 			credentialsServiceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", credentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paasFAILING/manifest\",\"environmentid\":\"envid\",\"skiperrors\":\"true\"}'")
+			command := exec.Command("cf", "cups", credentialsServiceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s/no-such-endpoint\",\"environmentid\":\"envid\",\"skiperrors\":\"true\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, credentialsServiceName)
@@ -111,7 +132,7 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 	Context("deploying a staticfile app with Dynatrace agent with two dynatrace services", func() {
 		It("check if service detection isn't disturbed by a service with tags", func() {
 			credentialsServiceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", credentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", credentialsServiceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, credentialsServiceName)
@@ -134,18 +155,18 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 			Expect(err).To(BeNil())
 
 			Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace PaaS agent."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace PaaS agent installer"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace OneAgent."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace OneAgent installer"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Copy dynatrace-env.sh"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent installed."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent injection is set up."))
 		})
 	})
 
 	Context("deploying a staticfile app with Dynatrace agent with single credentials service and without manifest.json", func() {
 		It("checks if Dynatrace injection was successful", func() {
 			serviceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", serviceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", serviceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, serviceName)
@@ -158,18 +179,18 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 			Expect(err).To(BeNil())
 
 			Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace PaaS agent."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace PaaS agent installer"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace OneAgent."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace OneAgent installer"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Copy dynatrace-env.sh"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent installed."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent injection is set up."))
 		})
 	})
 
 	Context("deploying a staticfile app with Dynatrace agent with failing agent download and checking retry", func() {
 		It("checks if retrying downloads works", func() {
 			credentialsServiceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", credentialsServiceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paasFAILING/manifest\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", credentialsServiceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s/no-such-endpoint\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, credentialsServiceName)
@@ -193,7 +214,7 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 	Context("deploying a staticfile app with Dynatrace agent with single credentials service and a redis service", func() {
 		It("checks if Dynatrace injection was successful", func() {
 			serviceName := "dynatrace-" + cutlass.RandStringRunes(20) + "-service"
-			command := exec.Command("cf", "cups", serviceName, "-p", "'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"https://s3.amazonaws.com/dt-paas/manifest\",\"environmentid\":\"envid\"}'")
+			command := exec.Command("cf", "cups", serviceName, "-p", fmt.Sprintf("'{\"apitoken\":\"secretpaastoken\",\"apiurl\":\"%s\",\"environmentid\":\"envid\"}'", dynatraceAPIURI))
 			_, err := command.CombinedOutput()
 			Expect(err).To(BeNil())
 			createdServices = append(createdServices, serviceName)
@@ -215,11 +236,11 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 			Expect(err).To(BeNil())
 
 			Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace PaaS agent."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace PaaS agent installer"))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace service credentials found. Setting up Dynatrace OneAgent."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Starting Dynatrace OneAgent installer"))
 			Expect(app.Stdout.String()).To(ContainSubstring("Copy dynatrace-env.sh"))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent installed."))
-			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace PaaS agent injection is set up."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent installed."))
+			Expect(app.Stdout.String()).To(ContainSubstring("Dynatrace OneAgent injection is set up."))
 		})
 	})
 })
