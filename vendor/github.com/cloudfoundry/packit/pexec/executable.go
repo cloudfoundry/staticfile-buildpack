@@ -1,16 +1,12 @@
 package pexec
 
 import (
-	"bytes"
 	"io"
 	"os/exec"
-
-	"code.cloudfoundry.org/lager"
 )
 
 type Executable struct {
-	name   string
-	logger lager.Logger
+	name string
 }
 
 type Execution struct {
@@ -21,17 +17,16 @@ type Execution struct {
 	Stderr io.Writer
 }
 
-func NewExecutable(name string, logger lager.Logger) Executable {
+func NewExecutable(name string) Executable {
 	return Executable{
-		name:   name,
-		logger: logger,
+		name: name,
 	}
 }
 
-func (e Executable) Execute(execution Execution) (string, string, error) {
+func (e Executable) Execute(execution Execution) error {
 	path, err := exec.LookPath(e.name)
 	if err != nil {
-		return "", "", err
+		return err
 	}
 
 	cmd := exec.Command(path, execution.Args...)
@@ -44,27 +39,8 @@ func (e Executable) Execute(execution Execution) (string, string, error) {
 		cmd.Env = execution.Env
 	}
 
-	stdout := &bytes.Buffer{}
-	cmd.Stdout = stdout
-	if execution.Stdout != nil {
-		cmd.Stdout = io.MultiWriter(stdout, execution.Stdout)
-	}
+	cmd.Stdout = execution.Stdout
+	cmd.Stderr = execution.Stderr
 
-	stderr := &bytes.Buffer{}
-	cmd.Stderr = stderr
-	if execution.Stderr != nil {
-		cmd.Stderr = io.MultiWriter(stderr, execution.Stderr)
-	}
-
-	data := lager.Data{"execution": execution, "path": path}
-	session := e.logger.Session("execute", data)
-
-	session.Debug("running")
-	err = cmd.Run()
-	if err != nil {
-		session.Error("errored", err)
-	}
-
-	session.Debug("done")
-	return stdout.String(), stderr.String(), err
+	return cmd.Run()
 }

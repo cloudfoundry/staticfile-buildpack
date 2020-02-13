@@ -1,12 +1,16 @@
 package glow
 
-import "github.com/cloudfoundry/packit/pexec"
+import (
+	"bytes"
+
+	"github.com/cloudfoundry/packit/pexec"
+)
 
 const ExecutableName = "cnb2cf"
 
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
-	Execute(pexec.Execution) (stdout, stderr string, err error)
+	Execute(pexec.Execution) error
 }
 
 type CLI struct {
@@ -48,10 +52,16 @@ func (c CLI) Package(dir, stack string, options PackageOptions) (string, string,
 		execution.Args = append(execution.Args, "-version", options.Version)
 	}
 
-	stdout, stderr, err := c.executable.Execute(execution)
+	stdout := bytes.NewBuffer(nil)
+	execution.Stdout = stdout
+
+	stderr := bytes.NewBuffer(nil)
+	execution.Stderr = stderr
+
+	err := c.executable.Execute(execution)
 	if err != nil {
-		return stdout, stderr, err
+		return stdout.String(), stderr.String(), err
 	}
 
-	return stdout, stderr, nil
+	return stdout.String(), stderr.String(), nil
 }

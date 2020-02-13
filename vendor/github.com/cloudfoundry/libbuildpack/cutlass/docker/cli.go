@@ -1,12 +1,16 @@
 package docker
 
-import "github.com/cloudfoundry/packit/pexec"
+import (
+	"bytes"
+
+	"github.com/cloudfoundry/packit/pexec"
+)
 
 const ExecutableName = "docker"
 
 //go:generate faux --interface Executable --output fakes/executable.go
 type Executable interface {
-	Execute(pexec.Execution) (stdout, stderr string, err error)
+	Execute(pexec.Execution) error
 }
 
 type CLI struct {
@@ -56,12 +60,18 @@ func (c CLI) Build(options BuildOptions) (string, string, error) {
 
 	execution.Args = append(execution.Args, options.Context)
 
-	stdout, stderr, err := c.executable.Execute(execution)
+	stdout := bytes.NewBuffer(nil)
+	execution.Stdout = stdout
+
+	stderr := bytes.NewBuffer(nil)
+	execution.Stderr = stderr
+
+	err := c.executable.Execute(execution)
 	if err != nil {
-		return stdout, stderr, err
+		return stdout.String(), stderr.String(), err
 	}
 
-	return stdout, stderr, nil
+	return stdout.String(), stderr.String(), nil
 }
 
 type RunOptions struct {
@@ -94,12 +104,18 @@ func (c CLI) Run(image string, options RunOptions) (string, string, error) {
 		execution.Args = append(execution.Args, "bash", "-c", options.Command)
 	}
 
-	stdout, stderr, err := c.executable.Execute(execution)
+	stdout := bytes.NewBuffer(nil)
+	execution.Stdout = stdout
+
+	stderr := bytes.NewBuffer(nil)
+	execution.Stderr = stderr
+
+	err := c.executable.Execute(execution)
 	if err != nil {
-		return stdout, stderr, err
+		return stdout.String(), stderr.String(), err
 	}
 
-	return stdout, stderr, nil
+	return stdout.String(), stderr.String(), nil
 }
 
 type RemoveImageOptions struct {
@@ -117,10 +133,16 @@ func (c CLI) RemoveImage(image string, options RemoveImageOptions) (string, stri
 
 	execution.Args = append(execution.Args, image)
 
-	stdout, stderr, err := c.executable.Execute(execution)
+	stdout := bytes.NewBuffer(nil)
+	execution.Stdout = stdout
+
+	stderr := bytes.NewBuffer(nil)
+	execution.Stderr = stderr
+
+	err := c.executable.Execute(execution)
 	if err != nil {
-		return stdout, stderr, err
+		return stdout.String(), stderr.String(), err
 	}
 
-	return stdout, stderr, nil
+	return stdout.String(), stderr.String(), nil
 }

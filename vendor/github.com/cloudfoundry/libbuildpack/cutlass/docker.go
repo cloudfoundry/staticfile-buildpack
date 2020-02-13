@@ -203,7 +203,7 @@ func ExecuteDockerFile(path, network, command string) (string, error) {
 	image := "internet_traffic_test" + RandStringRunes(8)
 
 	session.Debug("creating-cli")
-	cli := docker.NewCLI(pexec.NewExecutable(docker.ExecutableName, session))
+	cli := docker.NewCLI(pexec.NewExecutable(docker.ExecutableName))
 
 	defer cli.RemoveImage(image, docker.RemoveImageOptions{Force: true})
 
