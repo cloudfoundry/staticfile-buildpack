@@ -137,8 +137,6 @@ func PackageShimmedBuildpack(bpDir, stack string) (VersionedBuildpackPackage, er
 
 	bpFilePath := os.Getenv("BUILDPACK_FILE")
 	if bpFilePath == "" {
-		session := DefaultLogger.Session("package-shim")
-
 		cnb2cf := pexec.NewExecutable(glow.ExecutableName)
 		cli := glow.NewCLI(cnb2cf)
 		archiver := glow.NewArchiver(cli)
