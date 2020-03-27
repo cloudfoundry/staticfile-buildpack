@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20200327204038-017dfab20723
+# github.com/cloudfoundry/libbuildpack v0.0.0-20200327210741-300aba315f40
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -14,7 +14,7 @@ github.com/cloudfoundry/libbuildpack/cutlass
 github.com/cloudfoundry/libbuildpack/cutlass/docker
 github.com/cloudfoundry/libbuildpack/cutlass/glow
 github.com/cloudfoundry/libbuildpack/packager
-# github.com/cloudfoundry/packit v0.0.0-20200213185904-9d0fc689e7af
+# github.com/cloudfoundry/packit v0.0.2
 github.com/cloudfoundry/packit/pexec
 # github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 github.com/elazarl/goproxy
@@ -60,7 +60,7 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/pkg/errors v0.8.1
+# github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/tidwall/gjson v1.6.0
 github.com/tidwall/gjson
