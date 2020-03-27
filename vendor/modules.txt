@@ -18,7 +18,7 @@ github.com/cloudfoundry/libbuildpack/packager
 github.com/cloudfoundry/packit/pexec
 # github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 github.com/elazarl/goproxy
-# github.com/golang/mock v1.4.0
+# github.com/golang/mock v1.4.3
 github.com/golang/mock/gomock
 # github.com/hpcloud/tail v1.0.0
 github.com/hpcloud/tail
@@ -72,7 +72,7 @@ github.com/tidwall/pretty
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20200212091648-12a6c2dcc1e4
+# golang.org/x/sys v0.0.0-20200327173247-9dae0f8f5775
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
 golang.org/x/text/encoding
