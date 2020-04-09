@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20200327210741-300aba315f40
+# github.com/cloudfoundry/libbuildpack v0.0.0-20200409131146-f0ac4f2efc24
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -14,7 +14,7 @@ github.com/cloudfoundry/libbuildpack/cutlass
 github.com/cloudfoundry/libbuildpack/cutlass/docker
 github.com/cloudfoundry/libbuildpack/cutlass/glow
 github.com/cloudfoundry/libbuildpack/packager
-# github.com/cloudfoundry/packit v0.0.2
+# github.com/cloudfoundry/packit v0.0.3
 github.com/cloudfoundry/packit/pexec
 # github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 github.com/elazarl/goproxy
@@ -72,7 +72,7 @@ github.com/tidwall/pretty
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20200331124033-c3d80250170d
+# golang.org/x/sys v0.0.0-20200409092240-59c9f1ba88fa
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
 golang.org/x/text/encoding

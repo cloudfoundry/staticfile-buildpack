@@ -4,7 +4,7 @@ require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/Masterminds/semver v1.5.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/packit v0.0.2
+	github.com/cloudfoundry/packit v0.0.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 	github.com/elazarl/goproxy/ext v0.0.0-20190911111923-ecfe977594f1 // indirect
