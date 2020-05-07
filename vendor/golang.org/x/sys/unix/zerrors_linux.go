@@ -2165,8 +2165,6 @@ const (
 	TCP_USER_TIMEOUT                            = 0x12
 	TCP_WINDOW_CLAMP                            = 0xa
 	TCP_ZEROCOPY_RECEIVE                        = 0x23
-	TFD_TIMER_ABSTIME                           = 0x1
-	TFD_TIMER_CANCEL_ON_SET                     = 0x2
 	TIMER_ABSTIME                               = 0x1
 	TIOCM_DTR                                   = 0x2
 	TIOCM_LE                                    = 0x1
