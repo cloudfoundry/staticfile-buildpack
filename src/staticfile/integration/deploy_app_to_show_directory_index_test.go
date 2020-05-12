@@ -9,6 +9,7 @@ import (
 
 var _ = Describe("deploy an app that shows the directory index", func() {
 	var app *cutlass.App
+
 	AfterEach(func() {
 		if app != nil {
 			app.Destroy()
