@@ -1,3 +1,19 @@
+v1.5.7 May 12, 2020
+====================
+
+* Rebuild nginx 1.18.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/172657425)
+
+* Rebuild nginx 1.17.10
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/172313698)
+
+* Add nginx 1.18.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/172657425)
+
+
 v1.5.6 Apr 23, 2020
 ====================
 
