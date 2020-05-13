@@ -17,6 +17,8 @@ github.com/cloudfoundry/packit v0.0.5 h1:k1zwXcVRMmkiO15G6KJ8DHw9gnKXNdVIfEpJZDP
 github.com/cloudfoundry/packit v0.0.5/go.mod h1:9xu1MT6SrenSB4oFOXtruMapQ+vdfGXLzBZDnPjhYrM=
 github.com/cloudfoundry/packit v0.0.6 h1:JQojVfWJDcxT2xX2pagWmUf0Jjate8f7HjFGBj2TH10=
 github.com/cloudfoundry/packit v0.0.6/go.mod h1:9xu1MT6SrenSB4oFOXtruMapQ+vdfGXLzBZDnPjhYrM=
+github.com/cloudfoundry/packit v0.0.7 h1:10j4d31TrJVCahe04A3bQ7QJUO3rpBLvQ+NGFXzg7os=
+github.com/cloudfoundry/packit v0.0.7/go.mod h1:KCQ69DsYeruJQfZy2pxNR9ozg1OFKEYCFvUHl37t1+Q=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
