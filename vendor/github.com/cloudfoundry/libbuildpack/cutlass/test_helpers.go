@@ -16,7 +16,7 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass/glow"
 	"github.com/cloudfoundry/libbuildpack/packager"
-	"github.com/cloudfoundry/packit/pexec"
+	"github.com/paketo-buildpacks/packit/pexec"
 	"gopkg.in/yaml.v2"
 )
 

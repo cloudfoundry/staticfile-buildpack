@@ -3,7 +3,7 @@ package docker
 import (
 	"bytes"
 
-	"github.com/cloudfoundry/packit/pexec"
+	"github.com/paketo-buildpacks/packit/pexec"
 )
 
 const ExecutableName = "docker"

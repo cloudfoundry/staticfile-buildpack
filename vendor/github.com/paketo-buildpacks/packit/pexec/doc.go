@@ -8,7 +8,7 @@
 //   import (
 //   	"os"
 //
-//   	"github.com/cloudfoundry/packit/pexec"
+//   	"github.com/paketo-buildpacks/packit/pexec"
 //   )
 //
 //   func main() {

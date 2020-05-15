@@ -14,7 +14,7 @@ import (
 	"code.cloudfoundry.org/lager"
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass/docker"
-	"github.com/cloudfoundry/packit/pexec"
+	"github.com/paketo-buildpacks/packit/pexec"
 	"github.com/pkg/errors"
 )
 
