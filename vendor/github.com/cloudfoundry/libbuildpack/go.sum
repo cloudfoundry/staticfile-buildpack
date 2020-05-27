@@ -78,6 +78,10 @@ github.com/paketo-buildpacks/packit v0.0.9 h1:FO2m6ONZYhMJNWw3DtNSpO6qzLeQE3fyFc
 github.com/paketo-buildpacks/packit v0.0.9/go.mod h1:S2ud8PcMgCjnOjIYnlituwDFL12uQ9eWy9qjTHlM/IM=
 github.com/paketo-buildpacks/packit v0.0.10 h1:W29he2huZn6UcSWO6nMgBUQlLBUi4pCrQS+VXcCfYBQ=
 github.com/paketo-buildpacks/packit v0.0.10/go.mod h1:S2ud8PcMgCjnOjIYnlituwDFL12uQ9eWy9qjTHlM/IM=
+github.com/paketo-buildpacks/packit v0.0.12 h1:GuGXq52bnLYxM7zzFPhp8rZOID+7d4zwlqM6zeoBaZc=
+github.com/paketo-buildpacks/packit v0.0.12/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
+github.com/paketo-buildpacks/packit v0.0.13 h1:+PFK/qKFX7DiZ73y5uZ/e0msislNqvEBZNXs724cNVA=
+github.com/paketo-buildpacks/packit v0.0.13/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
