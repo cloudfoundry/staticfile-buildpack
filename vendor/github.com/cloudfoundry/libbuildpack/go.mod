@@ -10,7 +10,7 @@ require (
 	github.com/golang/mock v1.4.3
 	github.com/google/subcommands v1.2.0
 	github.com/jarcoal/httpmock v1.0.5
-	github.com/onsi/ginkgo v1.12.3
+	github.com/onsi/ginkgo v1.13.0
 	github.com/onsi/gomega v1.10.1
 	github.com/paketo-buildpacks/packit v0.0.14
 	github.com/pkg/errors v0.9.1
