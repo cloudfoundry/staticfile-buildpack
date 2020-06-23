@@ -13,6 +13,14 @@ dependencies:
   source: http://nginx.org/download/nginx-1.17.10.tar.gz
   source_sha256: a9aa73f19c352a6b166d78e2a664bb3ef1295bbe6d3cc5aa7404bd4664ab4b83
 - name: nginx
+  version: 1.18.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.18.0_linux_x64_cflinuxfs3_195be92a.tgz
+  sha256: 195be92ae215467b2888d5f376def5cbc9533911eca360c210e3c33c062121c1
+  cf_stacks:
+  - cflinuxfs3
+  source: http://nginx.org/download/nginx-1.18.0.tar.gz
+  source_sha256: 4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99
+- name: nginx
   version: 1.19.0
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.19.0_linux_x64_cflinuxfs3_63dd4da1.tgz
   sha256: 63dd4da1872162d831dd9693e2151d3cb83685cc72e10a39c879b74c0d002a1a
@@ -40,6 +48,10 @@ dependency_deprecation_dates:
 - version_line: 1.17.x
   name: nginx
   date: 2020-05-01
+  link: https://nginx.org/
+- version_line: 1.18.x
+  name: nginx
+  date: 2021-05-01
   link: https://nginx.org/
 - version_line: 1.19.x
   name: nginx
