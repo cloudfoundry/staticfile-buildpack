@@ -1,3 +1,22 @@
+v1.5.8 Jul 06, 2020
+====================
+
+* Auto merge pull request 176
+
+* Add nginx 1.18.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/172657425)
+
+* Auto merge pull request 175
+
+* Add nginx 1.19.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/173470659)
+
+* Merge pull request #169 from rctay/patch-1
+  Convert tabs to spaces in template, which is space-indented
+
+
 v1.5.7 May 12, 2020
 ====================
 
