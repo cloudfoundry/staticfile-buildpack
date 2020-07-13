@@ -1,3 +1,13 @@
+v1.5.9 Jul 13, 2020
+====================
+
+* Auto merge pull request 177
+
+* Add nginx 1.19.1, remove nginx 1.19.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/173689583)
+
+
 v1.5.8 Jul 06, 2020
 ====================
 
