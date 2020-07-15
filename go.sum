@@ -12,8 +12,8 @@ github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdn
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cheggaaa/pb/v3 v3.0.4/go.mod h1:7rgWxLrAUcFMkvJuv09+DYi7mMUYi8nO9iOWcvGJPfw=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20200706130154-bb22e76cb694 h1:64yp45hzNHxseFz086EBJLFyDGJwvuwV3stIKfjyLOw=
-github.com/cloudfoundry/libbuildpack v0.0.0-20200706130154-bb22e76cb694/go.mod h1:1nnqkakuDCi//GA1YVxPh9w4OUPrTzi9r6lc3MJ8UGg=
+github.com/cloudfoundry/libbuildpack v0.0.0-20200710152100-beafd84f1ce5 h1:V2jjiSF9ltHs+9kXW7pl5tCcgDAYElmTtlC6t/dj4PI=
+github.com/cloudfoundry/libbuildpack v0.0.0-20200710152100-beafd84f1ce5/go.mod h1:RSDMqP7IV/86ajyWW37J8mu7BCVQzonex1+kn8KHohU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -77,8 +77,8 @@ github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1Cpa
 github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7JYyY=
 github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
 github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
-github.com/paketo-buildpacks/packit v0.2.0 h1:l4sFKYlmKENRNMAKATt437+Ar9WD+bM42ZckKW59rMY=
-github.com/paketo-buildpacks/packit v0.2.0/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
+github.com/paketo-buildpacks/packit v0.2.1 h1:MWvvGkj83clltK0kqF1+wHjcfWmGTRe254h8s3PZyF4=
+github.com/paketo-buildpacks/packit v0.2.1/go.mod h1:b40wtWWAcgB47+vYGDD9KKhzOtBjI8KPqGxwGvV+XNs=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
