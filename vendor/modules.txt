@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20200729131748-0c5878c95826
+# github.com/cloudfoundry/libbuildpack v0.0.0-20200807132259-9b4cde3ca641
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -61,7 +61,7 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/paketo-buildpacks/packit v0.2.4
+# github.com/paketo-buildpacks/packit v0.2.5
 github.com/paketo-buildpacks/packit/pexec
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
@@ -75,7 +75,7 @@ github.com/tidwall/pretty
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1
+# golang.org/x/sys v0.0.0-20200806125547-5acd03effb82
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
