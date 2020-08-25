@@ -9,7 +9,7 @@ require (
 	github.com/onsi/ginkgo v1.14.0
 	github.com/onsi/gomega v1.10.1
 	github.com/tidwall/gjson v1.6.0
-	golang.org/x/sys v0.0.0-20200812155832-6a926be9bd1d // indirect
+	golang.org/x/sys v0.0.0-20200824131525-c12d262b63d8 // indirect
 )
 
 go 1.13
