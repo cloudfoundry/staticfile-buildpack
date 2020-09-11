@@ -26,6 +26,7 @@ type Command interface {
 type credentials struct {
 	ServiceName   string
 	EnvironmentID string
+	CustomOneAgentURL   string
 	APIToken      string
 	APIURL        string
 	SkipErrors    bool
@@ -211,11 +212,12 @@ func (h *Hook) getCredentials() *credentials {
 				EnvironmentID: queryString("environmentid"),
 				APIToken:      queryString("apitoken"),
 				APIURL:        queryString("apiurl"),
+				CustomOneAgentURL:   queryString("customoneagenturl"),
 				SkipErrors:    queryString("skiperrors") == "true",
 				NetworkZone:   queryString("networkzone"),
 			}
 
-			if creds.EnvironmentID != "" && creds.APIToken != "" {
+			if (creds.EnvironmentID != "" && creds.APIToken != "") || creds.CustomOneAgentURL != "" {
 				found = append(found, creds)
 			} else if !(creds.EnvironmentID == "" && creds.APIToken == "") { // One of the fields is empty.
 				h.Log.Warning("Incomplete credentials for service: %s, environment ID: %s, API token: %s", creds.ServiceName,
@@ -242,8 +244,10 @@ func (h *Hook) download(url, filePath string, buildPackVersion string, language 
 
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", language, buildPackVersion))
-	req.Header.Set("Authorization", fmt.Sprintf("Api-Token %s", creds.APIToken))
+	if creds.CustomOneAgentURL == "" {
+		req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", language, buildPackVersion))
+		req.Header.Set("Authorization", fmt.Sprintf("Api-Token %s", creds.APIToken))
+	}
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -298,6 +302,10 @@ func (h *Hook) download(url, filePath string, buildPackVersion string, language 
 }
 
 func (h *Hook) getDownloadURL(c *credentials) string {
+	if c.CustomOneAgentURL != "" {
+		return c.CustomOneAgentURL
+	}
+
 	apiURL := c.APIURL
 	if apiURL == "" {
 		apiURL = fmt.Sprintf("https://%s.live.dynatrace.com/api", c.EnvironmentID)
