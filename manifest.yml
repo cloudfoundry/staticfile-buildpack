@@ -5,13 +5,13 @@ default_versions:
   version: 1.19.x
 dependencies:
 - name: nginx
-  version: 1.19.2
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.19.2_linux_x64_cflinuxfs3_8fa1aa09.tgz
-  sha256: 8fa1aa095474e03cd20b9282eb4ee3738d4f7aa452246dd0663b6f44a80a220e
+  version: 1.19.3
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.19.3_linux_x64_cflinuxfs3_74910b06.tgz
+  sha256: 74910b067424367891a8710db694a39b3d4fa77d0fa28f6212405ba3227a8501
   cf_stacks:
   - cflinuxfs3
-  source: http://nginx.org/download/nginx-1.19.2.tar.gz
-  source_sha256: 7c1f7bb13e79433ee930c597d272a64bc6e30c356a48524f38fd34fa88d62473
+  source: http://nginx.org/download/nginx-1.19.3.tar.gz
+  source_sha256: 91e5b74fa17879d2463294e93ad8f6ffc066696ae32ad0478ffe15ba0e9e8df0
 pre_package: scripts/build.sh
 include_files:
 - CHANGELOG
