@@ -2,7 +2,9 @@ package pexec
 
 import (
 	"io"
+	"os"
 	"os/exec"
+	"strings"
 )
 
 // Executable represents an executable on the $PATH.
@@ -22,12 +24,28 @@ func NewExecutable(name string) Executable {
 
 // Execute invokes the executable with a set of Execution arguments.
 func (e Executable) Execute(execution Execution) error {
-	path, err := exec.LookPath(e.name)
+	envPath := os.Getenv("PATH")
+
+	if execution.Env != nil {
+		var path string
+		for _, variable := range execution.Env {
+			if strings.HasPrefix(variable, "PATH=") {
+				path = strings.TrimPrefix(variable, "PATH=")
+			}
+		}
+		if path != "" {
+			os.Setenv("PATH", path)
+		}
+	}
+
+	executable, err := exec.LookPath(e.name)
 	if err != nil {
 		return err
 	}
 
-	cmd := exec.Command(path, execution.Args...)
+	os.Setenv("PATH", envPath)
+
+	cmd := exec.Command(executable, execution.Args...)
 
 	if execution.Dir != "" {
 		cmd.Dir = execution.Dir
