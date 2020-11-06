@@ -124,6 +124,7 @@ github.com/paketo-buildpacks/packit v0.2.7 h1:KYv4MBU4JnTDE3P5udCskjQFbh668Gbxa6
 github.com/paketo-buildpacks/packit v0.2.7/go.mod h1:DO2CSp/uF+cn+9pk2zE+Y7ZpA99PPi/pBNYc2p4ZRjk=
 github.com/paketo-buildpacks/packit v0.2.8 h1:wGUsV7cO4UfsuKE/HXPp+cu+DQFolyao94iP5iG1Ez4=
 github.com/paketo-buildpacks/packit v0.2.8/go.mod h1:DeB8IvScMQVgO6c4J8IOeJglorhiiZa9StbgAN9rs/k=
+github.com/paketo-buildpacks/packit v0.3.0/go.mod h1:BQ38pCFZjrtPnJBVbH7X0DEoLyob9YKjrx0+3hlFaRY=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -139,6 +140,7 @@ github.com/tidwall/gjson v1.6.0 h1:9VEQWz6LLMUsUl6PueE49ir4Ka6CzLymOAZDxpFsTDc=
 github.com/tidwall/gjson v1.6.0/go.mod h1:P256ACg0Mn+j1RXIDXoss50DeIABTYK1PULOJHhxOls=
 github.com/tidwall/gjson v1.6.1 h1:LRbvNuNuvAiISWg6gxLEFuCe72UKy5hDqhxW/8183ws=
 github.com/tidwall/gjson v1.6.1/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
+github.com/tidwall/gjson v1.6.3/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/match v1.0.1 h1:PnKP62LPNxHKTwvHHZZzdOAOCtsJTjo6dZLCwpKm5xc=
 github.com/tidwall/match v1.0.1/go.mod h1:LujAq0jyVjBy028G1WhWfIzbpQfMO8bBZ6Tyb0+pL9E=
 github.com/tidwall/pretty v1.0.0 h1:HsD+QiTn7sK6flMKIvNmpqz1qrpP3Ps6jOKIKMooyg4=
