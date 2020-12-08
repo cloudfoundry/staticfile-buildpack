@@ -15,7 +15,7 @@ require (
 	github.com/paketo-buildpacks/packit v0.4.1
 	github.com/pkg/errors v0.9.1
 	github.com/tidwall/gjson v1.6.3
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 go 1.13
