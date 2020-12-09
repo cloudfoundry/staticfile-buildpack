@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20201130214258-5135e066e245
+# github.com/cloudfoundry/libbuildpack v0.0.0-20201208170224-012f7fc4ca6c
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -61,11 +61,11 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/paketo-buildpacks/packit v0.4.1
+# github.com/paketo-buildpacks/packit v0.4.2
 github.com/paketo-buildpacks/packit/pexec
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
-# github.com/tidwall/gjson v1.6.3
+# github.com/tidwall/gjson v1.6.4
 github.com/tidwall/gjson
 # github.com/tidwall/match v1.0.1
 github.com/tidwall/match

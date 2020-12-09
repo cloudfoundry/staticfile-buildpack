@@ -201,6 +201,7 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.4.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-containerregistry v0.1.4/go.mod h1:6EGiuQp36pL82lX6rFN0s9AJOVL0Mlgx/DAsYZW5X3s=
+github.com/google/go-containerregistry v0.2.1/go.mod h1:Ts3Wioz1r5ayWx8sS6vLcWltWcM1aqFjd/eVrkFhrWM=
 github.com/google/gofuzz v0.0.0-20161122191042-44d81051d367/go.mod h1:HP5RmnzzSNb993RKQDq4+1A4ia9nllfqcQFTQJedwGI=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/google/gofuzz v1.1.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
@@ -373,6 +374,7 @@ github.com/paketo-buildpacks/packit v0.2.8/go.mod h1:DeB8IvScMQVgO6c4J8IOeJglorh
 github.com/paketo-buildpacks/packit v0.3.0/go.mod h1:BQ38pCFZjrtPnJBVbH7X0DEoLyob9YKjrx0+3hlFaRY=
 github.com/paketo-buildpacks/packit v0.3.2/go.mod h1:BQ38pCFZjrtPnJBVbH7X0DEoLyob9YKjrx0+3hlFaRY=
 github.com/paketo-buildpacks/packit v0.4.1/go.mod h1:M32oBH9DJG8uZZBo4dVwjIpbZNjmEsOLY5JHsWThKNg=
+github.com/paketo-buildpacks/packit v0.4.2/go.mod h1:aqL3Yl44rPVAFA9dg0gSPKrVOBxyTUYTnhhJsOT93JA=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pelletier/go-toml v1.8.1/go.mod h1:T2/BmBdy8dvIRq1a/8aqjN41wvWlN4lrapLU/GW4pbc=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
@@ -441,6 +443,7 @@ github.com/tidwall/gjson v1.6.0/go.mod h1:P256ACg0Mn+j1RXIDXoss50DeIABTYK1PULOJH
 github.com/tidwall/gjson v1.6.1 h1:LRbvNuNuvAiISWg6gxLEFuCe72UKy5hDqhxW/8183ws=
 github.com/tidwall/gjson v1.6.1/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/gjson v1.6.3/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
+github.com/tidwall/gjson v1.6.4/go.mod h1:BaHyNc5bjzYkPqgLq7mdVzeiRtULKULXLgZFKsxEHI0=
 github.com/tidwall/match v1.0.1 h1:PnKP62LPNxHKTwvHHZZzdOAOCtsJTjo6dZLCwpKm5xc=
 github.com/tidwall/match v1.0.1/go.mod h1:LujAq0jyVjBy028G1WhWfIzbpQfMO8bBZ6Tyb0+pL9E=
 github.com/tidwall/pretty v1.0.0 h1:HsD+QiTn7sK6flMKIvNmpqz1qrpP3Ps6jOKIKMooyg4=
