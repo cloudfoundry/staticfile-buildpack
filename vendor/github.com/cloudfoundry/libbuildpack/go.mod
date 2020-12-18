@@ -11,7 +11,7 @@ require (
 	github.com/google/subcommands v1.2.0
 	github.com/jarcoal/httpmock v1.0.6
 	github.com/onsi/ginkgo v1.14.2
-	github.com/onsi/gomega v1.10.3
+	github.com/onsi/gomega v1.10.4
 	github.com/paketo-buildpacks/packit v0.4.2
 	github.com/pkg/errors v0.9.1
 	github.com/tidwall/gjson v1.6.4
