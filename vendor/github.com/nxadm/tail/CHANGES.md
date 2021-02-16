@@ -1,3 +1,8 @@
+# Version v1.4.7-v1.4.8
+* Documentation updates.
+* Small linter cleanups.
+* Added example in test. 
+
 # Version v1.4.6
 
 * Document the usage of Cleanup when re-reading a file (thanks to @lesovsky) for issue #18.
