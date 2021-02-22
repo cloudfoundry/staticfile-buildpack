@@ -5,34 +5,35 @@
 package finalize_test
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockYAML is a mock of YAML interface
+// MockYAML is a mock of YAML interface.
 type MockYAML struct {
 	ctrl     *gomock.Controller
 	recorder *MockYAMLMockRecorder
 }
 
-// MockYAMLMockRecorder is the mock recorder for MockYAML
+// MockYAMLMockRecorder is the mock recorder for MockYAML.
 type MockYAMLMockRecorder struct {
 	mock *MockYAML
 }
 
-// NewMockYAML creates a new mock instance
+// NewMockYAML creates a new mock instance.
 func NewMockYAML(ctrl *gomock.Controller) *MockYAML {
 	mock := &MockYAML{ctrl: ctrl}
 	mock.recorder = &MockYAMLMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockYAML) EXPECT() *MockYAMLMockRecorder {
 	return m.recorder
 }
 
-// Load mocks base method
+// Load mocks base method.
 func (m *MockYAML) Load(arg0 string, arg1 interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Load", arg0, arg1)
@@ -40,7 +41,7 @@ func (m *MockYAML) Load(arg0 string, arg1 interface{}) error {
 	return ret0
 }
 
-// Load indicates an expected call of Load
+// Load indicates an expected call of Load.
 func (mr *MockYAMLMockRecorder) Load(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Load", reflect.TypeOf((*MockYAML)(nil).Load), arg0, arg1)
