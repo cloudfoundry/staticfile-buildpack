@@ -731,8 +731,13 @@ func parseArrayPath(path string) (r arrayPathResult) {
 		}
 		if path[i] == '.' {
 			r.part = path[:i]
-			r.path = path[i+1:]
-			r.more = true
+			if !r.arrch && i < len(path)-1 && isDotPiperChar(path[i+1]) {
+				r.pipe = path[i+1:]
+				r.piped = true
+			} else {
+				r.path = path[i+1:]
+				r.more = true
+			}
 			return
 		}
 		if path[i] == '#' {
@@ -978,6 +983,11 @@ right:
 	return s
 }
 
+// peek at the next byte and see if it's a '@', '[', or '{'.
+func isDotPiperChar(c byte) bool {
+	return !DisableModifiers && (c == '@' || c == '[' || c == '{')
+}
+
 type objectPathResult struct {
 	part  string
 	path  string
@@ -996,12 +1006,8 @@ func parseObjectPath(path string) (r objectPathResult) {
 			return
 		}
 		if path[i] == '.' {
-			// peek at the next byte and see if it's a '@', '[', or '{'.
 			r.part = path[:i]
-			if !DisableModifiers &&
-				i < len(path)-1 &&
-				(path[i+1] == '@' ||
-					path[i+1] == '[' || path[i+1] == '{') {
+			if i < len(path)-1 && isDotPiperChar(path[i+1]) {
 				r.pipe = path[i+1:]
 				r.piped = true
 			} else {
@@ -1031,14 +1037,11 @@ func parseObjectPath(path string) (r objectPathResult) {
 						continue
 					} else if path[i] == '.' {
 						r.part = string(epart)
-						// peek at the next byte and see if it's a '@' modifier
-						if !DisableModifiers &&
-							i < len(path)-1 && path[i+1] == '@' {
+						if i < len(path)-1 && isDotPiperChar(path[i+1]) {
 							r.pipe = path[i+1:]
 							r.piped = true
 						} else {
 							r.path = path[i+1:]
-							r.more = true
 						}
 						r.more = true
 						return
@@ -2528,7 +2531,10 @@ func parseInt(s string) (n int64, ok bool) {
 	return n, true
 }
 
+// safeInt validates a given JSON number
+// ensures it lies within the minimum and maximum representable JSON numbers
 func safeInt(f float64) (n int64, ok bool) {
+	//  https://tc39.es/ecma262/#sec-number.min_safe_integer || https://tc39.es/ecma262/#sec-number.max_safe_integer
 	if f < -9007199254740991 || f > 9007199254740991 {
 		return 0, false
 	}
