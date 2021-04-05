@@ -6,10 +6,10 @@ require (
 	github.com/cloudfoundry/libbuildpack v0.0.0-20210402164325-ec1795c01409
 	github.com/golang/mock v1.5.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
-	github.com/onsi/ginkgo v1.15.2
+	github.com/onsi/ginkgo v1.16.0
 	github.com/onsi/gomega v1.11.0
 	github.com/tidwall/gjson v1.7.4
-	golang.org/x/sys v0.0.0-20210331175145-43e1dd70ce54 // indirect
+	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
 )
 
 go 1.13
