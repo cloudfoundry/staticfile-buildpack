@@ -6,7 +6,7 @@ github.com/Dynatrace/libbuildpack-dynatrace
 github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20210505165545-e3a16d9e5ce4
+# github.com/cloudfoundry/libbuildpack v0.0.0-20210506154334-b97f4d9f706e
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -49,7 +49,7 @@ github.com/onsi/ginkgo/reporters/stenographer
 github.com/onsi/ginkgo/reporters/stenographer/support/go-colorable
 github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty
 github.com/onsi/ginkgo/types
-# github.com/onsi/gomega v1.11.0
+# github.com/onsi/gomega v1.12.0
 github.com/onsi/gomega
 github.com/onsi/gomega/format
 github.com/onsi/gomega/internal/assertion
@@ -72,14 +72,14 @@ github.com/tidwall/gjson
 github.com/tidwall/match
 # github.com/tidwall/pretty v1.1.0
 github.com/tidwall/pretty
-# golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
+# golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6
+# golang.org/x/sys v0.0.0-20210514084401-e8d321eab015
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.4
+# golang.org/x/text v0.3.6
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/htmlindex
