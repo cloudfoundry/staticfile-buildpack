@@ -1,9 +1,25 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-cd "$( dirname "${BASH_SOURCE[0]}" )/.."
-source .envrc
-./scripts/install_tools.sh
+set -e
+set -u
+set -o pipefail
 
-cd src/*/integration/..
-ginkgo -r -mod=vendor -skipPackage=brats,integration -compilers=1
+ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly ROOTDIR
+
+source "${ROOTDIR}/.envrc"
+
+function main() {
+  local src
+  src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
+
+  "${ROOTDIR}/scripts/install_tools.sh"
+
+  ginkgo \
+    -r \
+    -mod vendor \
+    -skipPackage brats,integration \
+      "${src}/..."
+}
+
+main "${@:-}"

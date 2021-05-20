@@ -1,23 +1,43 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-cd "$( dirname "${BASH_SOURCE[0]}" )/.."
-source .envrc
-./scripts/install_tools.sh
+set -e
+set -u
+set -o pipefail
 
-GINKGO_NODES=${GINKGO_NODES:-3}
-GINKGO_ATTEMPTS=${GINKGO_ATTEMPTS:-2}
-export CF_STACK=${CF_STACK:-cflinuxfs3}
+ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+readonly ROOTDIR
 
-UNCACHED_BUILDPACK_FILE=${UNCACHED_BUILDPACK_FILE:-""}
-CACHED_BUILDPACK_FILE=${CACHED_BUILDPACK_FILE:-""}
+source "${ROOTDIR}/.envrc"
 
-cd src/*/integration
+function main() {
+  local src
+  src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
 
-echo "Run Uncached Buildpack"
-BUILDPACK_FILE="$UNCACHED_BUILDPACK_FILE" \
-  ginkgo -r -mod=vendor -compilers=1 --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached=false
+  "${ROOTDIR}/scripts/install_tools.sh"
 
-echo "Run Cached Buildpack"
-BUILDPACK_FILE="$CACHED_BUILDPACK_FILE" \
-  ginkgo -r -mod=vendor -compilers=1 --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES --slowSpecThreshold=60 -- --cached
+  echo "Run Uncached Buildpack"
+  CF_STACK="${CF_STACK:-cflinuxfs3}" \
+  BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
+    ginkgo \
+      -r \
+      -mod vendor \
+      --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
+      -nodes "${GINKGO_NODES:-3}" \
+      --slowSpecThreshold 60 \
+        "${src}/integration" \
+      -- --cached=false
+
+  echo "Run Cached Buildpack"
+  CF_STACK="${CF_STACK:-cflinuxfs3}" \
+  BUILDPACK_FILE="${CACHED_BUILDPACK_FILE:-}" \
+    ginkgo \
+      -mod vendor \
+      -r \
+      --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
+      -nodes "${GINKGO_NODES:-3}" \
+      --slowSpecThreshold 60 \
+        "${src}/integration" \
+      -- --cached=true
+}
+
+main "${@:-}"

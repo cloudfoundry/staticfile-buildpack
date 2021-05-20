@@ -1,0 +1,66 @@
+name: Test Pull Request
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  integration:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.16
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+
+    - name: Run Unit Tests
+      run: ./scripts/unit.sh
+
+  approve:
+    name: Approve Bot PRs
+    if: ${{ github.event.pull_request.user.login == 'cf-buildpacks-eng' || github.event.pull_request.user.login == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    needs: integration
+    steps:
+
+    - name: Check Commit Verification
+      id: unverified-commits
+      uses: paketo-buildpacks/github-config/actions/pull-request/check-unverified-commits@main
+      with:
+        token: ${{ secrets.CF_BOT_TOKEN }}
+        repo: ${{ github.repository }}
+        number: ${{ github.event.number }}
+
+    - name: Check for Human Commits
+      id: human-commits
+      uses: paketo-buildpacks/github-config/actions/pull-request/check-human-commits@main
+      with:
+        token: ${{ secrets.CF_BOT_TOKEN }}
+        repo: ${{ github.repository }}
+        number: ${{ github.event.number }}
+        bots: 'dependabot[bot],web-flow,cf-buildpacks-eng'
+
+    - name: Checkout
+      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+      uses: actions/checkout@v2
+
+    - name: Dispatch
+      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+      uses: paketo-buildpacks/github-config/actions/dispatch@main
+      with:
+        repos: ${{ github.repository }}
+        token: ${{ secrets.CF_BOT_TOKEN }}
+        event: approve-bot-pr
+        payload: |
+          {
+            "number": "${{ github.event.pull_request.number }}",
+            "login": "${{ github.event.pull_request.user.login }}"
+          }
