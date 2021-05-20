@@ -7,13 +7,18 @@ set -o pipefail
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly ROOTDIR
 
-source "${ROOTDIR}/.envrc"
+# shellcheck source=SCRIPTDIR/.util/tools.sh
+source "${ROOTDIR}/scripts/.util/tools.sh"
+
+# shellcheck source=SCRIPTDIR/.util/tools.sh
+source "${ROOTDIR}/scripts/.util/tools.sh"
 
 function main() {
   local src
   src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
 
-  "${ROOTDIR}/scripts/install_tools.sh"
+  util::tools::ginkgo::install --directory "${ROOTDIR}/.bin"
+  util::tools::buildpack-packager::install --directory "${ROOTDIR}/.bin"
 
   ginkgo \
     -r \
