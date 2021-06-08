@@ -184,11 +184,16 @@ func CountBuildpack(language string) (int, error) {
 }
 
 func CreateOrUpdateBuildpack(language, file, stack string) error {
-	if err := createBuildpack(language, file); err != nil {
-		return UpdateBuildpack(language, file, stack)
+	count, err := CountBuildpack(language)
+	if err != nil {
+		return err
 	}
 
-	return nil
+	if count == 0 {
+		return createBuildpack(language, file)
+	}
+
+	return UpdateBuildpack(language, file, stack)
 }
 
 func (a *App) ConfirmBuildpack(version string) error {

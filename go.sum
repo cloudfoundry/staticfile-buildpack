@@ -62,8 +62,8 @@ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5P
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20210608221502-8186642fcbf5 h1:ce56Pb3+SYOa5F6zZfyk3F3rX834LdQLeI1v+69bEPU=
-github.com/cloudfoundry/libbuildpack v0.0.0-20210608221502-8186642fcbf5/go.mod h1:5vRZ7NjMmArCd3Aon8cgKOiTqJBkfUL3BNgBQ5ULZMU=
+github.com/cloudfoundry/libbuildpack v0.0.0-20210608233952-b5d1ff03c407 h1:9XeE4Qzdfg53C9gNYEArBtjRbqYc3LvQgBYu0sqWjts=
+github.com/cloudfoundry/libbuildpack v0.0.0-20210608233952-b5d1ff03c407/go.mod h1:5vRZ7NjMmArCd3Aon8cgKOiTqJBkfUL3BNgBQ5ULZMU=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/containerd/containerd v1.3.0/go.mod h1:bC6axHOhabU15QhwfG7w5PipXdVtMXFTttgp+kVtyUA=
 github.com/containerd/stargz-snapshotter/estargz v0.4.1/go.mod h1:x7Q9dg9QYb4+ELgxmo4gBUeJB0tl5dqH1Sdz0nJU1QM=
