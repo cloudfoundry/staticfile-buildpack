@@ -1,3 +1,19 @@
+v1.5.22 Jun 11, 2021
+=====================
+
+* Add nginx 1.21.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/178449716)
+
+* Add nginx 1.20.1, remove nginx 1.20.0
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/178286174)
+
+* Bootstraps with github-config
+
+* Update libbuildpack
+
+
 v1.5.21 May 05, 2021
 =====================
 
