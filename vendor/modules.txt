@@ -18,7 +18,7 @@ github.com/cloudfoundry/libbuildpack/packager
 github.com/elazarl/goproxy
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/golang/mock v1.5.0
+# github.com/golang/mock v1.6.0
 github.com/golang/mock/gomock
 # github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 github.com/kardolus/httpmock
