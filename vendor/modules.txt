@@ -18,7 +18,7 @@ github.com/cloudfoundry/libbuildpack/packager
 github.com/elazarl/goproxy
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/golang/mock v1.5.0
+# github.com/golang/mock v1.6.0
 github.com/golang/mock/gomock
 # github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 github.com/kardolus/httpmock
@@ -77,7 +77,7 @@ github.com/tidwall/pretty
 golang.org/x/net/html
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
-# golang.org/x/sys v0.0.0-20210608053332-aa57babbf139
+# golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.6
