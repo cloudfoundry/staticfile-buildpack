@@ -20,29 +20,48 @@ function main() {
   local stack
   stack="$(jq -r -S .stack "${ROOTDIR}/config.json")"
 
-  echo "Run Uncached Buildpack"
+  cached=true
+  serial=true
+  if [[ "${src}" == *python ]]; then
+    run_specs "uncached" "parallel"
+    run_specs "uncached" "serial"
+
+    run_specs "cached" "parallel"
+    run_specs "cached" "serial"
+  else
+    run_specs "uncached" "parallel"
+    run_specs "cached" "parallel"
+  fi
+}
+
+function run_specs(){
+  local cached serial nodes
+
+  cached="false"
+  serial=""
+  nodes="${GINKGO_NODES:-3}"
+
+  echo "Run ${1} Buildpack"
+
+  if [[ "${1}" == "cached" ]] ; then
+    cached="true"
+  fi
+
+  if [[ "${2}" == "serial" ]]; then
+    nodes=1
+    serial="-serial=true"
+  fi
+
   CF_STACK="${CF_STACK:-"${stack}"}" \
   BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
     ginkgo \
       -r \
       -mod vendor \
       --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
-      -nodes "${GINKGO_NODES:-3}" \
+      -nodes ${nodes} \
       --slowSpecThreshold 60 \
         "${src}/integration" \
-      -- --cached=false
-
-  echo "Run Cached Buildpack"
-  CF_STACK="${CF_STACK:-"${stack}"}" \
-  BUILDPACK_FILE="${CACHED_BUILDPACK_FILE:-}" \
-    ginkgo \
-      -mod vendor \
-      -r \
-      --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
-      -nodes "${GINKGO_NODES:-3}" \
-      --slowSpecThreshold 60 \
-        "${src}/integration" \
-      -- --cached=true
+      -- --cached="${cached}" ${serial}
 }
 
 main "${@:-}"
