@@ -166,7 +166,7 @@ func createBuildpack(language, file string) error {
 	return nil
 }
 
-func CountBuildpack(language string) (int, error) {
+func CountBuildpack(language string, stack string) (int, error) {
 	command := exec.Command("cf", "buildpacks")
 	targetBpname := fmt.Sprintf("%s_buildpack", language)
 	matches := 0
@@ -176,15 +176,19 @@ func CountBuildpack(language string) (int, error) {
 	}
 	for _, line := range strings.Split(string(lines), "\n") {
 		bpname := strings.SplitN(line, " ", 2)[0]
+		split := strings.Split(line, " ")
+		stackval := split[len(split)-1]
 		if bpname == targetBpname {
-			matches++
+			if stack == "" || stack == stackval {
+				matches++
+			}
 		}
 	}
 	return matches, nil
 }
 
 func CreateOrUpdateBuildpack(language, file, stack string) error {
-	count, err := CountBuildpack(language)
+	count, err := CountBuildpack(language, stack)
 	if err != nil {
 		return err
 	}

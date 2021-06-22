@@ -80,11 +80,11 @@ func DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(copyBrats func(string)
 			Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
 			// With stacks, creating the buildpack twice will result in a second record, one with `nil` stack.
 			// We need to clean up both.
-			if count, err := cutlass.CountBuildpack(bpName); err == nil && count > 0 {
+			if count, err := cutlass.CountBuildpack(bpName, ""); err == nil && count > 0 {
 				Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed(), "Attempted to delete buildpack %s", bpName)
 			}
 			// LTS errors when running `cf buildpacks`. Ignore that output.
-			count, err := cutlass.CountBuildpack(bpName)
+			count, err := cutlass.CountBuildpack(bpName, "")
 			if err == nil {
 				Expect(count).To(BeZero(), "There are %d %s buildpacks", count, bpName)
 			}
