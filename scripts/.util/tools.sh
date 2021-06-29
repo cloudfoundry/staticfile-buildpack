@@ -37,10 +37,12 @@ function util::tools::ginkgo::install() {
   if [[ ! -f "${dir}/ginkgo" ]]; then
     util::print::title "Installing ginkgo"
 
-    GOBIN="${dir}" \
-      go get \
-        -u \
-        github.com/onsi/ginkgo/ginkgo
+    pushd /tmp > /dev/null || return
+      GOBIN="${dir}" \
+        go get \
+          -u \
+          github.com/onsi/ginkgo/ginkgo@latest
+    popd > /dev/null || return
   fi
 }
 
@@ -64,9 +66,11 @@ function util::tools::buildpack-packager::install() {
   if [[ ! -f "${dir}/buildpack-packager" ]]; then
     util::print::title "Installing buildpack-packager"
 
-    GOBIN="${dir}" \
-      go install \
-        github.com/cloudfoundry/libbuildpack/packager/buildpack-packager
+    pushd /tmp > /dev/null || return
+      GOBIN="${dir}" \
+        go install \
+          github.com/cloudfoundry/libbuildpack/packager/buildpack-packager@latest
+    popd > /dev/null || return
   fi
 }
 
