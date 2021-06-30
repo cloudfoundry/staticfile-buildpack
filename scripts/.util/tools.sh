@@ -116,3 +116,47 @@ function util::tools::jq::install() {
     chmod +x "${dir}/jq"
   fi
 }
+
+function util::tools::cf::install() {
+  local dir
+  while [[ "${#}" != 0 ]]; do
+    case "${1}" in
+      --directory)
+        dir="${2}"
+        shift 2
+        ;;
+
+      *)
+        util::print::error "unknown argument \"${1}\""
+    esac
+  done
+
+  mkdir -p "${dir}"
+  util::tools::path::export "${dir}"
+
+  local os
+  case "$(uname)" in
+    "Darwin")
+      os="macosx64"
+      ;;
+
+    "Linux")
+      os="linux64"
+      ;;
+
+    *)
+      echo "Unknown OS \"$(uname)\""
+      exit 1
+  esac
+
+  if [[ ! -f "${dir}/cf" ]]; then
+    util::print::title "Installing cf"
+
+    curl "https://packages.cloudfoundry.org/stable?release=${os}-binary&version=6.49.0&source=github-rel" \
+      --silent \
+      --location \
+      --output /tmp/cf.tar.gz
+    tar -xzf /tmp/cf.tar.gz -C "${dir}" cf
+    rm /tmp/cf.tar.gz
+  fi
+}
