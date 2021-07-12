@@ -318,6 +318,13 @@ func (h *Hook) getDownloadURL(c *credentials) string {
 
 	qv := make(url.Values)
 	qv.Add("bitness", "64")
+	// If no networkzone is provided we set "default" to be safe,
+	// otherwise we'd have an empty "&networkzone=" in the download url
+	if c.NetworkZone != "" {
+		qv.Add("networkzone", c.NetworkZone)
+	} else {
+		qv.Add("networkzone", "default")
+	}
 	for _, t := range h.IncludeTechnologies {
 		qv.Add("include", t)
 	}
