@@ -52,21 +52,25 @@ function specs::run() {
     serial_flag=""
   fi
 
+  local buildpack_file
+  buildpack_file="$(buildpack::package "1.2.3" "${cached}")"
+
   if [[ "${harness}" == "gotest" ]]; then
-    specs::gotest::run "${nodes}" "${cached_flag}" "${serial_flag}"
+    specs::gotest::run "${nodes}" "${cached_flag}" "${serial_flag}" "${buildpack_file}"
   else
-    specs::ginkgo::run "${nodes}" "${cached_flag}" "${serial_flag}"
+    specs::ginkgo::run "${nodes}" "${cached_flag}" "${serial_flag}" "${buildpack_file}"
   fi
 }
 
 function specs::gotest::run() {
-  local nodes cached_flag serial_flag
+  local nodes cached_flag serial_flag buildpack_file
   nodes="${1}"
   cached_flag="${2}"
   serial_flag="${3}"
+  buildpack_file="${4}"
 
   CF_STACK="${CF_STACK:-"${stack}"}" \
-  BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
+  BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
   GOMAXPROCS="${GOMAXPROCS:-"${nodes}"}" \
     go test \
       -count=1 \
@@ -79,13 +83,14 @@ function specs::gotest::run() {
 }
 
 function specs::ginkgo::run(){
-  local nodes cached_flag serial_flag
+  local nodes cached_flag serial_flag buildpack_file
   nodes="${1}"
   cached_flag="${2}"
   serial_flag="${3}"
+  buildpack_file="${4}"
 
   CF_STACK="${CF_STACK:-"${stack}"}" \
-  BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
+  BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
     ginkgo \
       -r \
       -mod vendor \
@@ -94,6 +99,30 @@ function specs::ginkgo::run(){
       --slowSpecThreshold 60 \
         "${src}/integration" \
       -- "${cached_flag}" "${serial_flag}"
+}
+
+function buildpack::package() {
+  local version cached
+  version="${1}"
+  cached="${2}"
+
+  local name cached_flag
+  name="buildpack-v${version}-uncached.zip"
+  cached_flag=""
+  if [[ "${cached}" == "true" ]]; then
+    cached_flag="--cached"
+    name="buildpack-v${version}-cached.zip"
+  fi
+
+  local output
+  output="$(mktemp -d)/${name}"
+
+  bash "${ROOTDIR}/scripts/package.sh" \
+    --version "${version}" \
+    --output "${output}" \
+    "${cached_flag}" > /dev/null
+
+  printf "%s" "${output}"
 }
 
 main "${@:-}"
