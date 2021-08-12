@@ -21,6 +21,11 @@ function main() {
 
   while [[ "${#}" != 0 ]]; do
     case "${1}" in
+      --stack)
+        stack="${2}"
+        shift 2
+        ;;
+
       --version)
         version="${2}"
         shift 2
