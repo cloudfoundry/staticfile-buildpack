@@ -2,5 +2,12 @@
   "stack": "cflinuxfs3",
   "oses": [
     "linux"
-  ]
+  ],
+  "integration": {
+    "harness": "ginkgo",
+    "matrix": [
+      { "cached": false, "parallel": true },
+      { "cached": true, "parallel": true }
+    ]
+  }
 }

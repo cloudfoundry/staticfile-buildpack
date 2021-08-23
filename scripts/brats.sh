@@ -22,6 +22,7 @@ function main() {
   util::tools::ginkgo::install --directory "${ROOTDIR}/.bin"
   util::tools::buildpack-packager::install --directory "${ROOTDIR}/.bin"
   util::tools::jq::install --directory "${ROOTDIR}/.bin"
+  util::tools::cf::install --directory "${ROOTDIR}/.bin"
 
   local stack
   stack="$(jq -r -S .stack "${ROOTDIR}/config.json")"
