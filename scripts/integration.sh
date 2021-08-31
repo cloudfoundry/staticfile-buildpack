@@ -11,17 +11,15 @@ readonly ROOTDIR
 source "${ROOTDIR}/scripts/.util/tools.sh"
 
 function main() {
-  local src stack harness
+  local src stack
   src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
   stack="${CF_STACK:-$(jq -r -S .stack "${ROOTDIR}/config.json")}"
-  harness="$(jq -r -S .integration.harness "${ROOTDIR}/config.json")"
 
   IFS=$'\n' read -r -d '' -a matrix < <(
     jq -r -S -c .integration.matrix[] "${ROOTDIR}/config.json" \
       && printf "\0"
   )
 
-  util::tools::ginkgo::install --directory "${ROOTDIR}/.bin"
   util::tools::buildpack-packager::install --directory "${ROOTDIR}/.bin"
   util::tools::cf::install --directory "${ROOTDIR}/.bin"
 
@@ -32,16 +30,15 @@ function main() {
 
     echo "Running integration suite (cached: ${cached}, parallel: ${parallel})"
 
-    specs::run "${harness}" "${cached}" "${parallel}" "${stack}"
+    specs::run "${cached}" "${parallel}" "${stack}"
   done
 }
 
 function specs::run() {
-  local harness cached parallel stack
-  harness="${1}"
-  cached="${2}"
-  parallel="${3}"
-  stack="${4}"
+  local cached parallel stack
+  cached="${1}"
+  parallel="${2}"
+  stack="${3}"
 
   local nodes cached_flag serial_flag
   cached_flag="--cached=${cached}"
@@ -56,21 +53,6 @@ function specs::run() {
   local buildpack_file
   buildpack_file="$(buildpack::package "1.2.3" "${cached}" "${stack}")"
 
-  if [[ "${harness}" == "gotest" ]]; then
-    specs::gotest::run "${nodes}" "${cached_flag}" "${serial_flag}" "${buildpack_file}" "${stack}"
-  else
-    specs::ginkgo::run "${nodes}" "${cached_flag}" "${serial_flag}" "${buildpack_file}" "${stack}"
-  fi
-}
-
-function specs::gotest::run() {
-  local nodes cached_flag serial_flag buildpack_file stack
-  nodes="${1}"
-  cached_flag="${2}"
-  serial_flag="${3}"
-  buildpack_file="${4}"
-  stack="${5}"
-
   CF_STACK="${stack}" \
   BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
   GOMAXPROCS="${GOMAXPROCS:-"${nodes}"}" \
@@ -82,26 +64,6 @@ function specs::gotest::run() {
         "${src}/integration" \
          "${cached_flag}" \
          "${serial_flag}"
-}
-
-function specs::ginkgo::run(){
-  local nodes cached_flag serial_flag buildpack_file stack
-  nodes="${1}"
-  cached_flag="${2}"
-  serial_flag="${3}"
-  buildpack_file="${4}"
-  stack="${5}"
-
-  CF_STACK="${stack}" \
-  BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
-    ginkgo \
-      -r \
-      -mod vendor \
-      --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
-      -nodes "${nodes}" \
-      --slowSpecThreshold 60 \
-        "${src}/integration" \
-      -- "${cached_flag}" "${serial_flag}"
 }
 
 function buildpack::package() {
