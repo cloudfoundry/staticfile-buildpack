@@ -123,11 +123,13 @@ nil, for JSON null
 To directly access the value:
 
 ```go
-result.Type    // can be String, Number, True, False, Null, or JSON
-result.Str     // holds the string
-result.Num     // holds the float64 number
-result.Raw     // holds the raw json
-result.Index   // index of raw value in original json, zero means index unknown
+result.Type           // can be String, Number, True, False, Null, or JSON
+result.Str            // holds the string
+result.Num            // holds the float64 number
+result.Raw            // holds the raw json
+result.Index          // index of raw value in original json, zero means index unknown
+result.Indexes        // indexes of all the elements that match on a `#(...)#` query
+
 ```
 
 There are a variety of handy functions that work on a result:
