@@ -59,7 +59,7 @@ function main() {
   done
 
   if [[ "${platform}" == "docker" ]]; then
-    if [[ "$(jq -r -S .harness "${ROOTDIR}/config.json")" != "switchblade" ]]; then
+    if [[ "$(jq -r -S .integration.harness "${ROOTDIR}/config.json")" != "switchblade" ]]; then
       util::print::warn "NOTICE: This integration suite does not support Docker."
     fi
   fi
