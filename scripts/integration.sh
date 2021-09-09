@@ -7,13 +7,62 @@ set -o pipefail
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 readonly ROOTDIR
 
+# shellcheck source=SCRIPTDIR/.util/print.sh
+source "${ROOTDIR}/scripts/.util/print.sh"
+
 # shellcheck source=SCRIPTDIR/.util/tools.sh
 source "${ROOTDIR}/scripts/.util/tools.sh"
 
+function usage() {
+  cat <<-USAGE
+integration.sh --github-token <token> [OPTIONS]
+Runs the integration tests.
+OPTIONS
+  --help                  -h  prints the command usage
+  --github-token <token>      GitHub token to use when making API requests
+  --platform <cf|docker>      Switchblade platform to execute the tests against
+USAGE
+}
+
 function main() {
-  local src stack
+  local src stack platform token
   src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
   stack="${CF_STACK:-$(jq -r -S .stack "${ROOTDIR}/config.json")}"
+  platform="cf"
+
+  while [[ "${#}" != 0 ]]; do
+    case "${1}" in
+      --platform)
+        platform="${2}"
+        shift 2
+        ;;
+
+      --github-token)
+        token="${2}"
+        shift 2
+        ;;
+
+      --help|-h)
+        shift 1
+        usage
+        exit 0
+        ;;
+
+      "")
+        # skip if the argument is empty
+        shift 1
+        ;;
+
+      *)
+        util::print::error "unknown argument \"${1}\""
+    esac
+  done
+
+  if [[ "${platform}" == "docker" ]]; then
+    if [[ "$(jq -r -S .harness "${ROOTDIR}/config.json")" != "switchblade" ]]; then
+      util::print::warn "NOTICE: This integration suite does not support Docker."
+    fi
+  fi
 
   IFS=$'\n' read -r -d '' -a matrix < <(
     jq -r -S -c .integration.matrix[] "${ROOTDIR}/config.json" \
@@ -30,19 +79,23 @@ function main() {
 
     echo "Running integration suite (cached: ${cached}, parallel: ${parallel})"
 
-    specs::run "${cached}" "${parallel}" "${stack}"
+    specs::run "${cached}" "${parallel}" "${stack}" "${platform}" "${token}"
   done
 }
 
 function specs::run() {
-  local cached parallel stack
+  local cached parallel stack platform token
   cached="${1}"
   parallel="${2}"
   stack="${3}"
+  platform="${4}"
+  token="${5}"
 
   local nodes cached_flag serial_flag
   cached_flag="--cached=${cached}"
-  serial_flag="-serial=true"
+  serial_flag="--serial=true"
+  platform_flag="--platform=${platform}"
+  token_flag="--github-token=${token}"
   nodes=1
 
   if [[ "${parallel}" == "true" ]]; then
@@ -63,6 +116,8 @@ function specs::run() {
       -v \
         "${src}/integration" \
          "${cached_flag}" \
+         "${platform_flag}" \
+         "${token_flag}" \
          "${serial_flag}"
 }
 
