@@ -54,7 +54,7 @@ jobs:
       id: unverified-commits
       uses: paketo-buildpacks/github-config/actions/pull-request/check-unverified-commits@main
       with:
-        token: ${{ secrets.CF_BOT_TOKEN }}
+        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
         repo: ${{ github.repository }}
         number: ${{ github.event.number }}
 
@@ -62,7 +62,7 @@ jobs:
       id: human-commits
       uses: paketo-buildpacks/github-config/actions/pull-request/check-human-commits@main
       with:
-        token: ${{ secrets.CF_BOT_TOKEN }}
+        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
         repo: ${{ github.repository }}
         number: ${{ github.event.number }}
         bots: 'dependabot[bot],web-flow,cf-buildpacks-eng'
@@ -76,7 +76,7 @@ jobs:
       uses: paketo-buildpacks/github-config/actions/dispatch@main
       with:
         repos: ${{ github.repository }}
-        token: ${{ secrets.CF_BOT_TOKEN }}
+        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
         event: approve-bot-pr
         payload: |
           {
