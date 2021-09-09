@@ -19,7 +19,7 @@ jobs:
       id: pull_request
       env:
         NUMBER: ${{ github.event.client_payload.number }}
-        GITHUB_TOKEN: ${{ secrets.CF_BOT_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
       run: |
         payload="$(
           curl "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${NUMBER}" \
@@ -34,12 +34,12 @@ jobs:
       if: ${{ steps.pull_request.outputs.mergeable_state == 'clean' || steps.pull_request.outputs.mergeable_state == 'unstable' }}
       uses: paketo-buildpacks/github-config/actions/pull-request/merge@main
       with:
-        token: ${{ secrets.CF_BOT_TOKEN }}
+        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
         number: ${{ github.event.client_payload.number }}
 
     - name: Rebase
       if: ${{ steps.pull_request.outputs.mergeable_state == 'behind' }}
       uses: paketo-buildpacks/github-config/actions/pull-request/rebase@main
       with:
-        token: ${{ secrets.CF_BOT_TOKEN }}
+        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
         number: ${{ github.event.client_payload.number }}
