@@ -79,7 +79,7 @@ function main() {
 
     echo "Running integration suite (cached: ${cached}, parallel: ${parallel})"
 
-    specs::run "${cached}" "${parallel}" "${stack}" "${platform}" "${token}"
+    specs::run "${cached}" "${parallel}" "${stack}" "${platform}" "${token:-}"
   done
 }
 
