@@ -1,7 +1,7 @@
 name: Test Pull Request
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
     - develop
 
@@ -41,7 +41,9 @@ jobs:
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
 
     - name: Run Integration Tests
-      run: ./scripts/integration.sh --platform docker --github-token "${GITHUB_TOKEN}"
+      env:
+        CF_BOT_GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+      run: ./scripts/integration.sh --platform docker --github-token "${CF_BOT_GITHUB_TOKEN}"
 
   approve:
     name: Approve Bot PRs
