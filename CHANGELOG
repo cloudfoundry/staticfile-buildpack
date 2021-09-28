@@ -1,3 +1,13 @@
+v1.5.25 Sep 28, 2021
+=====================
+
+* Add nginx 1.21.3, remove nginx 1.21.1
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/179497106)
+  (https://www.pivotaltracker.com/story/show/179423127)
+
+  Bumped libbuildpack-dynatrace to 1.4.1
+
 v1.5.24 Jul 14, 2021
 =====================
 
