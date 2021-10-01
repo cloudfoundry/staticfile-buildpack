@@ -30,7 +30,7 @@ var _ = Describe("deploy a HTTP/2 app", func() {
 		Expect(err).To(BeNil())
 		apiVersion, err := semver.Make(apiVersionString)
 		Expect(err).To(BeNil())
-		apiHasHttp2, err := semver.ParseRange("> 2.172.0")
+		apiHasHttp2, err := semver.ParseRange(">= 2.172.0")
 		Expect(err).To(BeNil())
 		if !apiHasHttp2(apiVersion) {
 			Skip("HTTP/2 not supported for this API version.")
