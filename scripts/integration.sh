@@ -106,6 +106,7 @@ function specs::run() {
   local buildpack_file
   buildpack_file="$(buildpack::package "1.2.3" "${cached}" "${stack}")"
 
+  PATH="${ROOTDIR}/.bin":${PATH} \
   CF_STACK="${stack}" \
   BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
   GOMAXPROCS="${GOMAXPROCS:-"${nodes}"}" \
