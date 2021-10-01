@@ -74,7 +74,15 @@ http {
   server_tokens off;
 
   server {
-    listen <%= ENV["PORT"] %>;
+    {{if .EnableHttp2}}
+	  listen <%= ENV["PORT"] %> http2;
+    {{else}}
+      <% if ENV["ENABLE_HTTP2"] %>
+	    listen <%= ENV["PORT"] %> http2;
+      <% else %>
+	    listen <%= ENV["PORT"] %>;
+      <% end %>
+    {{end}}
     server_name localhost;
 
     root <%= ENV["APP_ROOT"] %>/public;

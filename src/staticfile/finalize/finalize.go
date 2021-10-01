@@ -24,6 +24,7 @@ type Staticfile struct {
 	HSTSIncludeSubDomains bool   `yaml:"http_strict_transport_security_include_subdomains"`
 	HSTSPreload           bool   `yaml:"http_strict_transport_security_preload"`
 	ForceHTTPS            bool   `yaml:"force_https"`
+	EnableHttp2           bool   `yaml:"enable_http2"`
 	BasicAuth             bool
 	StatusCodes           map[string]string `yaml:"status_codes"`
 }
@@ -50,6 +51,7 @@ type StaticfileTemp struct {
 	HSTSIncludeSubDomains string            `yaml:"http_strict_transport_security_include_subdomains"`
 	HSTSPreload           string            `yaml:"http_strict_transport_security_preload"`
 	ForceHTTPS            string            `yaml:"force_https"`
+	EnableHttp2           string            `yaml:"enable_http2"`
 	StatusCodes           map[string]string `yaml:"status_codes"`
 }
 
@@ -175,6 +177,10 @@ func (sf *Finalizer) LoadStaticfile() error {
 	if isEnabled(hash.HSTSPreload) {
 		sf.Log.BeginStep("Enabling HSTS Preload")
 		conf.HSTSPreload = true
+	}
+	if isEnabled(hash.EnableHttp2) {
+		sf.Log.BeginStep("Enabling HTTP/2")
+		conf.EnableHttp2 = true
 	}
 	if isEnabled(hash.ForceHTTPS) {
 		sf.Log.BeginStep("Enabling HTTPS redirect")

@@ -139,6 +139,7 @@ var _ = Describe("Compile", func() {
 				Expect(finalizer.Config.HSTS).To(Equal(false))
 				Expect(finalizer.Config.HSTSIncludeSubDomains).To(Equal(false))
 				Expect(finalizer.Config.HSTSPreload).To(Equal(false))
+				Expect(finalizer.Config.EnableHttp2).To(Equal(false))
 				Expect(finalizer.Config.ForceHTTPS).To(Equal(false))
 				Expect(finalizer.Config.BasicAuth).To(Equal(false))
 			})
@@ -276,6 +277,20 @@ var _ = Describe("Compile", func() {
 				})
 				It("Logs", func() {
 					Expect(buffer.String()).To(ContainSubstring("-----> Enabling HSTS Preload\n"))
+				})
+			})
+
+			Context("and sets enable_http2", func() {
+				BeforeEach(func() {
+					mockYaml.EXPECT().Load(filepath.Join(buildDir, "Staticfile"), gomock.Any()).Do(func(_ string, hash *finalize.StaticfileTemp) {
+						(*hash).EnableHttp2 = "true"
+					})
+				})
+				It("sets enable_http2", func() {
+					Expect(finalizer.Config.EnableHttp2).To(Equal(true))
+				})
+				It("Logs", func() {
+					Expect(buffer.String()).To(Equal("-----> Enabling HTTP/2\n"))
 				})
 			})
 
@@ -569,6 +584,16 @@ var _ = Describe("Compile", func() {
           rewrite ^(.*)$ / break;
         }
 			`)
+			enableHttp2Conf := stripStartWsp(`
+				listen <%= ENV["PORT"] %> http2;
+			`)
+			enableHttp2Erb := stripStartWsp(`
+				<% if ENV["ENABLE_HTTP2"] %>
+				  listen <%= ENV["PORT"] %> http2;
+				<% else %>
+				  listen <%= ENV["PORT"] %>;
+				<% end %>
+			`)
 			forceHTTPSConf := stripStartWsp(`
 				set $updated_host $host;
 				if ($http_x_forwarded_host != "") {
@@ -751,6 +776,27 @@ var _ = Describe("Compile", func() {
 				})
 			})
 
+			Context("enable_http2 is set in staticfile", func() {
+				BeforeEach(func() {
+					staticfile.EnableHttp2 = true
+				})
+				It("the listener uses the http2 directive", func() {
+					data := readNginxConfAndStrip()
+					Expect(string(data)).To(ContainSubstring(enableHttp2Conf))
+					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["ENABLE_HTTP2"] %>`))
+				})
+			})
+
+			Context("enable_http2 is NOT set in staticfile", func() {
+				BeforeEach(func() {
+					staticfile.EnableHttp2 = false
+				})
+				It("using the http2 directive depends on ENV['ENABLE_HTTP2']", func() {
+					data := readNginxConfAndStrip()
+					Expect(string(data)).To(ContainSubstring(enableHttp2Erb))
+				})
+			})
+
 			Context("force_https is set in staticfile", func() {
 				BeforeEach(func() {
 					staticfile.ForceHTTPS = true
@@ -759,7 +805,6 @@ var _ = Describe("Compile", func() {
 					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(forceHTTPSConf))
 					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
-					Expect(string(data)).NotTo(ContainSubstring(`<% end %>`))
 				})
 			})
 
