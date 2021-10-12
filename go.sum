@@ -77,8 +77,8 @@ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5P
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20210726164432-80929621d448 h1:auWk6l6v4EHJUEMYnO1sdcpU0IpdQTtbMrJUVeLfBc4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20210726164432-80929621d448/go.mod h1:wKLvkl7/DtlHpl1nLl8ePzOIKFtR+Qm3fnpHug5MYgo=
+github.com/cloudfoundry/libbuildpack v0.0.0-20211012151659-ed6fb71f47bf h1:KL/s0HRYYRmTvFl9aAXhGA/AyRlG4S9txQNsNDeMOPs=
+github.com/cloudfoundry/libbuildpack v0.0.0-20211012151659-ed6fb71f47bf/go.mod h1:SjbBYrd7B+LDwapO4O4ysKGilmOye6JqWb6KbmEYnlY=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20200629203442-efcf912fb354/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
