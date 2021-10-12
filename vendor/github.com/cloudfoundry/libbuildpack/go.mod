@@ -11,7 +11,7 @@ require (
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.14.0
-	github.com/paketo-buildpacks/packit v0.14.1
+	github.com/paketo-buildpacks/packit v0.14.2
 	github.com/pkg/errors v0.9.1
 	github.com/tidwall/gjson v1.7.5
 	gopkg.in/yaml.v2 v2.4.0
