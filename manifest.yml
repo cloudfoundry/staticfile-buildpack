@@ -5,6 +5,14 @@ default_versions:
   version: 1.21.x
 dependencies:
 - name: nginx
+  version: 1.20.2
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.20.2_linux_x64_cflinuxfs3_4ef9ee19.tgz
+  sha256: 4ef9ee19332b1496b90c1dde72e2b5606429fdbd15d9ba269c066d2c87a2062c
+  cf_stacks:
+  - cflinuxfs3
+  source: http://nginx.org/download/nginx-1.20.2.tar.gz
+  source_sha256: 958876757782190a1653e14dc26dfc7ba263de310e04c113e11e97d1bef45a42
+- name: nginx
   version: 1.21.4
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.21.4_linux_x64_cflinuxfs3_935cebfb.tgz
   sha256: 935cebfb0529b673efb776b6a4dae611b1bddf42cc362d8bff4da18fedcddd81
@@ -29,6 +37,10 @@ include_files:
 - bin/supply
 - manifest.yml
 dependency_deprecation_dates:
+- version_line: 1.20.x
+  name: nginx
+  date: 2022-05-25
+  link: https://nginx.org/
 - version_line: 1.21.x
   name: nginx
   date: 2022-05-25
