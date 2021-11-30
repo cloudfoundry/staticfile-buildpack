@@ -13,7 +13,7 @@ require (
 	github.com/onsi/gomega v1.16.0
 	github.com/paketo-buildpacks/packit v0.14.2
 	github.com/pkg/errors v0.9.1
-	github.com/tidwall/gjson v1.7.5
+	github.com/tidwall/gjson v1.12.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
