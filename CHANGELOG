@@ -1,3 +1,54 @@
+v1.5.27 Dec 10, 2021
+=====================
+
+* Bump github.com/onsi/gomega from 1.14.0 to 1.17.0
+  Bumps [github.com/onsi/gomega](https://github.com/onsi/gomega) from 1.14.0 to 1.17.0.
+  - [Release notes](https://github.com/onsi/gomega/releases)
+  - [Changelog](https://github.com/onsi/gomega/blob/master/CHANGELOG.md)
+  - [Commits](https://github.com/onsi/gomega/compare/v1.14.0...v1.17.0)
+  
+  ---
+  updated-dependencies:
+  - dependency-name: github.com/onsi/gomega
+    dependency-type: direct:production
+    update-type: version-update:semver-minor
+  ...
+
+* Bump github.com/Dynatrace/libbuildpack-dynatrace from 1.4.1 to 1.4.2
+  Bumps [github.com/Dynatrace/libbuildpack-dynatrace](https://github.com/Dynatrace/libbuildpack-dynatrace) from 1.4.1 to 1.4.2.
+  - [Release notes](https://github.com/Dynatrace/libbuildpack-dynatrace/releases)
+  - [Commits](https://github.com/Dynatrace/libbuildpack-dynatrace/compare/v1.4.1...v1.4.2)
+  
+  ---
+  updated-dependencies:
+  - dependency-name: github.com/Dynatrace/libbuildpack-dynatrace
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+* Bump github.com/tidwall/gjson from 1.12.0 to 1.12.1
+  Bumps [github.com/tidwall/gjson](https://github.com/tidwall/gjson) from 1.12.0 to 1.12.1.
+  - [Release notes](https://github.com/tidwall/gjson/releases)
+  - [Commits](https://github.com/tidwall/gjson/compare/v1.12.0...v1.12.1)
+  
+  ---
+  updated-dependencies:
+  - dependency-name: github.com/tidwall/gjson
+    dependency-type: direct:production
+    update-type: version-update:semver-patch
+  ...
+
+* Update libbuildpack
+
+* Add nginx 1.20.2
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/180330923)
+
+* Add nginx 1.21.4, remove nginx 1.21.3
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/180167967)
+
+
 v1.5.26 Oct 08, 2021
 =====================
 
