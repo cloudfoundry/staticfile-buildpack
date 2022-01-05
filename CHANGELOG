@@ -1,3 +1,11 @@
+v1.5.28 Jan 05, 2022
+=====================
+
+* Add nginx 1.21.5, remove nginx 1.21.4
+  for stack(s) cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/180755261)
+
+
 v1.5.27 Dec 10, 2021
 =====================
 
