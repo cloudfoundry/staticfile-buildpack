@@ -214,6 +214,11 @@ func (t Result) IsArray() bool {
 	return t.Type == JSON && len(t.Raw) > 0 && t.Raw[0] == '['
 }
 
+// IsBool returns true if the result value is a JSON boolean.
+func (t Result) IsBool() bool {
+	return t.Type == True || t.Type == False
+}
+
 // ForEach iterates through values.
 // If the result represents a non-existent value, then no values will be
 // iterated. If the result is an Object, the iterator will pass the key and
@@ -2671,6 +2676,7 @@ var modifiers = map[string]func(json, arg string) string{
 	"values":  modValues,
 	"tostr":   modToStr,
 	"fromstr": modFromStr,
+	"group":   modGroup,
 }
 
 // AddModifier binds a custom modifier command to the GJSON syntax.
@@ -2969,6 +2975,41 @@ func modFromStr(json, arg string) string {
 //   {"id":1023,"name":"alert"} -> "{\"id\":1023,\"name\":\"alert\"}"
 func modToStr(str, arg string) string {
 	data, _ := json.Marshal(str)
+	return string(data)
+}
+
+func modGroup(json, arg string) string {
+	res := Parse(json)
+	if !res.IsObject() {
+		return ""
+	}
+	var all [][]byte
+	res.ForEach(func(key, value Result) bool {
+		if !value.IsArray() {
+			return true
+		}
+		var idx int
+		value.ForEach(func(_, value Result) bool {
+			if idx == len(all) {
+				all = append(all, []byte{})
+			}
+			all[idx] = append(all[idx], ("," + key.Raw + ":" + value.Raw)...)
+			idx++
+			return true
+		})
+		return true
+	})
+	var data []byte
+	data = append(data, '[')
+	for i, item := range all {
+		if i > 0 {
+			data = append(data, ',')
+		}
+		data = append(data, '{')
+		data = append(data, item[1:]...)
+		data = append(data, '}')
+	}
+	data = append(data, ']')
 	return string(data)
 }
 
