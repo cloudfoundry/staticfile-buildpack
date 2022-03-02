@@ -16,6 +16,8 @@ It has features such as [one line retrieval](#get-a-value), [dot notation paths]
 
 Also check out [SJSON](https://github.com/tidwall/sjson) for modifying json, and the [JJ](https://github.com/tidwall/jj) command line tool.
 
+This README is a quick overview of how to use GJSON, for more information check out [GJSON Syntax](SYNTAX.md).
+
 Getting Started
 ===============
 
@@ -206,6 +208,7 @@ There are currently the following built-in modifiers:
 - `@values`: Returns an array of values for an object.
 - `@tostr`: Converts json to a string. Wraps a json string.
 - `@fromstr`: Converts a string from json. Unwraps a json string.
+- `@group`: Groups arrays of objects. See [e4fc67c](https://github.com/tidwall/gjson/commit/e4fc67c92aeebf2089fabc7872f010e340d105db).
 
 ### Modifier arguments
 
