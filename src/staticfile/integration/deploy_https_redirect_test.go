@@ -42,6 +42,19 @@ var _ = Describe("deploy a staticfile app", func() {
 			Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
 			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix(fmt.Sprintf("https://%s", upstreamHostName)))))
 		})
+
+		Context("Comma separated values in X-Forwarded headers", func() {
+			It("picks leftmost x-forwarded-host,-port values into Location on redirect", func() {
+				_, headers, err := app.Get("/path1/path2", map[string]string{
+					"NoFollow":           "true",
+					"X-Forwarded-Host":   "host.com, something.else",
+					"X-Forwarded-Prefix": "/pre/fix1, /pre/fix2",
+				})
+				Expect(err).To(BeNil())
+				Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
+				Expect(headers).To(HaveKeyWithValue("Location", ConsistOf("https://host.com/pre/fix1/path1/path2")))
+			})
+		})
 	})
 
 	Context("Using Staticfile", func() {
@@ -62,5 +75,17 @@ var _ = Describe("deploy a staticfile app", func() {
 			Expect(headers).To(HaveKeyWithValue("Location", ConsistOf(HavePrefix(fmt.Sprintf("https://%s", upstreamHostName)))))
 		})
 
+		Context("Comma separated values in X-Forwarded headers", func() {
+			It("picks leftmost x-forwarded-host,-port values into Location on redirect", func() {
+				_, headers, err := app.Get("/path1/path2", map[string]string{
+					"NoFollow":           "true",
+					"X-Forwarded-Host":   "host.com, something.else",
+					"X-Forwarded-Prefix": "/pre/fix1, /pre/fix2",
+				})
+				Expect(err).To(BeNil())
+				Expect(headers).To(HaveKeyWithValue("StatusCode", []string{"301"}))
+				Expect(headers).To(HaveKeyWithValue("Location", ConsistOf("https://host.com/pre/fix1/path1/path2")))
+			})
+		})
 	})
 })
