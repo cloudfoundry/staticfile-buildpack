@@ -73,6 +73,16 @@ http {
   port_in_redirect off; # Ensure that redirects don't include the internal container PORT - <%= ENV["PORT"] %>
   server_tokens off;
 
+  map $http_x_forwarded_host $best_host {
+    "~^([^,]+),?.*$" $1;
+    ''               $host;
+  }
+
+  map $http_x_forwarded_prefix $best_prefix {
+    "~^([^,]+),?.*$" $1;
+    ''               '';
+  }
+
   server {
     {{if .EnableHttp2}}
 	  listen <%= ENV["PORT"] %> http2;
@@ -88,23 +98,14 @@ http {
     root <%= ENV["APP_ROOT"] %>/public;
 
     {{if .ForceHTTPS}}
-      set $updated_host $host;
-      if ($http_x_forwarded_host != "") {
-        set $updated_host $http_x_forwarded_host;
-      } 
 
       if ($http_x_forwarded_proto != "https") {
-        return 301 https://$updated_host$request_uri;
+        return 301 https://$best_host$best_prefix$request_uri;
       }
     {{else}}
       <% if ENV["FORCE_HTTPS"] %>
-        set $updated_host $host;
-        if ($http_x_forwarded_host != "") {
-          set $updated_host $http_x_forwarded_host;
-        } 
-
         if ($http_x_forwarded_proto != "https") {
-          return 301 https://$updated_host$request_uri;
+          return 301 https://$best_host$best_prefix$request_uri;
         }
       <% end %>
     {{end}}

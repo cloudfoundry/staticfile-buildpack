@@ -595,26 +595,28 @@ var _ = Describe("Compile", func() {
 				<% end %>
 			`)
 			forceHTTPSConf := stripStartWsp(`
-				set $updated_host $host;
-				if ($http_x_forwarded_host != "") {
-       				set $updated_host $http_x_forwarded_host;
-				} 
-
 				if ($http_x_forwarded_proto != "https") {
-					return 301 https://$updated_host$request_uri;
+					return 301 https://$best_host$best_prefix$request_uri;
 				}
 			`)
 			forceHTTPSErb := stripStartWsp(`
 				<% if ENV["FORCE_HTTPS"] %>
-				set $updated_host $host;
-				if ($http_x_forwarded_host != "") {
-					set $updated_host $http_x_forwarded_host;
-				} 
-			
-				if ($http_x_forwarded_proto != "https") {
-					return 301 https://$updated_host$request_uri;
-				}
+					if ($http_x_forwarded_proto != "https") {
+						return 301 https://$best_host$best_prefix$request_uri;
+					}
 				<% end %>
+			`)
+			xForwardedHostMappingConf := stripStartWsp(`
+				map $http_x_forwarded_host $best_host {
+					"~^([^,]+),?.*$" $1;
+					''               $host;
+				}
+			`)
+			xForwardedPrefixMappingConf := stripStartWsp(`
+				map $http_x_forwarded_prefix $best_prefix {
+					"~^([^,]+),?.*$" $1;
+					''               '';
+				}
 			`)
 			basicAuthConf := stripStartWsp(`
         auth_basic "Restricted";  #For Basic Auth
@@ -804,6 +806,8 @@ var _ = Describe("Compile", func() {
 				It("the 301 redirect does not depend on ENV['FORCE_HTTPS']", func() {
 					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(forceHTTPSConf))
+					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
+					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
 					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
@@ -815,6 +819,9 @@ var _ = Describe("Compile", func() {
 				It("the 301 redirect does depend on ENV['FORCE_HTTPS']", func() {
 					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(forceHTTPSErb))
+					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
+					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
+					Expect(string(data)).To(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
 
