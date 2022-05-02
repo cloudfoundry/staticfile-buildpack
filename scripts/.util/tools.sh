@@ -39,8 +39,7 @@ function util::tools::ginkgo::install() {
 
     pushd /tmp > /dev/null || return
       GOBIN="${dir}" \
-        go get \
-          -u \
+        go install \
           github.com/onsi/ginkgo/ginkgo@latest
     popd > /dev/null || return
   fi
