@@ -1,3 +1,30 @@
+v1.5.30 May 06, 2022
+=====================
+
+* Handle comma separated X-Forwarded-{Header,Prefix}
+  1. Proxies can technically set these headers with multiple comma separated
+  values. For XF-Host header, we were dumping the entire value into the
+  redirect thus creating invalid redirects like `301 https://host1,
+  host2`. With this change, we pick the leftmost comma separated value
+  to use for setting the redirect host location.
+  
+  2. Add support for X-Forwarded-Prefix
+  Also in the edge case there are multiple comma separated values,
+  pick the leftmost.
+
+  E.g.
+
+  ```
+  X-Forwarded-Host: host1, host2
+  X-Forwarded-Prefix: /pre/fix1, /pre/fix2
+  example.com/abc/def
+  ```
+
+  will resolve to `301 https://host1/pre/fix1/abc/def`
+  
+  Fixes #280
+
+
 v1.5.29 Feb 10, 2022
 =====================
 
