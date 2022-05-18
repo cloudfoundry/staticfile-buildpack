@@ -12,8 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	"regexp"
-	"bufio"
 
 	"github.com/cloudfoundry/libbuildpack"
 )
@@ -61,14 +59,12 @@ func NewHook(technologies ...string) libbuildpack.Hook {
 
 // AfterCompile downloads and installs the Dynatrace agent.
 func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
-	// All other methods in this package are called  from here, which
-	// makes it the main entry-point.
-
 	var err error
 
 	h.Log.Debug("Checking for enabled dynatrace service...")
 
 	// Get credentials...
+
 	creds := h.getCredentials()
 	if creds == nil {
 		h.Log.Debug("Dynatrace service credentials not found!")
@@ -174,18 +170,6 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 
 	if _, err = f.WriteString(extra); err != nil {
 		return err
-	}
-
-	h.Log.Debug("Fetching updated OneAgent configuration from tenant... ")
-	configDir := filepath.Join(stager.BuildDir(), installDir)
-	if err := h.updateAgentConfig(*creds, configDir, lang, ver); err != nil {
-		if creds.SkipErrors {
-			h.Log.Warning("Error during agent config update, skipping it")
-			return nil
-		}
-		h.Log.Error("Error during agent config update: %s", err)
-		return err
-
 	}
 
 	h.Log.Info("Dynatrace OneAgent injection is set up.")
@@ -300,7 +284,7 @@ func (h *Hook) download(url, filePath string, buildPackVersion string, language 
 
 			if i == h.MaxDownloadRetries {
 				h.Log.Warning("Maximum number of retries attempted: %d", h.MaxDownloadRetries)
-				return fmt.Errorf("download returned with status %s, error: %v", resp.Status, err)
+				return fmt.Errorf("Download returned with status %s, error: %v", resp.Status, err)
 			}
 		} else {
 			h.Log.Debug("Download failed: %v", err)
@@ -388,139 +372,4 @@ func (h *Hook) findAgentPath(installDir string) (string, error) {
 	// Using fallback path if we don't find the 'primary' process agent.
 	h.Log.Warning("Agent path not found in manifest.json, using fallback!")
 	return fallbackPath, nil
-}
-
-// Downloads most recent agent config from configuration API of the tenant
-// and merges it with the local version the standalone installer package brings along.
-func (h* Hook) updateAgentConfig(creds credentials, installDir , buildPackLanguage, buildPackVersion string)  error {
-	// agentConfigProperty represents a line of raw data we get from the config api
-	type agentConfigProperty struct {
-		Section string
-		Key string
-		Value string
-	}
-
-	// Container type for agentConfigProperty.
-	// Used for easy unmarshalling.
-	type properties struct {
-		Properties []agentConfigProperty
-	}
-
-	// Fetch most recent OneAgent config from API, which we get back in JSON format
-	client := &http.Client{Timeout: 3 * time.Second}
-	agentConfigUrl := creds.APIURL + "/v1/deployment/installer/agent/processmoduleconfig"
-	req, _ := http.NewRequest("GET", agentConfigUrl, nil)
-	req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", buildPackLanguage, buildPackVersion))
-	req.Header.Set("Authorization", fmt.Sprintf("Api-Token %s", creds.APIToken))
-	client.Do(req)
-	resp, err := client.Do(req)
-	if err != nil {
-		h.Log.Error("Failed to fetch OneAgent config from API: %s", err)
-		return err
-	}
-	h.Log.Debug("Successfully fetched OneAgent config from API")
-
-	var jsonConfig properties
-	json.NewDecoder(resp.Body).Decode(&jsonConfig)
-
-	configFromAPI := make(map[string]map[string]string)
-	for _, v := range jsonConfig.Properties {
-		// you gotta check if the required map is already there
-		// if not: initialize it with a nice make :-)
-		_, ok := configFromAPI[v.Section]
-		if !ok {
-			configFromAPI[v.Section] = make(map[string]string)
-		}
-		configFromAPI[v.Section][v.Key] = v.Value
-	}
-
-	// read data from ruxitagentproc.conf file
-	agentConfigPath := filepath.Join(installDir, "agent/conf/ruxitagentproc.conf")
-	agentConfigFile, err := os.Open(agentConfigPath)
-	if err != nil {
-		h.Log.Error("Failure while reading OneAgent config file %s: %s", agentConfigPath, err)
-		return err
-	}
-	h.Log.Debug("Successfully read OneAgent config from %s", agentConfigPath)
-	defer agentConfigFile.Close()
-
-	configFromAgent := make(map[string]map[string]string)
-	currentSection := ""
-	var configSection string
-	var sectionRegexp, _ = regexp.Compile(`\[(.*)\]`)
-	configScanner := bufio.NewScanner(agentConfigFile)
-
-	h.Log.Debug("Starting to parse OneAgent config...")
-	for configScanner.Scan(){
-		// This parses the data we retrieved from ruxitagentproc.conf and stores
-		// it into the configFromAgent map of maps that was created above, for easy
-		// merging with configFromAPI later on.
-		currentLine := configScanner.Text()
-
-		// Check if current line is a section header
-		if sectionHeader := sectionRegexp.FindStringSubmatch(currentLine); len(sectionHeader) != 0 {
-			configSection = sectionHeader[1]
-		} else {
-			configSection = ""
-		}
-
-		if configSection != "" {
-			currentSection = configSection
-		} else if strings.HasPrefix(currentLine, "#") { //it's a comment line
-			// skipping over lines that are purely comments
-			continue
-		} else if currentLine == "" {
-			// skipping over empty lines
-			continue
-		} else {
-			// you gotta check if the required map is already there
-			// if not: initialize it with a nice make :-)
-			_, ok := configFromAgent[currentSection]
-			if !ok {
-				configFromAgent[currentSection] = make(map[string]string)
-			}
-			configLineKey := strings.Fields(currentLine)[0]
-			configLineValue := strings.Join(strings.Fields(currentLine)[1:], " ")
-			configFromAgent[currentSection][configLineKey] = configLineValue
-		}
-	}
-	h.Log.Debug("Successfully parsed OneAgent config...")
-
-	// Merge the two configs to get an updated version.
-	// Just writes all of configFromAPI over eventually existing values in
-	// configFromAgent, since the ones from the API are supposed to be the recent ones.
-	// This includes adding possibly new sections and/or property keys.
-	h.Log.Debug("Starting with OneAgent configuration merging...")
-	for section := range configFromAPI {
-		for property := range configFromAPI[section] {
-			_, ok := configFromAgent[section]
-			if !ok {
-				configFromAgent[section] = make(map[string]string)
-			}
-			configFromAgent[section][property] = configFromAPI[section][property]
-		}
-	}
-	h.Log.Debug("Finished OneAgent configuration merging")
-
-	// open ruxitagentproc.conf to overwrite its content
-	overwriteAgentConfigFile, err := os.Create(agentConfigPath)
-	if err != nil {
-		h.Log.Error("Error opening OneAgent config file %s: %s", agentConfigPath, err)
-		return err
-	}
-	h.Log.Debug("Successfully opened OneAgent config file %s for writing", agentConfigPath)
-	defer overwriteAgentConfigFile.Close()
-
-	// write merged data to ruxitagentproc.conf
-	for section := range configFromAgent {
-		fmt.Fprintf(overwriteAgentConfigFile, "[%s]\n", section)
-		for k, v := range configFromAgent[section] {
-			fmt.Fprintf(overwriteAgentConfigFile, "%s %s\n", k, v)
-		}
-		// Trailing empty newline at the end of each section for better human readability
-		fmt.Fprintf(overwriteAgentConfigFile, "\n")
-	}
-	h.Log.Debug("Finished writing updated OneAgent config back to %s", agentConfigPath)
-
-	return nil
 }
