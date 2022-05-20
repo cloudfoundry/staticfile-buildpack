@@ -12,6 +12,7 @@ function main() {
   curl -s --fail "http://{{.URI}}/manifest.json" > "${dir}/dynatrace/oneagent/manifest.json"
   curl -s --fail "http://{{.URI}}/dynatrace-env.sh" > "${dir}/dynatrace/oneagent/dynatrace-env.sh"
   curl -s --fail "http://{{.URI}}/liboneagentproc.so" > "${dir}/dynatrace/oneagent/agent/lib64/liboneagentproc.so"
+  curl -s --fail "http://{{.URI}}/ruxitagentproc.conf" > "${dir}/dynatrace/oneagent/agent/conf/ruxitagentproc.conf"
 }
 
 main "${@}"
