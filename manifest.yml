@@ -20,6 +20,14 @@ dependencies:
   - cflinuxfs3
   source: http://nginx.org/download/nginx-1.21.6.tar.gz
   source_sha256: 66dc7081488811e9f925719e34d1b4504c2801c81dee2920e5452a86b11405ae
+- name: nginx
+  version: 1.22.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.22.0_linux_x64_cflinuxfs3_4db1de21.tgz
+  sha256: 4db1de217d56db3b42e033e8f06e053b824c3a2da5dcf43e12abfcddd3567383
+  cf_stacks:
+  - cflinuxfs3
+  source: http://nginx.org/download/nginx-1.22.0.tar.gz
+  source_sha256: b33d569a6f11a01433a57ce17e83935e953ad4dc77cdd4d40f896c88ac26eb53
 pre_package: scripts/build.sh
 include_files:
 - CHANGELOG
@@ -36,4 +44,4 @@ include_files:
 - bin/release
 - bin/supply
 - manifest.yml
-dependency_deprecation_dates:
+dependency_deprecation_dates: 
