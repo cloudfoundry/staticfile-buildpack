@@ -1,3 +1,13 @@
+v1.5.31 Jun 10, 2022
+=====================
+
+* Deprecate Nginx 1.20.x
+
+* Add nginx 1.22.0 for stack(s) cflinuxfs3
+
+* Remove nginx estimated deprecation dates. They were causing confusion to users
+
+
 v1.5.30 May 06, 2022
 =====================
 
