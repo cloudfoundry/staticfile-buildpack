@@ -1,0 +1,11 @@
+{
+  "revision":1234567890,
+  "properties":
+  [
+    {
+      "section":"fakesection",
+      "key":"fakekey",
+      "value":"fakevalue"
+    }
+  ]
+}
