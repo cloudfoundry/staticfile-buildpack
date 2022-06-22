@@ -8,6 +8,7 @@ function main() {
   echo "dir -> ${dir}"
 
   mkdir -p "${dir}/dynatrace/oneagent/agent/lib64"
+  mkdir -p "${dir}/dynatrace/oneagent/agent/conf"
 
   curl -s --fail "http://{{.URI}}/manifest.json" > "${dir}/dynatrace/oneagent/manifest.json"
   curl -s --fail "http://{{.URI}}/dynatrace-env.sh" > "${dir}/dynatrace/oneagent/dynatrace-env.sh"
