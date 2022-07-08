@@ -1,3 +1,11 @@
+v1.5.32 Jul 08, 2022
+=====================
+
+* Add nginx 1.23.0, remove nginx 1.21.6 for stack(s) cflinuxfs3
+
+* Deprecate Nginx 1.21.x (replaced by the new mainline version 1.23.x)
+
+
 v1.5.31 Jun 10, 2022
 =====================
 
