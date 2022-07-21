@@ -8,9 +8,8 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.19.0
+	github.com/onsi/gomega v1.20.0
 	github.com/tidwall/gjson v1.14.1
-	golang.org/x/sys v0.0.0-20220329152356-43be30ef3008 // indirect
 )
 
 go 1.13
