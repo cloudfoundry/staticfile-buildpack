@@ -10,7 +10,7 @@ require (
 	github.com/google/subcommands v1.2.0
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.19.0
+	github.com/onsi/gomega v1.20.0
 	github.com/paketo-buildpacks/packit v1.3.1
 	github.com/pkg/errors v0.9.1
 	github.com/tidwall/gjson v1.12.0
