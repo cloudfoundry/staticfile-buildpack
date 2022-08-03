@@ -19,26 +19,7 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/libbuildpack"
-	"gopkg.in/yaml.v2"
 )
-
-type sha struct {
-	Sha map[string]string `yaml:"sha"`
-}
-
-func readManifest(bpDir string) (Manifest, error) {
-	data, err := ioutil.ReadFile(filepath.Join(bpDir, "manifest.yml"))
-	if err != nil {
-		return Manifest{}, err
-	}
-
-	var manifest Manifest
-	if err := yaml.Unmarshal(data, &manifest); err != nil {
-		return Manifest{}, err
-	}
-
-	return manifest, nil
-}
 
 var CacheDir = filepath.Join(os.Getenv("HOME"), ".buildpack-packager", "cache")
 var Stdout, Stderr io.Writer = os.Stdout, os.Stderr

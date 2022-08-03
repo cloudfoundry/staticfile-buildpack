@@ -16,8 +16,8 @@ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWR
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20220721112542-5ae967e1b05f h1:zHL2Ze/J2pM9VxFaigZoNtPqlBZsJJ+LzcGc/Cv59Ls=
-github.com/cloudfoundry/libbuildpack v0.0.0-20220721112542-5ae967e1b05f/go.mod h1:c7C4sqxVYAV4eTHmENS7Sp1DBZvimZMEFpVRKFynT+o=
+github.com/cloudfoundry/libbuildpack v0.0.0-20220803205337-6407cc253bec h1:3CnSmr3G8nKSa9j6FwyUuXsBGASphew3mA7gvJLTVLs=
+github.com/cloudfoundry/libbuildpack v0.0.0-20220803205337-6407cc253bec/go.mod h1:c7C4sqxVYAV4eTHmENS7Sp1DBZvimZMEFpVRKFynT+o=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
