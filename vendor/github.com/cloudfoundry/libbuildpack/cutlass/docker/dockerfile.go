@@ -34,7 +34,7 @@ func BuildStagingDockerfile(logger lager.Logger, fixturePath, buildpackPath stri
 		instructions = append(instructions, NewDockerfileENV(env))
 	}
 	// HACK around https://github.com/dotcloud/docker/issues/5490
-	instructions = append(instructions, NewDockerfileRUN("mv /usr/sbin/tcpdump /usr/bin/tcpdump"))
+	instructions = append(instructions, NewDockerfileRUN("if [ ! -f /usr/bin/tcpdump ]; then mv /usr/sbin/tcpdump /usr/bin/tcpdump; fi"))
 
 	instructions = append(instructions, NewDockerfileRUN("chmod o+rwx /tmp"))
 	instructions = append(instructions, NewDockerfileRUN("chown vcap /tmp/ -R"))
