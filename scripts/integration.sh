@@ -91,10 +91,11 @@ function specs::run() {
   platform="${4}"
   token="${5}"
 
-  local nodes cached_flag serial_flag
+  local nodes cached_flag serial_flag platform_flag stack_flag token_flag
   cached_flag="--cached=${cached}"
   serial_flag="--serial=true"
   platform_flag="--platform=${platform}"
+  stack_flag="--stack=${stack}"
   token_flag="--github-token=${token}"
   nodes=1
 
@@ -104,7 +105,7 @@ function specs::run() {
   fi
 
   local buildpack_file
-  buildpack_file="$(buildpack::package "1.2.3" "${cached}" "${stack}")"
+  buildpack_file="$(buildpack::package "1.2.3" "${cached}")"
 
   CF_STACK="${stack}" \
   BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
@@ -118,14 +119,14 @@ function specs::run() {
          "${cached_flag}" \
          "${platform_flag}" \
          "${token_flag}" \
+         "${stack_flag}" \
          "${serial_flag}"
 }
 
 function buildpack::package() {
-  local version cached stack
+  local version cached
   version="${1}"
   cached="${2}"
-  stack="${3}"
 
   local name cached_flag
   name="buildpack-v${version}-uncached.zip"
@@ -141,7 +142,6 @@ function buildpack::package() {
   bash "${ROOTDIR}/scripts/package.sh" \
     --version "${version}" \
     --output "${output}" \
-    --stack "${stack}" \
     "${cached_flag}" > /dev/null
 
   printf "%s" "${output}"

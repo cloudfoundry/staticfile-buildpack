@@ -15,7 +15,7 @@ source "${ROOTDIR}/scripts/.util/print.sh"
 
 function main() {
   local stack version cached output
-  stack="$(jq -r -S .stack "${ROOTDIR}/config.json")"
+  stack="any"
   cached="false"
   output="${ROOTDIR}/build/buildpack.zip"
 
@@ -91,12 +91,18 @@ function package::buildpack() {
 
   echo "Building buildpack (version: ${version}, stack: ${stack}, cached: ${cached}, output: ${output})"
 
+  local stack_flag
+  stack_flag="--any-stack"
+  if [[ "${stack}" != "any" ]]; then
+    stack_flag="--stack=${stack}"
+  fi
+
   local file
   file="$(
     buildpack-packager build \
       "--version=${version}" \
       "--cached=${cached}" \
-      "--stack=${stack}" \
+      "${stack_flag}" \
     | xargs -n1 | grep -e '\.zip$'
   )"
 
