@@ -3,7 +3,7 @@ name: Test Pull Request
 on:
   pull_request:
     branches:
-    - develop
+      - develop
 
 jobs:
   unit:
@@ -11,18 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.17.x
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17.x
 
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
 
-    - name: Run Unit Tests
-      run: ./scripts/unit.sh
+      - name: Run Unit Tests
+        run: ./scripts/unit.sh
 
   integration:
     name: Integration Tests
@@ -30,20 +30,20 @@ jobs:
     needs: unit
     steps:
 
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.17.x
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17.x
 
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || true
 
-    - name: Run Integration Tests
-      env:
-        CF_BOT_GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-      run: ./scripts/integration.sh --platform docker --github-token "${CF_BOT_GITHUB_TOKEN}"
+      - name: Run Integration Tests
+        env:
+          CF_BOT_GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+        run: ./scripts/integration.sh --platform docker --github-token "${CF_BOT_GITHUB_TOKEN}"
 
   approve:
     name: Approve Bot PRs
@@ -52,36 +52,51 @@ jobs:
     needs: integration
     steps:
 
-    - name: Check Commit Verification
-      id: unverified-commits
-      uses: paketo-buildpacks/github-config/actions/pull-request/check-unverified-commits@main
-      with:
-        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        repo: ${{ github.repository }}
-        number: ${{ github.event.number }}
+      - name: Check Commit Verification
+        id: unverified-commits
+        uses: paketo-buildpacks/github-config/actions/pull-request/check-unverified-commits@main
+        with:
+          token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          number: ${{ github.event.number }}
 
-    - name: Check for Human Commits
-      id: human-commits
-      uses: paketo-buildpacks/github-config/actions/pull-request/check-human-commits@main
-      with:
-        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        repo: ${{ github.repository }}
-        number: ${{ github.event.number }}
-        bots: 'dependabot[bot],web-flow,cf-buildpacks-eng'
+      - name: Check for Human Commits
+        id: human-commits
+        uses: paketo-buildpacks/github-config/actions/pull-request/check-human-commits@main
+        with:
+          token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          number: ${{ github.event.number }}
+          bots: 'dependabot[bot],web-flow,cf-buildpacks-eng'
 
-    - name: Checkout
-      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
-      uses: actions/checkout@v2
+      - name: Checkout
+        if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
-    - name: Dispatch
-      if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
-      uses: paketo-buildpacks/github-config/actions/dispatch@main
-      with:
-        repos: ${{ github.repository }}
-        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        event: approve-bot-pr
-        payload: |
-          {
-            "number": "${{ github.event.pull_request.number }}",
-            "login": "${{ github.event.pull_request.user.login }}"
-          }
+      - name: Get Tracker Story ID
+        if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+        id: story-id
+        run: |
+          message=$(git log -1 --pretty=%B)
+          story_id=$(echo $message | grep -oE "#[0-9]+" | grep -oE "[0-9]+")
+          if [ -z "$story_id" ]; then
+            echo "::set-output name=story_id::-1"
+          else
+            echo "::set-output name=story_id::$story_id"
+          fi
+
+      - name: Dispatch
+        if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
+        uses: paketo-buildpacks/github-config/actions/dispatch@main
+        with:
+          repos: ${{ github.repository }}
+          token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+          event: approve-bot-pr
+          payload: |
+            {
+              "number": "${{ github.event.pull_request.number }}",
+              "login": "${{ github.event.pull_request.user.login }}",
+              "tracker_story": "${{ steps.story-id.outputs.story_id }}"
+            }
