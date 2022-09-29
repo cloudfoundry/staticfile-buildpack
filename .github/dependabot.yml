@@ -1,12 +1,8 @@
 ---
 version: 2
 updates:
-- package-ecosystem: gomod
-  directory: "/"
-  target-branch: "develop"
-  schedule:
-    interval: daily
-  ignore:
-  - dependency-name: github.com/Dynatrace/libbuildpack-dynatrace
-    versions:
-    - 1.5.0
+  - package-ecosystem: gomod
+    directory: "/"
+    target-branch: "develop"
+    schedule:
+      interval: daily

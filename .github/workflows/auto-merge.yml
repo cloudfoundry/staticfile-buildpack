@@ -3,7 +3,7 @@ name: Auto-Merge
 on:
   repository_dispatch:
     types:
-    - approve-bot-pr
+      - approve-bot-pr
 
 jobs:
   automerge:
@@ -12,34 +12,54 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Fetch Pull Request Details
-      id: pull_request
-      env:
-        NUMBER: ${{ github.event.client_payload.number }}
-        GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-      run: |
-        payload="$(
-          curl "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${NUMBER}" \
-            --silent \
-            --location \
-            --header "Authorization: token ${GITHUB_TOKEN}"
-        )"
+      - name: Fetch Pull Request Details
+        id: pull_request
+        env:
+          NUMBER: ${{ github.event.client_payload.number }}
+          GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+        run: |
+          payload="$(
+            curl "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${NUMBER}" \
+              --silent \
+              --location \
+              --header "Authorization: token ${GITHUB_TOKEN}"
+          )"
+          
+          echo "::set-output name=mergeable_state::$(echo "${payload}" | jq -r -c .mergeable_state)"
 
-        echo "::set-output name=mergeable_state::$(echo "${payload}" | jq -r -c .mergeable_state)"
+      - name: Merge
+        if: ${{ steps.pull_request.outputs.mergeable_state == 'clean' || steps.pull_request.outputs.mergeable_state == 'unstable' }}
+        uses: paketo-buildpacks/github-config/actions/pull-request/merge@main
+        with:
+          token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+          number: ${{ github.event.client_payload.number }}
 
-    - name: Merge
-      if: ${{ steps.pull_request.outputs.mergeable_state == 'clean' || steps.pull_request.outputs.mergeable_state == 'unstable' }}
-      uses: paketo-buildpacks/github-config/actions/pull-request/merge@main
-      with:
-        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        number: ${{ github.event.client_payload.number }}
+      - name: Accept Tracker Story
+        if: ${{ steps.pull_request.outputs.mergeable_state == 'clean' || steps.pull_request.outputs.mergeable_state == 'unstable' }}
+        run: |
+          story_id=${{ github.event.client_payload.tracker_story }}
+          if [ "$story_id" != "-1" ]; then
+            ## Comment with Github PR link
+            curl -X POST \
+              -H "X-TrackerToken: ${{ secrets.TRACKER_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"text\": \"Merged in [PR](https://www.github.com/${GITHUB_REPOSITORY}/pull/${NUMBER})\"}" \
+              "https://www.pivotaltracker.com/services/v5/projects/${{ secrets.TRACKER_PROJECT_ID }}/stories/$story_id/comments"
 
-    - name: Rebase
-      if: ${{ steps.pull_request.outputs.mergeable_state == 'behind' }}
-      uses: paketo-buildpacks/github-config/actions/pull-request/rebase@main
-      with:
-        token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        number: ${{ github.event.client_payload.number }}
+            ## Accept story
+            curl -X PUT \
+              -H "X-TrackerToken: ${{ secrets.TRACKER_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d '{"current_state":"accepted"}' \
+              "https://www.pivotaltracker.com/services/v5/projects/${{ secrets.TRACKER_PROJECT_ID }}/stories/$story_id"
+          fi
+
+      - name: Rebase
+        if: ${{ steps.pull_request.outputs.mergeable_state == 'behind' }}
+        uses: paketo-buildpacks/github-config/actions/pull-request/rebase@main
+        with:
+          token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
+          number: ${{ github.event.client_payload.number }}
