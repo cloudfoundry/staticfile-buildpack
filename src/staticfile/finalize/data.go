@@ -83,6 +83,11 @@ http {
     ''               '';
   }
 
+  map $http_x_forwarded_proto $best_proto {
+    "~^([^,]+),?.*$" $1;
+    ''               '';
+  }
+  
   server {
     {{if .EnableHttp2}}
 	  listen <%= ENV["PORT"] %> http2;
@@ -99,12 +104,12 @@ http {
 
     {{if .ForceHTTPS}}
 
-      if ($http_x_forwarded_proto != "https") {
+      if ($best_proto != "https") {
         return 301 https://$best_host$best_prefix$request_uri;
       }
     {{else}}
       <% if ENV["FORCE_HTTPS"] %>
-        if ($http_x_forwarded_proto != "https") {
+        if ($best_proto != "https") {
           return 301 https://$best_host$best_prefix$request_uri;
         }
       <% end %>
