@@ -595,13 +595,13 @@ var _ = Describe("Compile", func() {
 				<% end %>
 			`)
 			forceHTTPSConf := stripStartWsp(`
-				if ($http_x_forwarded_proto != "https") {
+				if ($best_proto != "https") {
 					return 301 https://$best_host$best_prefix$request_uri;
 				}
 			`)
 			forceHTTPSErb := stripStartWsp(`
 				<% if ENV["FORCE_HTTPS"] %>
-					if ($http_x_forwarded_proto != "https") {
+					if ($best_proto != "https") {
 						return 301 https://$best_host$best_prefix$request_uri;
 					}
 				<% end %>
@@ -614,6 +614,12 @@ var _ = Describe("Compile", func() {
 			`)
 			xForwardedPrefixMappingConf := stripStartWsp(`
 				map $http_x_forwarded_prefix $best_prefix {
+					"~^([^,]+),?.*$" $1;
+					''               '';
+				}
+			`)
+			xForwardedProtoMappingConf := stripStartWsp(`
+				map $http_x_forwarded_proto $best_proto {
 					"~^([^,]+),?.*$" $1;
 					''               '';
 				}
@@ -808,6 +814,7 @@ var _ = Describe("Compile", func() {
 					Expect(string(data)).To(ContainSubstring(forceHTTPSConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
+					Expect(string(data)).To(ContainSubstring(xForwardedProtoMappingConf))
 					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
@@ -821,6 +828,7 @@ var _ = Describe("Compile", func() {
 					Expect(string(data)).To(ContainSubstring(forceHTTPSErb))
 					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
+					Expect(string(data)).To(ContainSubstring(xForwardedProtoMappingConf))
 					Expect(string(data)).To(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
