@@ -10,8 +10,8 @@ github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 ## explicit
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20221007111339-12da67d8a8c4
-## explicit; go 1.13
+# github.com/cloudfoundry/libbuildpack v0.0.0-20221031220135-8f5ee8c4444a
+## explicit; go 1.19
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
 github.com/cloudfoundry/libbuildpack/bratshelper
