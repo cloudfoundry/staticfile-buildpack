@@ -1,3 +1,11 @@
+v1.5.35 Nov 03, 2022
+=====================
+
+* Add nginx 1.23.2, remove nginx 1.23.1 for stack(s) cflinuxfs3
+
+* Add nginx 1.22.1, remove nginx 1.22.0 for stack(s) cflinuxfs3
+
+
 v1.5.34 Oct 13, 2022
 =====================
 
