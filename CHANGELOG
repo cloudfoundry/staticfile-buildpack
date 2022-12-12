@@ -1,3 +1,10 @@
+v1.5.36 Dec 12, 2022
+=====================
+
+* Handle comma separated X-Forwarded-Proto
+  (https://github.com/cloudfoundry/staticfile-buildpack/pull/318)
+
+
 v1.5.35 Nov 03, 2022
 =====================
 
