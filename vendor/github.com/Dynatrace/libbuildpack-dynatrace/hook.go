@@ -178,7 +178,7 @@ func (h *Hook) AfterCompile(stager *libbuildpack.Stager) error {
 
 	h.Log.Debug("Fetching updated OneAgent configuration from tenant... ")
 	configDir := filepath.Join(stager.BuildDir(), installDir)
-	if err := h.updateAgentConfig(*creds, configDir, lang, ver); err != nil {
+	if err := h.updateAgentConfig(creds, configDir, lang, ver); err != nil {
 		if creds.SkipErrors {
 			h.Log.Warning("Error during agent config update, skipping it")
 			return nil
@@ -322,9 +322,9 @@ func (h *Hook) getDownloadURL(c *credentials) string {
 		return c.CustomOneAgentURL
 	}
 
-	apiURL := c.APIURL
-	if apiURL == "" {
-		apiURL = fmt.Sprintf("https://%s.live.dynatrace.com/api", c.EnvironmentID)
+	apiURL, err := h.ensureApiURL(c)
+	if err != nil {
+		return ""
 	}
 
 	u, err := url.ParseRequestURI(fmt.Sprintf("%s/v1/deployment/installer/agent/unix/paas-sh/latest", apiURL))
@@ -344,6 +344,27 @@ func (h *Hook) getDownloadURL(c *credentials) string {
 	u.RawQuery = qv.Encode() // Parameters will be sorted by key.
 
 	return u.String()
+}
+
+// ensureApiURL makes sure that a valid URL was provided via the cf service.
+// If the c.APIURL property is empty, we assume this is a PaaS setting and generate
+// a proper API URL for a PaaS tenant.
+func (h *Hook) ensureApiURL(creds *credentials) (string, error) {
+	apiURL := creds.APIURL
+	if apiURL == "" {
+		apiURL = fmt.Sprintf("https://%s.live.dynatrace.com/api", creds.EnvironmentID)
+		h.Log.Debug("No apiurl configured, assuming PaaS tenant and setting apiurl to %s", apiURL)
+	} else {
+		h.Log.Debug("apiurl parameter configured is set to %s, no need to apply PaaS fallback", apiURL)
+	}
+
+	url, err := url.ParseRequestURI(apiURL)
+	if err != nil {
+		h.Log.Error("Failed to verify the configured API URL: %s", err)
+		return "", err
+	}
+
+	return url.String(), nil
 }
 
 // findAgentPath reads the manifest file included in the OneAgent package, and looks
@@ -392,7 +413,7 @@ func (h *Hook) findAgentPath(installDir string) (string, error) {
 
 // Downloads most recent agent config from configuration API of the tenant
 // and merges it with the local version the standalone installer package brings along.
-func (h* Hook) updateAgentConfig(creds credentials, installDir , buildPackLanguage, buildPackVersion string)  error {
+func (h* Hook) updateAgentConfig(creds *credentials, installDir , buildPackLanguage, buildPackVersion string)  error {
 	// agentConfigProperty represents a line of raw data we get from the config api
 	type agentConfigProperty struct {
 		Section string
@@ -408,7 +429,11 @@ func (h* Hook) updateAgentConfig(creds credentials, installDir , buildPackLangua
 
 	// Fetch most recent OneAgent config from API, which we get back in JSON format
 	client := &http.Client{Timeout: 3 * time.Second}
-	agentConfigUrl := creds.APIURL + "/v1/deployment/installer/agent/processmoduleconfig"
+	apiURL, err := h.ensureApiURL(creds)
+	if err != nil {
+		return err
+	}
+	agentConfigUrl := apiURL + "/v1/deployment/installer/agent/processmoduleconfig"
 	req, _ := http.NewRequest("GET", agentConfigUrl, nil)
 	req.Header.Set("User-Agent", fmt.Sprintf("cf-%s-buildpack/%s", buildPackLanguage, buildPackVersion))
 	req.Header.Set("Authorization", fmt.Sprintf("Api-Token %s", creds.APIToken))

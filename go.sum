@@ -4,6 +4,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/toml v0.4.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/Dynatrace/libbuildpack-dynatrace v1.5.0 h1:EZ2fSooBGd179dFbM673l1RE7zGfKuyVUujl/plWsnU=
 github.com/Dynatrace/libbuildpack-dynatrace v1.5.0/go.mod h1:TojYXsxk1r+TaVOTUOWKyX2hAOzbvb+BsQGxUZ8Cb2s=
+github.com/Dynatrace/libbuildpack-dynatrace v1.5.1 h1:t9HX2uNILKdLsU0D8qCTcVjnQiX6xnQfVOCo5BO38JY=
+github.com/Dynatrace/libbuildpack-dynatrace v1.5.1/go.mod h1:YsiN8yLiXmv0PzBe+Fo17gWxrA2HF6vMUTv49WuoY6o=
 github.com/Masterminds/semver v1.4.2/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
@@ -15,6 +17,8 @@ github.com/cheggaaa/pb/v3 v3.0.8/go.mod h1:UICbiLec/XO6Hw6k+BHEtHeQFzzBH4i2/qk/o
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
 github.com/cloudfoundry/libbuildpack v0.0.0-20221031220135-8f5ee8c4444a h1:RiHgwRfNbImnlPOJCMHuXY1g7NUzsFYLqP7mQN8HXmI=
 github.com/cloudfoundry/libbuildpack v0.0.0-20221031220135-8f5ee8c4444a/go.mod h1:+WS8HO6SzyGOZ3G6Sc+Tqb6WNqvOriF+Lu0z0cVBweY=
+github.com/cloudfoundry/libbuildpack v0.0.0-20221115221325-f9d1b0cc562f h1:z5swN43NOZNrqI4GKAwQ4v3LFpZ+73VcmdQDc8Jid18=
+github.com/cloudfoundry/libbuildpack v0.0.0-20221115221325-f9d1b0cc562f/go.mod h1:Pw3P7uRWL0GrU2qWd5yylqMMqq/l39hUqiFohA2jry0=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
