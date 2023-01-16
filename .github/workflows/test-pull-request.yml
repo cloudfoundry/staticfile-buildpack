@@ -42,8 +42,8 @@ jobs:
 
       - name: Run Integration Tests
         env:
-          CF_BOT_GITHUB_TOKEN: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-        run: ./scripts/integration.sh --platform docker --github-token "${CF_BOT_GITHUB_TOKEN}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./scripts/integration.sh --platform docker --github-token "${GITHUB_TOKEN}"
 
   approve:
     name: Approve Bot PRs
