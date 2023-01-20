@@ -13,8 +13,8 @@ github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdn
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cheggaaa/pb/v3 v3.0.8/go.mod h1:UICbiLec/XO6Hw6k+BHEtHeQFzzBH4i2/qk/ow1EJTA=
 github.com/cloudfoundry/libbuildpack v0.0.0-20181224210246-78d931650f60/go.mod h1:KeoPc96Iq+nQVhfgjoVN3tNHT0P2NjGCYzCezJi5OW4=
-github.com/cloudfoundry/libbuildpack v0.0.0-20221115221325-f9d1b0cc562f h1:z5swN43NOZNrqI4GKAwQ4v3LFpZ+73VcmdQDc8Jid18=
-github.com/cloudfoundry/libbuildpack v0.0.0-20221115221325-f9d1b0cc562f/go.mod h1:Pw3P7uRWL0GrU2qWd5yylqMMqq/l39hUqiFohA2jry0=
+github.com/cloudfoundry/libbuildpack v0.0.0-20221216180909-3fd083482e26 h1:PMzw8RgYxAJeib8s/CUmR2XNw76+JUoJgQ0lPUSLS8M=
+github.com/cloudfoundry/libbuildpack v0.0.0-20221216180909-3fd083482e26/go.mod h1:pBTNHPaZ66dlLv1iev94BOBKSZye7OmnkyE0OY+rlJ4=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
