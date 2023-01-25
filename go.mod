@@ -3,11 +3,11 @@ module github.com/cloudfoundry/staticfile-buildpack
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.5.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/libbuildpack v0.0.0-20221216180909-3fd083482e26
+	github.com/cloudfoundry/libbuildpack v0.0.0-20230120161322-3c5a208dff10
 	github.com/golang/mock v1.6.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.24.2
+	github.com/onsi/gomega v1.25.0
 	github.com/tidwall/gjson v1.14.4
 )
 
@@ -22,9 +22,9 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/net v0.4.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
