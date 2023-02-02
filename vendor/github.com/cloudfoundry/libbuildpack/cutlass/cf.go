@@ -201,15 +201,17 @@ func CreateOrUpdateBuildpack(language, file, stack string) error {
 }
 
 func (a *App) ConfirmBuildpack(version string) error {
-	if !strings.Contains(a.Stdout.String(), fmt.Sprintf("Buildpack version %s\n", version)) {
+	output := a.Stdout.String()
+	if !strings.Contains(output, fmt.Sprintf("Buildpack version %s\n", version)) {
 		var versionLine string
 		for _, line := range strings.Split(a.Stdout.String(), "\n") {
 			if versionLine == "" && strings.Contains(line, " Buildpack version ") {
 				versionLine = line
 			}
 		}
-		return fmt.Errorf("Wrong buildpack version. Expected '%s', but this was logged: %s", version, versionLine)
+		return fmt.Errorf("Wrong buildpack version. Expected '%q', but this was logged: %q\nOutput: %s", version, versionLine, output)
 	}
+
 	return nil
 }
 
@@ -355,6 +357,7 @@ func (a *App) PushNoStart() error {
 		a.logCmd.Stderr = DefaultStdoutStderr
 		a.Stdout = &Buffer{}
 		a.logCmd.Stdout = a.Stdout
+		a.logCmd.Env = append(os.Environ(), "CF_DIAL_TIMEOUT=60")
 		if err := a.logCmd.Start(); err != nil {
 			return err
 		}
