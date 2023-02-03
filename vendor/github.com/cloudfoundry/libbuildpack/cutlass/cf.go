@@ -353,17 +353,31 @@ func (a *App) PushNoStart() error {
 	}
 
 	if a.logCmd == nil {
-		a.logCmd = exec.Command("cf", "logs", a.Name)
-		a.logCmd.Stderr = DefaultStdoutStderr
 		a.Stdout = &Buffer{}
-		a.logCmd.Stdout = a.Stdout
-		a.logCmd.Env = append(os.Environ(), "CF_DIAL_TIMEOUT=60")
-		if err := a.logCmd.Start(); err != nil {
-			return err
-		}
+		go a.reconnectLogs()
 	}
 
 	return nil
+}
+
+func (a *App) reconnectLogs() {
+	for {
+		if a.Stdout == nil {
+			return
+		}
+
+		a.logCmd = exec.Command("cf", "logs", a.Name)
+		a.logCmd.Stderr = DefaultStdoutStderr
+		a.logCmd.Stdout = a.Stdout
+
+		err := a.logCmd.Run()
+		if err != nil {
+			fmt.Fprintln(DefaultStdoutStderr, err)
+			continue
+		}
+
+		return
+	}
 }
 
 func (a *App) V3Push() error {
@@ -493,9 +507,13 @@ func (a *App) DownloadDroplet(path string) error {
 
 func (a *App) Destroy() error {
 	if a.logCmd != nil && a.logCmd.Process != nil {
+		a.Stdout = nil
+
 		if err := a.logCmd.Process.Kill(); err != nil {
 			return err
 		}
+
+		a.logCmd = nil
 	}
 
 	command := exec.Command("cf", "delete", "-f", a.Name)
