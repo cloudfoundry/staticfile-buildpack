@@ -1,7 +1,7 @@
 module github.com/cloudfoundry/staticfile-buildpack
 
 require (
-	github.com/Dynatrace/libbuildpack-dynatrace v1.5.0
+	github.com/Dynatrace/libbuildpack-dynatrace v1.5.2
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cloudfoundry/libbuildpack v0.0.0-20230202173042-e0fe4bc5c1ef
 	github.com/golang/mock v1.6.0
