@@ -1,3 +1,11 @@
+v1.5.39 Feb 17, 2023
+=====================
+
+* update libbuildpack-dynatrace to 1.5.2
+
+* Bump github.com/onsi/gomega from 1.26.0 to 1.27.0
+
+
 v1.5.38 Feb 13, 2023
 =====================
 
