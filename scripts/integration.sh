@@ -25,7 +25,7 @@ USAGE
 }
 
 function main() {
-  local src stack platform token
+  local src stack platform token cached parallel
   src="$(find "${ROOTDIR}/src" -mindepth 1 -maxdepth 1 -type d )"
   stack="${CF_STACK:-$(jq -r -S .stack "${ROOTDIR}/config.json")}"
   platform="cf"
@@ -39,6 +39,16 @@ function main() {
 
       --github-token)
         token="${2}"
+        shift 2
+        ;;
+
+      --cached)
+        cached="${2}"
+        shift 2
+        ;;
+
+      --parallel)
+        parallel="${2}"
         shift 2
         ;;
 
@@ -64,10 +74,15 @@ function main() {
     fi
   fi
 
-  IFS=$'\n' read -r -d '' -a matrix < <(
-    jq -r -S -c .integration.matrix[] "${ROOTDIR}/config.json" \
-      && printf "\0"
-  )
+  declare -a matrix
+  if [[ "${cached:-}" != "" && "${parallel:-}" != "" ]]; then
+    matrix+=("{\"cached\":${cached},\"parallel\":${parallel}}")
+  else
+    IFS=$'\n' read -r -d '' -a matrix < <(
+      jq -r -S -c .integration.matrix[] "${ROOTDIR}/config.json" \
+        && printf "\0"
+    )
+  fi
 
   util::tools::buildpack-packager::install --directory "${ROOTDIR}/.bin"
   util::tools::cf::install --directory "${ROOTDIR}/.bin"
