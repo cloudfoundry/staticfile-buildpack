@@ -116,22 +116,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Get Tracker Story ID
-        if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
-        id: story-id
-        run: |
-          if [[ "${{ github.event.pull_request.user.login }}" == "cf-buildpacks-eng" ]]; then
-            message=$(git log -1 --pretty=%B)
-            story_id=$(echo $message | grep -oE "#[0-9]+" | grep -oE "[0-9]+")
-            if [ -z "$story_id" ]; then
-              echo "::set-output name=story_id::-1"
-            else
-              echo "::set-output name=story_id::$story_id"
-            fi
-          else
-            echo "::set-output name=story_id::-1"
-          fi
-
       - name: Dispatch
         if: steps.human-commits.outputs.human_commits == 'false' && steps.unverified-commits.outputs.unverified_commits == 'false'
         uses: paketo-buildpacks/github-config/actions/dispatch@main
