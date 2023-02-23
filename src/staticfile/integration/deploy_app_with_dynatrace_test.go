@@ -2,6 +2,7 @@ package integration_test
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"time"
 
@@ -21,6 +22,11 @@ var _ = Describe("CF Staticfile Buildpack", func() {
 
 	BeforeEach(func() {
 		dynatraceAPI = cutlass.New(Fixtures("fake_dynatrace_api"))
+		// TODO: remove this once go-buildpack runs on cflinuxfs4
+		// This is done to have the dynatrace broker app written in go up and running
+		if os.Getenv("CF_STACK") == "cflinuxfs4" {
+			dynatraceAPI.Stack = "cflinuxfs3"
+		}
 		dynatraceAPI.SetEnv("BP_DEBUG", "true")
 
 		Expect(dynatraceAPI.Push()).To(Succeed())
