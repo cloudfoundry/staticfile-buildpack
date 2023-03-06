@@ -20,7 +20,7 @@ jobs:
         uses: cloudfoundry/buildpacks-github-config/actions/dependency/deprecation-list@main
         with:
           buildpack: .
-          buffer-days: 30
+          buffer-days: 10
 
       - name: File Issue
         if: steps.deprecations.outputs.list != ''
