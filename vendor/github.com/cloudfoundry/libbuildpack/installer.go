@@ -87,17 +87,17 @@ func (i *Installer) InstallDependency(dep Dependency, outputDir string) error {
 
 func (i *Installer) warnNewerPatch(dep Dependency) error {
 
-	if strings.Contains(dep.Version, "preview") {
-		i.manifest.log.Warning("You are using the preview version %s of %s", dep.Version, dep.Name)
-		return nil
-	}
-
-	versions := i.manifest.AllDependencyVersions(dep.Name)
-
 	v, err := semver.NewVersion(dep.Version)
 	if err != nil {
 		return nil
 	}
+
+	if v.Prerelease() != "" {
+		i.manifest.log.Warning("You are using the pre-release version %s of %s", dep.Version, dep.Name)
+		return nil
+	}
+
+	versions := i.manifest.AllDependencyVersions(dep.Name)
 
 	minor := fmt.Sprintf("%v", v.Minor())
 	versionLine := *i.GetVersionLine()
