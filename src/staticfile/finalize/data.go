@@ -178,6 +178,7 @@ types {
   font/ttf ttf;
   font/woff woff;
   font/woff2 woff2;
+  font/otf otf;
   text/mathml mml;
   text/plain txt;
   text/vnd.sun.j2me.app-descriptor jad;
