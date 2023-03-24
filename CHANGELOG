@@ -1,3 +1,11 @@
+v1.6.1 Mar 23, 2023
+====================
+
+* Don't use ERB to template nginx.conf
+* Bump github.com/onsi/gomega from 1.27.2 to 1.27.4
+* Bump github.com/onsi/gomega from 1.27.1 to 1.27.2
+
+
 v1.6.0 Feb 24, 2023
 =====================
 
