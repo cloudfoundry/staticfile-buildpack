@@ -19,8 +19,20 @@ const (
 export APP_ROOT=$HOME
 export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH
 
-mv $APP_ROOT/nginx/conf/nginx.conf $APP_ROOT/nginx/conf/nginx.conf.erb
-erb $APP_ROOT/nginx/conf/nginx.conf.erb > $APP_ROOT/nginx/conf/nginx.conf
+sed -i "s#((APP_ROOT))#${APP_ROOT}#" "${APP_ROOT}/nginx/conf/nginx.conf"
+sed -i "s#((PORT))#${PORT}#" "${APP_ROOT}/nginx/conf/nginx.conf"
+
+if [[ -n "${ENABLE_HTTP2}" ]]; then
+	sed -i "s#((LISTEN_DIRECTIVE))#listen ${PORT} http2;#" "${APP_ROOT}/nginx/conf/nginx.conf"
+else
+	sed -i "s#((LISTEN_DIRECTIVE))#listen ${PORT};#" "${APP_ROOT}/nginx/conf/nginx.conf"
+fi
+
+if [[ -n "${FORCE_HTTPS}" ]]; then
+	sed -i 's#((FORCE_HTTPS_DIRECTIVE))#if ($best_proto != "https") { return 301 https://$best_host$best_prefix$request_uri; }#' "${APP_ROOT}/nginx/conf/nginx.conf"
+else
+	sed -i 's#((FORCE_HTTPS_DIRECTIVE))##' "${APP_ROOT}/nginx/conf/nginx.conf"
+fi
 
 if [[ ! -f $APP_ROOT/nginx/logs/access.log ]]; then
     mkfifo $APP_ROOT/nginx/logs/access.log
@@ -46,13 +58,13 @@ nginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf
 worker_processes 1;
 daemon off;
 
-error_log <%= ENV["APP_ROOT"] %>/nginx/logs/error.log;
+error_log ((APP_ROOT))/nginx/logs/error.log;
 events { worker_connections 1024; }
 
 http {
   charset utf-8;
   log_format cloudfoundry '$http_x_forwarded_for - $http_referer - [$time_local] "$request" $status $body_bytes_sent';
-  access_log <%= ENV["APP_ROOT"] %>/nginx/logs/access.log cloudfoundry;
+  access_log ((APP_ROOT))/nginx/logs/access.log cloudfoundry;
   default_type application/octet-stream;
   include mime.types;
   sendfile on;
@@ -70,7 +82,7 @@ http {
 
   tcp_nopush on;
   keepalive_timeout 30;
-  port_in_redirect off; # Ensure that redirects don't include the internal container PORT - <%= ENV["PORT"] %>
+  port_in_redirect off; # Ensure that redirects don't include the internal container PORT - ((PORT))
   server_tokens off;
 
   map $http_x_forwarded_host $best_host {
@@ -90,17 +102,13 @@ http {
   
   server {
     {{if .EnableHttp2}}
-	  listen <%= ENV["PORT"] %> http2;
+	  listen ((PORT)) http2;
     {{else}}
-      <% if ENV["ENABLE_HTTP2"] %>
-	    listen <%= ENV["PORT"] %> http2;
-      <% else %>
-	    listen <%= ENV["PORT"] %>;
-      <% end %>
+		((LISTEN_DIRECTIVE))
     {{end}}
     server_name localhost;
 
-    root <%= ENV["APP_ROOT"] %>/public;
+    root ((APP_ROOT))/public;
 
     {{if .ForceHTTPS}}
 
@@ -108,11 +116,7 @@ http {
         return 301 https://$best_host$best_prefix$request_uri;
       }
     {{else}}
-      <% if ENV["FORCE_HTTPS"] %>
-        if ($best_proto != "https") {
-          return 301 https://$best_host$best_prefix$request_uri;
-        }
-      <% end %>
+		((FORCE_HTTPS_DIRECTIVE))
     {{end}}
 
 
@@ -132,7 +136,7 @@ http {
 
       {{if .BasicAuth}}
         auth_basic "Restricted";  #For Basic Auth
-        auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
+        auth_basic_user_file ((APP_ROOT))/nginx/conf/.htpasswd;
       {{end}}
 
       {{if .SSI}}

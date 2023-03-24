@@ -585,26 +585,12 @@ var _ = Describe("Compile", func() {
         }
 			`)
 			enableHttp2Conf := stripStartWsp(`
-				listen <%= ENV["PORT"] %> http2;
-			`)
-			enableHttp2Erb := stripStartWsp(`
-				<% if ENV["ENABLE_HTTP2"] %>
-				  listen <%= ENV["PORT"] %> http2;
-				<% else %>
-				  listen <%= ENV["PORT"] %>;
-				<% end %>
+				listen ((PORT)) http2;
 			`)
 			forceHTTPSConf := stripStartWsp(`
 				if ($best_proto != "https") {
 					return 301 https://$best_host$best_prefix$request_uri;
 				}
-			`)
-			forceHTTPSErb := stripStartWsp(`
-				<% if ENV["FORCE_HTTPS"] %>
-					if ($best_proto != "https") {
-						return 301 https://$best_host$best_prefix$request_uri;
-					}
-				<% end %>
 			`)
 			xForwardedHostMappingConf := stripStartWsp(`
 				map $http_x_forwarded_host $best_host {
@@ -626,7 +612,7 @@ var _ = Describe("Compile", func() {
 			`)
 			basicAuthConf := stripStartWsp(`
         auth_basic "Restricted";  #For Basic Auth
-        auth_basic_user_file <%= ENV["APP_ROOT"] %>/nginx/conf/.htpasswd;
+        auth_basic_user_file ((APP_ROOT))/nginx/conf/.htpasswd;
 			`)
 
 			Context("host_dot_files is set in staticfile", func() {
@@ -791,7 +777,7 @@ var _ = Describe("Compile", func() {
 				It("the listener uses the http2 directive", func() {
 					data := readNginxConfAndStrip()
 					Expect(string(data)).To(ContainSubstring(enableHttp2Conf))
-					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["ENABLE_HTTP2"] %>`))
+					Expect(string(data)).NotTo(ContainSubstring(`((LISTEN_DIRECTIVE))`))
 				})
 			})
 
@@ -801,7 +787,7 @@ var _ = Describe("Compile", func() {
 				})
 				It("using the http2 directive depends on ENV['ENABLE_HTTP2']", func() {
 					data := readNginxConfAndStrip()
-					Expect(string(data)).To(ContainSubstring(enableHttp2Erb))
+					Expect(string(data)).To(ContainSubstring(`((LISTEN_DIRECTIVE))`))
 				})
 			})
 
@@ -815,7 +801,6 @@ var _ = Describe("Compile", func() {
 					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedProtoMappingConf))
-					Expect(string(data)).NotTo(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
 
@@ -825,11 +810,10 @@ var _ = Describe("Compile", func() {
 				})
 				It("the 301 redirect does depend on ENV['FORCE_HTTPS']", func() {
 					data := readNginxConfAndStrip()
-					Expect(string(data)).To(ContainSubstring(forceHTTPSErb))
+					Expect(string(data)).To(ContainSubstring(`((FORCE_HTTPS_DIRECTIVE))`))
 					Expect(string(data)).To(ContainSubstring(xForwardedHostMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedPrefixMappingConf))
 					Expect(string(data)).To(ContainSubstring(xForwardedProtoMappingConf))
-					Expect(string(data)).To(ContainSubstring(`<% if ENV["FORCE_HTTPS"] %>`))
 				})
 			})
 
