@@ -1,3 +1,15 @@
+v1.6.2 Apr 06, 2023
+====================
+
+* Add nginx 1.23.4, remove nginx 1.23.3
+  for stack(s) cflinuxfs3, cflinuxfs4
+  (https://www.pivotaltracker.com/story/show/184817130)
+
+* Update libbuildpack
+
+* Bump github.com/onsi/gomega from 1.27.5 to 1.27.6
+
+
 v1.6.1 Mar 23, 2023
 ====================
 
