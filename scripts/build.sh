@@ -29,6 +29,7 @@ function main() {
         output="${output}.exe"
       fi
 
+      CGO_ENABLED=0 \
       GOOS="${os}" \
         go build \
           -mod vendor \
