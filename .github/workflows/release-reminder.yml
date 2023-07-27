@@ -32,6 +32,7 @@ jobs:
         if: github.repository == 'cloudfoundry/php-buildpack'
         run: |
           echo 'task=* Bump PHP modules. See [doc](https://github.com/cloudfoundry/buildpacks-ci/tree/master/scripts/php-modules#pre-buildpack-release-task)' >> "${GITHUB_OUTPUT}"
+          echo 'title=Bump PHP Modules and ' >> "${GITHUB_OUTPUT}"
 
       - name: File Issue
         id: file-issue
@@ -39,7 +40,7 @@ jobs:
         with:
           token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
           repo: ${{ github.repository }}
-          issue_title: "Release: ${{ github.event.repository.name }} (${{ steps.month.outputs.month }})"
+          issue_title: "${{ steps.php-specific.outputs.title }}Release: ${{ github.event.repository.name }} (${{ steps.month.outputs.month }})"
           issue_body: |
             Release reminder for ${{ github.event.repository.name }}
 
