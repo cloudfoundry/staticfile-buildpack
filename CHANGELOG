@@ -1,3 +1,10 @@
+v1.6.6 Aug 14, 2023
+====================
+
+* Bump github.com/tidwall/gjson from 1.14.4 to 1.16.0
+* Updating github-config
+
+
 v1.6.5 Jul 10, 2023
 ====================
 
