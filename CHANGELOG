@@ -1,3 +1,9 @@
+v1.6.7 Sep 07, 2023
+====================
+
+* Add nginx 1.25.2, remove nginx 1.25.1 for stack(s) cflinuxfs4, cflinuxfs3
+
+
 v1.6.6 Aug 14, 2023
 ====================
 
