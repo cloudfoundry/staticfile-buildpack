@@ -18,7 +18,7 @@ function main() {
 
   mkdir -p "${dir}"
 
-  if [[ ! -f "${dir}/go/bin/go" ]]; then
+  if [[ ! -f "${dir}/bin/go" ]]; then
     local url
     # TODO: use exact stack based dep, after go buildpack has cflinuxfs4 support
     #url="https://buildpacks.cloudfoundry.org/dependencies/go/go_${version}_linux_x64_${CF_STACK}_${expected_sha:0:8}.tgz"
