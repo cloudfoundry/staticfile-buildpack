@@ -18,6 +18,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	backoff "github.com/cenkalti/backoff/v4"
 )
 
 func init() {
@@ -345,18 +347,39 @@ func CheckSha256(filePath, expectedSha256 string) error {
 	return nil
 }
 
-func downloadFile(url, destFile string) error {
-	resp, err := http.Get(url)
+func downloadFile(url string, destFile string, retryTimeLimit time.Duration, retryTimeInitialInterval time.Duration, logger *Logger) error {
+	bo := backoff.NewExponentialBackOff()
+	bo.MaxElapsedTime = retryTimeLimit
+	bo.InitialInterval = retryTimeInitialInterval
+
+	var resp *http.Response
+	var err error
+
+	operation := func() error {
+		resp, err = http.Get(url)
+
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode >= 400 {
+			return fmt.Errorf("%s", resp.Status)
+		}
+		return writeToFile(resp.Body, destFile, 0666)
+	}
+
+	notify := func(err error, duration time.Duration) {
+		logger.Info("error: %v, retrying in %v...", err, duration)
+	}
+
+	err = backoff.RetryNotify(operation, bo, notify)
+
 	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return fmt.Errorf("could not download: %d", resp.StatusCode)
+		return fmt.Errorf("could not download: %s", err)
 	}
 
-	return writeToFile(resp.Body, destFile, 0666)
+	return nil
 }
 
 func writeToFile(source io.Reader, destFile string, mode os.FileMode) error {

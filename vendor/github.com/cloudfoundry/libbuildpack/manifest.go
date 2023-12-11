@@ -154,8 +154,6 @@ func (m *Manifest) CheckBuildpackVersion(cacheDir string) {
 	if md.Version != version {
 		m.log.Warning("buildpack version changed from %s to %s", md.Version, version)
 	}
-
-	return
 }
 
 func (m *Manifest) StoreBuildpackMetadata(cacheDir string) error {
@@ -279,13 +277,13 @@ func deleteBadFile(entry *ManifestEntry, outputFile string) error {
 	return nil
 }
 
-func downloadDependency(entry *ManifestEntry, outputFile string, logger *Logger) error {
+func downloadDependency(entry *ManifestEntry, outputFile string, logger *Logger, retryTimeLimit time.Duration, retryTimeInitialInterval time.Duration) error {
 	filteredURI, err := filterURI(entry.URI)
 	if err != nil {
 		return err
 	}
 	logger.Info("Download [%s]", filteredURI)
-	err = downloadFile(entry.URI, outputFile)
+	err = downloadFile(entry.URI, outputFile, retryTimeLimit, retryTimeInitialInterval, logger)
 	if err != nil {
 		return err
 	}

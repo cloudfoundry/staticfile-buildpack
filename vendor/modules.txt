@@ -10,7 +10,10 @@ github.com/Masterminds/semver
 # github.com/blang/semver v3.5.1+incompatible
 ## explicit
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20230331144814-0b11b8e0551a
+# github.com/cenkalti/backoff/v4 v4.2.1
+## explicit; go 1.18
+github.com/cenkalti/backoff/v4
+# github.com/cloudfoundry/libbuildpack v0.0.0-20231211162543-86d10e150195
 ## explicit; go 1.19
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner
