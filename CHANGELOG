@@ -1,3 +1,9 @@
+v1.6.10 Feb 14, 2024
+=====================
+
+* Update Dynatrace tests to enable it on envs w/o preinstalled fs3 BP (#405)
+
+
 v1.6.9 Dec 13, 2023
 ====================
 
