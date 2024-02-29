@@ -26,7 +26,7 @@ jobs:
                 echo "It's the second Thursday of the month"
                 echo "bool=true" >> "${GITHUB_OUTPUT}"
             # fourth thursday of the month will always be between day 21 and 28 (inclusive)
-            if [[ "$day_of_month" -ge "22" && "$day_of_month" -le "28" ]]; then
+            elif [[ "$day_of_month" -ge "22" && "$day_of_month" -le "28" ]]; then
                 echo "It's the fourth Thursday of the month"
                 echo "bool=true" >> "${GITHUB_OUTPUT}"
             else
