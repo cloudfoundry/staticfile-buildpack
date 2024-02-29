@@ -22,11 +22,11 @@ jobs:
             day_of_month=$(date +%d)
             # Check if it's the second or fourth Thursday of the month
             # second thursday of the month will always be between day 8 and 14 (inclusive)
-            if [[ "$day_of_month" -ge "8" && "$day_of_month" -le "14" ]; then
+            if [[ "$day_of_month" -ge "8" && "$day_of_month" -le "14" ]]; then
                 echo "It's the second Thursday of the month"
                 echo "bool=true" >> "${GITHUB_OUTPUT}"
             # fourth thursday of the month will always be between day 21 and 28 (inclusive)
-            if [[ "$day_of_month" -ge "22" && "$day_of_month" -le "28" ]; then
+            if [[ "$day_of_month" -ge "22" && "$day_of_month" -le "28" ]]; then
                 echo "It's the fourth Thursday of the month"
                 echo "bool=true" >> "${GITHUB_OUTPUT}"
             else
