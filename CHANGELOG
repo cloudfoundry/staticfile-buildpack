@@ -1,3 +1,11 @@
+v1.6.11 Mar 01, 2024
+=====================
+
+* Add nginx 1.25.4, remove nginx 1.25.3 (#408)
+  for stack(s) cflinuxfs4, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/187047410)
+
+
 v1.6.10 Feb 14, 2024
 =====================
 
