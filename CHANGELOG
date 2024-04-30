@@ -1,3 +1,17 @@
+v1.6.13 Apr 30, 2024
+=====================
+
+* Add nginx 1.26.0, remove 1.24.0
+  for stack(s) cflinuxfs3, cflinuxfs4
+  (https://www.pivotaltracker.com/story/show/187519048)
+
+* Add nginx 1.25.5, remove nginx 1.25.4
+  for stack(s) cflinuxfs4, cflinuxfs3
+  (https://www.pivotaltracker.com/story/show/187441964)
+
+* add codeowners (#418)
+
+
 v1.6.12 Apr 12, 2024
 =====================
 
