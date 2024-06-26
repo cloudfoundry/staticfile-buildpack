@@ -36,6 +36,22 @@ dependencies:
   - cflinuxfs4
   source: http://nginx.org/download/nginx-1.26.1.tar.gz
   source_sha256: f9187468ff2eb159260bfd53867c25ff8e334726237acf227b9e870e53d3e36b
+- name: nginx
+  version: 1.27.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.27.0_linux_x64_cflinuxfs3_106c1399.tgz
+  sha256: 106c13992a5f550bdc3278153712fcbcc36dab4cc73f9cabe0a5077f30d7a135
+  cf_stacks:
+  - cflinuxfs3
+  source: http://nginx.org/download/nginx-1.27.0.tar.gz
+  source_sha256: b7230e3cf87eaa2d4b0bc56aadc920a960c7873b9991a1b66ffcc08fc650129c
+- name: nginx
+  version: 1.27.0
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.27.0_linux_x64_cflinuxfs4_17c5ba9b.tgz
+  sha256: 17c5ba9bbeb7b6bd4db39c8cef41013a39cc129b3df8a5915f1ba023a889265e
+  cf_stacks:
+  - cflinuxfs4
+  source: http://nginx.org/download/nginx-1.27.0.tar.gz
+  source_sha256: b7230e3cf87eaa2d4b0bc56aadc920a960c7873b9991a1b66ffcc08fc650129c
 pre_package: scripts/build.sh
 include_files:
 - CHANGELOG
