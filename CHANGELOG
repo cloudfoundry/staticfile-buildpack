@@ -1,3 +1,12 @@
+v1.6.15 Jun 27, 2024
+=====================
+
+* Add nginx 1.27.0, remove 1.25
+  for stack(s) cflinuxfs3, cflinuxfs4
+
+* Update default version to 1.27.0
+
+
 v1.6.14 Jun 20, 2024
 =====================
 
