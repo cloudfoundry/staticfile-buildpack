@@ -2,7 +2,7 @@ name: Update shared github-config
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '10 9 * * *'
   workflow_dispatch: { }
 
 jobs:
@@ -12,13 +12,13 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
           ref: develop
 
       - name: Checkout github-config
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: cloudfoundry/buildpacks-github-config
           path: github-config
