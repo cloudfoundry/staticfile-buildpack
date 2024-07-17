@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -191,75 +190,6 @@ func StagingWithADepThatIsNotTheLatestConstrained(depName string, versionConstra
 
 func StagingWithADepThatIsNotTheLatest(depName string, copyBrats func(string) *cutlass.App) {
 	StagingWithADepThatIsNotTheLatestConstrained(depName, "x", copyBrats)
-}
-
-func StagingWithCustomBuildpackWithCredentialsInDependencies(copyBrats func(string) *cutlass.App) {
-	Describe("staging with custom buildpack that uses credentials in manifest dependency uris", func() {
-		var (
-			buildpackFile, bpName, stack, username, password string
-			app                                              *cutlass.App
-		)
-		JustBeforeEach(func() {
-			file, err := ModifyBuildpackManifest(buildpackFile, func(m *Manifest) {
-				for _, d := range m.Dependencies {
-					uri, err := url.Parse(d.URI)
-					if proxyHost, ok := os.LookupEnv("PROXY_HOST"); ok {
-						uri.Host = proxyHost
-					}
-					if proxyPort, ok := os.LookupEnv("PROXY_PORT"); ok {
-						uri.Host += ":" + proxyPort
-					}
-					if proxyScheme, ok := os.LookupEnv("PROXY_SCHEME"); ok {
-						uri.Scheme = proxyScheme
-					}
-					if proxyUsername, ok := os.LookupEnv("PROXY_USERNAME"); ok {
-						username = proxyUsername
-					} else {
-						username = "login"
-					}
-					if proxyPassword, ok := os.LookupEnv("PROXY_PASSWORD"); ok {
-						password = proxyPassword
-					} else {
-						password = "password"
-					}
-					uri.User = url.UserPassword(username, password)
-					Expect(err).ToNot(HaveOccurred())
-					d.URI = uri.String()
-				}
-			})
-			Expect(err).ToNot(HaveOccurred())
-			bpName = GenBpName("eol")
-
-			app = copyBrats("")
-			app.Buildpacks = []string{bpName + "_buildpack"}
-
-			stackAssociationSupported, err := cutlass.ApiGreaterThan("2.113.0")
-			Expect(err).ToNot(HaveOccurred())
-			if stackAssociationSupported {
-				stack = app.Stack
-			} else {
-				stack = ""
-			}
-
-			Expect(cutlass.CreateOrUpdateBuildpack(bpName, file, stack)).To(Succeed())
-			os.Remove(file)
-			PushApp(app)
-		})
-		AfterEach(func() {
-			defaultCleanup(app)
-			Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
-		})
-		Context("using an uncached buildpack", func() {
-			BeforeEach(func() {
-				buildpackFile = Data.UncachedFile
-			})
-			It("does not include credentials in logged dependency uris", func() {
-				Expect(app.Stdout.String()).To(MatchRegexp(`\[.*-redacted-:-redacted-.*\]`))
-				Expect(app.Stdout.String()).ToNot(ContainSubstring(username))
-				Expect(app.Stdout.String()).ToNot(ContainSubstring(password))
-			})
-		})
-	})
 }
 
 func DeployAppWithExecutableProfileScript(depName string, copyBrats func(string) *cutlass.App) {
