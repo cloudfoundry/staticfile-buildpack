@@ -1,3 +1,10 @@
+v1.6.18 Nov 05, 2024
+=====================
+
+* Add nginx 1.27.2, remove nginx 1.27.1
+  for stack(s) cflinuxfs3, cflinuxfs4
+
+
 v1.6.17 Sep 23, 2024
 =====================
 
