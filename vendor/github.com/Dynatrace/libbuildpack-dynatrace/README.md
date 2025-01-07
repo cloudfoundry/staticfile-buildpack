@@ -31,7 +31,9 @@ We support the following configuration fields,
 | apitoken      | string  | The API Token for the Dynatrace environment.                                                | Yes      | N/A             |
 | apiurl        | string  | Overrides the default Dynatrace API URL to connect to.                                      | No       | Default API URL |
 | skiperrors    | boolean | If true, the deployment doesn't fail if the Dynatrace agent download fails.                 | No       | false           |
-| networkzone      | string  | If set, agent is configured to choose communication endpoints located at the field's value. | No       | empty           |
+| networkzone   | string  | If set, agent is configured to choose communication endpoints located at the field's value. | No       | empty           |
+| enablefips    | boolean | If true, the [FIPS 140-2 mode](https://www.dynatrace.com/news/blog/dynatrace-achieves-fips-140-2-certification/) is enabled | No       | false           |
+| addtechnologies| string | Adds additional OneAgent code-modules via a comma-separated list. See [supported values](https://docs.dynatrace.com/docs/dynatrace-api/environment-api/deployment/oneagent/download-oneagent-version#parameters) in the "included" row | No | empty |
 
 For example,
 
