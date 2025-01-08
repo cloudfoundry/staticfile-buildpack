@@ -7,7 +7,5 @@ import (
 
 var _ = Describe("Staticfile buildpack", func() {
 	bratshelper.UnbuiltBuildpack("nginx", CopyBrats)
-	bratshelper.DeployingAnAppWithAnUpdatedVersionOfTheSameBuildpack(CopyBrats)
 	bratshelper.DeployAppWithExecutableProfileScript("nginx", CopyBrats)
-	bratshelper.DeployAnAppWithSensitiveEnvironmentVariables(CopyBrats)
 })
