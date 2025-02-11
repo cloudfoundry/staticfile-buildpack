@@ -1,8 +1,0 @@
----
-applications:
-- name: SED_APP_NAME
-  routes:
-    - route: SED_ROUTE
-      protocol: http2
-  env:
-    ENABLE_HTTP2: true
