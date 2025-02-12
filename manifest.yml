@@ -5,21 +5,21 @@ default_versions:
   version: 1.27.x
 dependencies:
 - name: nginx
-  version: 1.26.2
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.26.2_linux_x64_cflinuxfs3_5f74ccc0.tgz
-  sha256: 5f74ccc03c2cbc47fe3cc06aed1ed9aeeeb2275c3656ce221ae1936c579815de
+  version: 1.26.3
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.26.3_linux_x64_cflinuxfs3_610037dd.tgz
+  sha256: 610037dd277c2341225b4c36b3d5b22a9810c62ddbc1db444ba4167d74b1c9c2
   cf_stacks:
   - cflinuxfs3
-  source: http://nginx.org/download/nginx-1.26.2.tar.gz
-  source_sha256: 627fe086209bba80a2853a0add9d958d7ebbdffa1a8467a5784c9a6b4f03d738
+  source: http://nginx.org/download/nginx-1.26.3.tar.gz
+  source_sha256: 69ee2b237744036e61d24b836668aad3040dda461fe6f570f1787eab570c75aa
 - name: nginx
-  version: 1.26.2
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.26.2_linux_x64_cflinuxfs4_ae05e081.tgz
-  sha256: ae05e0816dab9d9c14024eb50b9af38d0359bae953319ce5a49309f359b4ceac
+  version: 1.26.3
+  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.26.3_linux_x64_cflinuxfs4_78ba6963.tgz
+  sha256: 78ba6963f4e77a746547bac843047b50237e3574100cb8da2ca1249a0e814a02
   cf_stacks:
   - cflinuxfs4
-  source: http://nginx.org/download/nginx-1.26.2.tar.gz
-  source_sha256: 627fe086209bba80a2853a0add9d958d7ebbdffa1a8467a5784c9a6b4f03d738
+  source: http://nginx.org/download/nginx-1.26.3.tar.gz
+  source_sha256: 69ee2b237744036e61d24b836668aad3040dda461fe6f570f1787eab570c75aa
 - name: nginx
   version: 1.27.4
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.27.4_linux_x64_cflinuxfs3_d5dddd48.tgz
