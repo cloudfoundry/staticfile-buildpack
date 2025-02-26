@@ -1,44 +1,72 @@
 package integration_test
 
 import (
-	"github.com/cloudfoundry/libbuildpack/cutlass"
+	"net/http"
+	"net/url"
+	"path/filepath"
+	"testing"
 
-	. "github.com/onsi/ginkgo"
+	"github.com/cloudfoundry/switchblade"
+	"github.com/sclevine/spec"
+
+	. "github.com/cloudfoundry/switchblade/matchers"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("deploy has nginx/conf directory", func() {
-	var app *cutlass.App
-	AfterEach(func() {
-		if app != nil {
-			app.Destroy()
-		}
-		app = nil
-	})
+func testWarnings(platform switchblade.Platform, fixtures string) func(*testing.T, spec.G, spec.S) {
+	return func(t *testing.T, context spec.G, it spec.S) {
+		var (
+			Expect     = NewWithT(t).Expect
+			Eventually = NewWithT(t).Eventually
 
-	Context("app has nginx include conf file", func() {
-		BeforeEach(func() {
-			app = cutlass.New(Fixtures("nginx_conf"))
-			app.Buildpacks = []string{"staticfile_buildpack"}
-			PushAppAndConfirm(app)
-		})
-		It("warns user to set root", func() {
-			Expect(app.Stdout.String()).To(ContainSubstring("You have an nginx/conf directory, but have not set *root*"))
-			Expect(app.GetBody("/")).To(ContainSubstring("Test warnings"))
-		})
-	})
+			name string
+		)
 
-	Context("app as nginx.conf file", func() {
-		BeforeEach(func() {
-			app = cutlass.New(Fixtures("deprecated_nginx_conf"))
-			PushAppAndConfirm(app)
+		it.Before(func() {
+			var err error
+			name, err = switchblade.RandomName()
+			Expect(err).NotTo(HaveOccurred())
 		})
-		It("warns user not to override nginx.conf", func() {
-			Expect(app.Stdout.String()).To(ContainSubstring("overriding nginx.conf is deprecated and highly discouraged, as it breaks the functionality of the Staticfile and Staticfile.auth configuration directives. Please use the NGINX buildpack available at: https://github.com/cloudfoundry/nginx-buildpack"))
 
-			_, headers, err := app.Get("/", nil)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(headers).To(HaveKeyWithValue("Custom-Nginx-Conf", []string{"true"}))
+		it.After(func() {
+			Expect(platform.Delete.Execute(name)).To(Succeed())
 		})
-	})
-})
+
+		context("when app has an nginx include conf file", func() {
+			it("warns user to set root", func() {
+				deployment, logs, err := platform.Deploy.
+					WithBuildpacks(
+						"staticfile_buildpack",
+					).
+					Execute(name, filepath.Join(fixtures, "warnings", "nginx_conf"))
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(logs).To(ContainSubstring("You have an nginx/conf directory, but have not set *root*"), logs.String())
+
+				Eventually(deployment).Should(Serve(ContainSubstring("Test warnings")))
+			})
+		})
+
+		context("when app has an nginx conf file", func() {
+			it("warns user to set root", func() {
+				deployment, logs, err := platform.Deploy.
+					Execute(name, filepath.Join(fixtures, "warnings", "deprecated_nginx_conf"))
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(logs).To(ContainSubstring("overriding nginx.conf is deprecated and highly discouraged, as it breaks the functionality of the Staticfile and Staticfile.auth configuration directives. Please use the NGINX buildpack available at: https://github.com/cloudfoundry/nginx-buildpack"))
+
+				uri, err := url.Parse(deployment.ExternalURL)
+				Expect(err).NotTo(HaveOccurred())
+
+				req, err := http.NewRequest("GET", uri.String(), nil)
+				Expect(err).NotTo(HaveOccurred())
+
+				var resp *http.Response
+				Eventually(func() error { resp, err = http.DefaultClient.Do(req); return err }).Should(Succeed())
+				defer resp.Body.Close()
+
+				Expect(resp.Header["Custom-Nginx-Conf"]).To(Equal([]string{"true"}))
+			})
+		})
+	}
+}
