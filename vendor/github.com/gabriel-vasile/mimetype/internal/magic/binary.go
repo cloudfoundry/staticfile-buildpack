@@ -21,6 +21,8 @@ var (
 	SWF = prefix([]byte("CWS"), []byte("FWS"), []byte("ZWS"))
 	// Torrent has bencoded text in the beginning.
 	Torrent = prefix([]byte("d8:announce"))
+	// PAR1 matches a parquet file.
+	Par1 = prefix([]byte{0x50, 0x41, 0x52, 0x31})
 )
 
 // Java bytecode and Mach-O binaries share the same magic number.
@@ -150,32 +152,34 @@ func Marc(raw []byte, limit uint32) bool {
 }
 
 // Glb matches a glTF model format file.
-// GLB is the binary file format representation of 3D models save in
+// GLB is the binary file format representation of 3D models saved in
 // the GL transmission Format (glTF).
-// see more: https://docs.fileformat.com/3d/glb/
-//           https://www.iana.org/assignments/media-types/model/gltf-binary
-// GLB file format is based on little endian and its header structure
-// show  below:
+// GLB uses little endian and its header structure is as follows:
 //
-// <-- 12-byte header                             -->
-// | magic            | version          | length   |
-// | (uint32)         | (uint32)         | (uint32) |
-// | \x67\x6C\x54\x46 | \x01\x00\x00\x00 | ...      |
-// | g   l   T   F    | 1                | ...      |
+// 	<-- 12-byte header                             -->
+// 	| magic            | version          | length   |
+// 	| (uint32)         | (uint32)         | (uint32) |
+// 	| \x67\x6C\x54\x46 | \x01\x00\x00\x00 | ...      |
+// 	| g   l   T   F    | 1                | ...      |
+//
+// Visit [glTF specification] and [IANA glTF entry] for more details.
+//
+// [glTF specification]: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html
+// [IANA glTF entry]: https://www.iana.org/assignments/media-types/model/gltf-binary
 var Glb = prefix([]byte("\x67\x6C\x54\x46\x02\x00\x00\x00"),
 	[]byte("\x67\x6C\x54\x46\x01\x00\x00\x00"))
 
 // TzIf matches a Time Zone Information Format (TZif) file.
 // See more: https://tools.ietf.org/id/draft-murchison-tzdist-tzif-00.html#rfc.section.3
 // Its header structure is shown below:
-// +---------------+---+
-// |  magic    (4) | <-+-- version (1)
-// +---------------+---+---------------------------------------+
-// |           [unused - reserved for future use] (15)         |
-// +---------------+---------------+---------------+-----------+
-// |  isutccnt (4) |  isstdcnt (4) |  leapcnt  (4) |
-// +---------------+---------------+---------------+
-// |  timecnt  (4) |  typecnt  (4) |  charcnt  (4) |
+// 	+---------------+---+
+// 	|  magic    (4) | <-+-- version (1)
+// 	+---------------+---+---------------------------------------+
+// 	|           [unused - reserved for future use] (15)         |
+// 	+---------------+---------------+---------------+-----------+
+// 	|  isutccnt (4) |  isstdcnt (4) |  leapcnt  (4) |
+// 	+---------------+---------------+---------------+
+// 	|  timecnt  (4) |  typecnt  (4) |  charcnt  (4) |
 func TzIf(raw []byte, limit uint32) bool {
 	// File is at least 44 bytes (header size).
 	if len(raw) < 44 {

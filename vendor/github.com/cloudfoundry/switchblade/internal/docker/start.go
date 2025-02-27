@@ -4,15 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/url"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
-	"io"
-	"os"
-	"path/filepath"
-	"sort"
 )
 
 type StartPhase interface {
@@ -169,7 +172,7 @@ func (s Start) Run(ctx context.Context, logs io.Writer, name, command string) (s
 	if ok {
 		for _, binding := range bindings {
 			if binding.HostIP == "0.0.0.0" {
-				externalURL = fmt.Sprintf("http://%s:%s", binding.HostIP, binding.HostPort)
+				externalURL = fmt.Sprintf("http://%s:%s", host(), binding.HostPort)
 			}
 		}
 	}
@@ -181,6 +184,20 @@ func (s Start) Run(ctx context.Context, logs io.Writer, name, command string) (s
 	}
 
 	return externalURL, internalURL, nil
+}
+
+func host() string {
+	val, ok := os.LookupEnv("DOCKER_HOST")
+	if !ok || strings.HasPrefix(val, "unix://") {
+		return "localhost"
+	}
+
+	url, err := url.Parse(val)
+	if err != nil {
+		return "localhost"
+	}
+
+	return url.Hostname()
 }
 
 func (s Start) WithStack(stack string) StartPhase {
