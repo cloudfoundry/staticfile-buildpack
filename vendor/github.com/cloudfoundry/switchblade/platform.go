@@ -19,7 +19,8 @@ type Buildpack struct {
 type Service map[string]interface{}
 
 type Platform struct {
-	initialize initializeProcess
+	initialize   initializeProcess
+	deinitialize deinitializeProcess
 
 	Deploy DeployProcess
 	Delete DeleteProcess
@@ -44,6 +45,10 @@ type initializeProcess interface {
 	Execute(buildpacks ...Buildpack) error
 }
 
+type deinitializeProcess interface {
+	Execute() error
+}
+
 const (
 	CloudFoundry = "cf"
 	Docker       = "docker"
@@ -60,11 +65,12 @@ func NewPlatform(platformType, token, stack string) (Platform, error) {
 		cli := pexec.NewExecutable("cf")
 
 		initialize := cloudfoundry.NewInitialize(cli, stack)
+		deinitialize := cloudfoundry.NewDeinitialize()
 		setup := cloudfoundry.NewSetup(cli, filepath.Join(home, ".cf"), stack)
 		stage := cloudfoundry.NewStage(cli)
 		teardown := cloudfoundry.NewTeardown(cli)
 
-		return NewCloudFoundry(initialize, setup, stage, teardown, os.TempDir()), nil
+		return NewCloudFoundry(initialize, deinitialize, setup, stage, teardown, os.TempDir()), nil
 	case Docker:
 		client, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 		if err != nil {
@@ -81,13 +87,14 @@ func NewPlatform(platformType, token, stack string) (Platform, error) {
 		buildpacksManager := docker.NewBuildpacksManager(archiver, buildpacksCache, buildpacksRegistry)
 		networkManager := docker.NewNetworkManager(client)
 
-		initialize := docker.NewInitialize(buildpacksRegistry)
+		initialize := docker.NewInitialize(buildpacksRegistry, networkManager)
+		deinitialize := docker.NewDeinitialize(networkManager)
 		setup := docker.NewSetup(client, lifecycleManager, buildpacksManager, archiver, networkManager, workspace, stack)
 		stage := docker.NewStage(client, archiver, workspace)
 		start := docker.NewStart(client, networkManager, workspace, stack)
-		teardown := docker.NewTeardown(client, networkManager, workspace)
+		teardown := docker.NewTeardown(client, workspace)
 
-		return NewDocker(initialize, setup, stage, start, teardown), nil
+		return NewDocker(initialize, deinitialize, setup, stage, start, teardown), nil
 	}
 
 	return Platform{}, fmt.Errorf("unknown platform type: %q", platformType)
@@ -95,4 +102,8 @@ func NewPlatform(platformType, token, stack string) (Platform, error) {
 
 func (p Platform) Initialize(buildpacks ...Buildpack) error {
 	return p.initialize.Execute(buildpacks...)
+}
+
+func (p Platform) Deinitialize() error {
+	return p.deinitialize.Execute()
 }
