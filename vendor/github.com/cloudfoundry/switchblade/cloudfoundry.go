@@ -9,15 +9,17 @@ import (
 )
 
 //go:generate faux --package github.com/cloudfoundry/switchblade/internal/cloudfoundry --interface InitializePhase --name CloudFoundryInitializePhase --output fakes/cloudfoundry_initialize_phase.go
+//go:generate faux --package github.com/cloudfoundry/switchblade/internal/cloudfoundry --interface DeinitializePhase --name CloudFoundryDeinitializePhase --output fakes/cloudfoundry_deinitialize_phase.go
 //go:generate faux --package github.com/cloudfoundry/switchblade/internal/cloudfoundry --interface SetupPhase --name CloudFoundrySetupPhase --output fakes/cloudfoundry_setup_phase.go
 //go:generate faux --package github.com/cloudfoundry/switchblade/internal/cloudfoundry --interface StagePhase --name CloudFoundryStagePhase --output fakes/cloudfoundry_stage_phase.go
 //go:generate faux --package github.com/cloudfoundry/switchblade/internal/cloudfoundry --interface TeardownPhase --name CloudFoundryTeardownPhase --output fakes/cloudfoundry_teardown_phase.go
 
-func NewCloudFoundry(initialize cloudfoundry.InitializePhase, setup cloudfoundry.SetupPhase, stage cloudfoundry.StagePhase, teardown cloudfoundry.TeardownPhase, workspace string) Platform {
+func NewCloudFoundry(initialize cloudfoundry.InitializePhase, deinitialize cloudfoundry.DeinitializePhase, setup cloudfoundry.SetupPhase, stage cloudfoundry.StagePhase, teardown cloudfoundry.TeardownPhase, workspace string) Platform {
 	return Platform{
-		initialize: cloudFoundryInitializeProcess{initialize: initialize},
-		Deploy:     cloudFoundryDeployProcess{setup: setup, stage: stage, workspace: workspace},
-		Delete:     cloudFoundryDeleteProcess{teardown: teardown, workspace: workspace},
+		initialize:   cloudFoundryInitializeProcess{initialize: initialize},
+		deinitialize: cloudFoundryDeinitializeProcess{deinitialize: deinitialize},
+		Deploy:       cloudFoundryDeployProcess{setup: setup, stage: stage, workspace: workspace},
+		Delete:       cloudFoundryDeleteProcess{teardown: teardown, workspace: workspace},
 	}
 }
 
@@ -35,6 +37,14 @@ func (p cloudFoundryInitializeProcess) Execute(buildpacks ...Buildpack) error {
 	}
 
 	return p.initialize.Run(bps)
+}
+
+type cloudFoundryDeinitializeProcess struct {
+	deinitialize cloudfoundry.DeinitializePhase
+}
+
+func (p cloudFoundryDeinitializeProcess) Execute() error {
+	return p.deinitialize.Run()
 }
 
 type cloudFoundryDeployProcess struct {

@@ -5,7 +5,7 @@ go 1.23.4
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.8.0
 	github.com/cloudfoundry/libbuildpack v0.0.0-20240717165421-f2ae8069fcba
-	github.com/cloudfoundry/switchblade v0.7.0
+	github.com/cloudfoundry/switchblade v0.9.0
 	github.com/golang/mock v1.6.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 	github.com/onsi/ginkgo v1.16.5
@@ -44,7 +44,7 @@ require (
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
-	golang.org/x/tools v0.28.0 // indirect
+	golang.org/x/tools v0.29.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
