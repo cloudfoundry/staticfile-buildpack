@@ -20,21 +20,14 @@ type TeardownClient interface {
 	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
 }
 
-//go:generate faux --interface TeardownNetworkManager --output fakes/teardown_network_manager.go
-type TeardownNetworkManager interface {
-	Delete(ctx context.Context, name string) error
-}
-
 type Teardown struct {
 	client    TeardownClient
-	networks  TeardownNetworkManager
 	workspace string
 }
 
-func NewTeardown(client TeardownClient, networks TeardownNetworkManager, workspace string) Teardown {
+func NewTeardown(client TeardownClient, workspace string) Teardown {
 	return Teardown{
 		client:    client,
-		networks:  networks,
 		workspace: workspace,
 	}
 }
@@ -43,11 +36,6 @@ func (t Teardown) Run(ctx context.Context, name string) error {
 	err := t.client.ContainerRemove(ctx, name, types.ContainerRemoveOptions{Force: true})
 	if err != nil && !client.IsErrNotFound(err) {
 		return fmt.Errorf("failed to remove container: %w", err)
-	}
-
-	err = t.networks.Delete(ctx, InternalNetworkName)
-	if err != nil {
-		return fmt.Errorf("failed to delete network: %w", err)
 	}
 
 	err = os.Remove(filepath.Join(t.workspace, "droplets", fmt.Sprintf("%s.tar.gz", name)))
