@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
-          ref: develop
+          ref: master
 
       - name: Checkout github-config
         uses: actions/checkout@v4
@@ -61,4 +61,4 @@ jobs:
           token: ${{ secrets.CF_BOT_GITHUB_TOKEN }}
           title: "Updates github-config"
           branch: automation/github-config/update
-          base: develop
+          base: master
