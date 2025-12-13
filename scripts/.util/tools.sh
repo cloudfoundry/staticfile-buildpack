@@ -148,10 +148,17 @@ function util::tools::cf::install() {
       exit 1
   esac
 
+  # Check if cf already exists in the target directory or system PATH
+  if [[ -f "${dir}/cf" ]] || command -v cf >/dev/null 2>&1; then
+    util::print::title "CF CLI already installed (using system version)"
+    cf version
+    return 0
+  fi
+
   if [[ ! -f "${dir}/cf" ]]; then
     util::print::title "Installing cf"
 
-    curl "https://packages.cloudfoundry.org/stable?release=${os}-binary&version=6.49.0&source=github-rel" \
+    curl "https://packages.cloudfoundry.org/stable?release=${os}-binary&source=github-rel" \
       --silent \
       --location \
       --output /tmp/cf.tar.gz
