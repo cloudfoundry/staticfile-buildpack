@@ -92,6 +92,11 @@ func (p dockerDeployProcess) WithStartCommand(command string) DeployProcess {
 	return p
 }
 
+func (p dockerDeployProcess) WithHealthCheckType(healthCheckType string) DeployProcess {
+	// Docker platform doesn't use CF health check types, so this is a no-op
+	return p
+}
+
 func (p dockerDeployProcess) Execute(name, path string) (Deployment, fmt.Stringer, error) {
 	ctx := context.Background()
 	logs := bytes.NewBuffer(nil)

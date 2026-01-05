@@ -25,19 +25,21 @@ type SetupPhase interface {
 	WithoutInternetAccess() SetupPhase
 	WithServices(services map[string]map[string]interface{}) SetupPhase
 	WithStartCommand(command string) SetupPhase
+	WithHealthCheckType(healthCheckType string) SetupPhase
 }
 
 type Setup struct {
 	cli  Executable
 	home string
 
-	internetAccess bool
-	buildpacks     []string
-	stack          string
-	env            map[string]string
-	services       map[string]map[string]interface{}
-	lookupHost     func(string) ([]string, error)
-	startCommand   string
+	internetAccess  bool
+	buildpacks      []string
+	stack           string
+	env             map[string]string
+	services        map[string]map[string]interface{}
+	lookupHost      func(string) ([]string, error)
+	startCommand    string
+	healthCheckType string
 }
 
 func NewSetup(cli Executable, home, stack string) Setup {
@@ -82,6 +84,11 @@ func (s Setup) WithCustomHostLookup(lookupHost func(string) ([]string, error)) S
 
 func (s Setup) WithStartCommand(command string) SetupPhase {
 	s.startCommand = command
+	return s
+}
+
+func (s Setup) WithHealthCheckType(healthCheckType string) SetupPhase {
+	s.healthCheckType = healthCheckType
 	return s
 }
 
@@ -277,7 +284,7 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 
 	for _, phase := range []string{"staging", "running"} {
 		err = s.cli.Execute(pexec.Execution{
-			Args:   []string{"bind-security-group", name, name, name, "--lifecycle", phase},
+			Args:   []string{"bind-security-group", name, name, "--space", name, "--lifecycle", phase},
 			Stdout: log,
 			Stderr: log,
 			Env:    env,
@@ -289,20 +296,18 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 
 	buffer = bytes.NewBuffer(nil)
 	err = s.cli.Execute(pexec.Execution{
-		Args:   []string{"curl", "/v2/security_groups"},
+		Args:   []string{"curl", "/v3/security_groups"},
 		Stdout: io.MultiWriter(log, buffer),
 		Stderr: io.MultiWriter(log, buffer),
 		Env:    env,
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to curl /v2/security_groups: %w\n\nOutput:\n%s", err, log)
+		return "", fmt.Errorf("failed to curl /v3/security_groups: %w\n\nOutput:\n%s", err, log)
 	}
 
 	var securityGroups struct {
 		Resources []struct {
-			Entity struct {
-				Name string `json:"name"`
-			} `json:"entity"`
+			Name string `json:"name"`
 		} `json:"resources"`
 	}
 	err = json.NewDecoder(buffer).Decode(&securityGroups)
@@ -311,9 +316,9 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 	}
 
 	for _, securityGroup := range securityGroups.Resources {
-		if !strings.HasPrefix(securityGroup.Entity.Name, "switchblade") {
+		if !strings.HasPrefix(securityGroup.Name, "switchblade") {
 			err = s.cli.Execute(pexec.Execution{
-				Args:   []string{"update-security-group", securityGroup.Entity.Name, filepath.Join(home, "empty-security-group.json")},
+				Args:   []string{"update-security-group", securityGroup.Name, filepath.Join(home, "empty-security-group.json")},
 				Stdout: log,
 				Stderr: log,
 				Env:    env,
@@ -355,17 +360,19 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 		Env:    env,
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to update-quota: %w\n\nOutput:\n%s", err, log)
-	}
-
-	err = s.cli.Execute(pexec.Execution{
-		Args:   []string{"map-route", name, fmt.Sprintf("tcp.%s", domain), "--random-port"},
-		Stdout: log,
-		Stderr: log,
-		Env:    env,
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to map-route: %w\n\nOutput:\n%s", err, log)
+		fmt.Fprintf(log, "WARNING: failed to update-quota for TCP routes: %v\n", err)
+		fmt.Fprintf(log, "Continuing without TCP route - HTTP routes will still be available\n")
+	} else {
+		err = s.cli.Execute(pexec.Execution{
+			Args:   []string{"map-route", name, fmt.Sprintf("tcp.%s", domain)},
+			Stdout: log,
+			Stderr: log,
+			Env:    env,
+		})
+		if err != nil {
+			fmt.Fprintf(log, "WARNING: failed to map TCP route: %v\n", err)
+			fmt.Fprintf(log, "Continuing without TCP route - HTTP routes will still be available\n")
+		}
 	}
 
 	buffer = bytes.NewBuffer(nil)
@@ -387,7 +394,7 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 	}
 	err = json.NewDecoder(buffer).Decode(&spaces)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse spaces: %w", err)
+		return "", fmt.Errorf("failed to parse spaces: %w\n\nOutput:\n%s", err, log)
 	}
 
 	var spaceGUID string
@@ -417,7 +424,7 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 	}
 	err = json.NewDecoder(buffer).Decode(&routes)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse routes: %w", err)
+		return "", fmt.Errorf("failed to parse routes: %w\n\nOutput:\n%s", err, log)
 	}
 
 	var port int
@@ -443,6 +450,18 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 		})
 		if err != nil {
 			return "", fmt.Errorf("failed to set-env: %w\n\nOutput:\n%s", err, log)
+		}
+	}
+
+	if s.healthCheckType != "" {
+		err = s.cli.Execute(pexec.Execution{
+			Args:   []string{"set-health-check", name, s.healthCheckType},
+			Stdout: log,
+			Stderr: log,
+			Env:    env,
+		})
+		if err != nil {
+			return "", fmt.Errorf("failed to set-health-check: %w\n\nOutput:\n%s", err, log)
 		}
 	}
 

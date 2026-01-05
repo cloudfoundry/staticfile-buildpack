@@ -33,6 +33,7 @@ type DeployProcess interface {
 	WithoutInternetAccess() DeployProcess
 	WithServices(map[string]Service) DeployProcess
 	WithStartCommand(command string) DeployProcess
+	WithHealthCheckType(healthCheckType string) DeployProcess
 
 	Execute(name, path string) (Deployment, fmt.Stringer, error)
 }

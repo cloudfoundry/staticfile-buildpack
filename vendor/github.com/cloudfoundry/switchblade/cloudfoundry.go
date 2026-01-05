@@ -88,6 +88,11 @@ func (p cloudFoundryDeployProcess) WithStartCommand(command string) DeployProces
 	return p
 }
 
+func (p cloudFoundryDeployProcess) WithHealthCheckType(healthCheckType string) DeployProcess {
+	p.setup = p.setup.WithHealthCheckType(healthCheckType)
+	return p
+}
+
 func (p cloudFoundryDeployProcess) Execute(name, source string) (Deployment, fmt.Stringer, error) {
 	logs := bytes.NewBuffer(nil)
 	home := filepath.Join(p.workspace, name)
