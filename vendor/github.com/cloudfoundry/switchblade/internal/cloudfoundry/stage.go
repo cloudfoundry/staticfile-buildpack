@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"strings"
 
 	"github.com/paketo-buildpacks/packit/v2/pexec"
@@ -36,6 +35,21 @@ func (s Stage) Run(logs io.Writer, home, name string) (string, error) {
 		Env:    env,
 	})
 	if err != nil {
+		// In CF API v3, staging failure logs are not automatically captured in stdout/stderr
+		// We need to fetch them explicitly using 'cf logs --recent'
+		recentLogs := bytes.NewBuffer(nil)
+		logErr := s.cli.Execute(pexec.Execution{
+			Args:   []string{"logs", name, "--recent"},
+			Stdout: recentLogs,
+			Stderr: recentLogs,
+			Env:    env,
+		})
+		if logErr == nil && recentLogs.Len() > 0 {
+			// Append recent logs to the main logs buffer
+			_, _ = logs.Write([]byte("\n--- Recent Logs (cf logs --recent) ---\n"))
+			_, _ = logs.Write(recentLogs.Bytes())
+		}
+
 		return "", fmt.Errorf("failed to start: %w\n\nOutput:\n%s", err, logs)
 	}
 
@@ -52,8 +66,9 @@ func (s Stage) Run(logs io.Writer, home, name string) (string, error) {
 	guid := strings.TrimSpace(buffer.String())
 	buffer = bytes.NewBuffer(nil)
 	err = s.cli.Execute(pexec.Execution{
-		Args:   []string{"curl", path.Join("/v2", "apps", guid, "routes")},
+		Args:   []string{"curl", fmt.Sprintf("/v3/apps/%s/routes", guid)},
 		Stdout: buffer,
+		Stderr: logs,
 		Env:    env,
 	})
 	if err != nil {
@@ -62,11 +77,8 @@ func (s Stage) Run(logs io.Writer, home, name string) (string, error) {
 
 	var routes struct {
 		Resources []struct {
-			Entity struct {
-				DomainURL string `json:"domain_url"`
-				Host      string `json:"host"`
-				Path      string `json:"path"`
-			} `json:"entity"`
+			URL      string `json:"url"`
+			Protocol string `json:"protocol"`
 		} `json:"resources"`
 	}
 	err = json.NewDecoder(buffer).Decode(&routes)
@@ -76,28 +88,7 @@ func (s Stage) Run(logs io.Writer, home, name string) (string, error) {
 
 	var url string
 	if len(routes.Resources) > 0 {
-		route := routes.Resources[0].Entity
-		buffer = bytes.NewBuffer(nil)
-		err = s.cli.Execute(pexec.Execution{
-			Args:   []string{"curl", route.DomainURL},
-			Stdout: buffer,
-			Env:    env,
-		})
-		if err != nil {
-			return "", fmt.Errorf("failed to fetch domain: %w\n\nOutput:\n%s", err, buffer)
-		}
-
-		var domain struct {
-			Entity struct {
-				Name string `json:"name"`
-			} `json:"entity"`
-		}
-		err = json.NewDecoder(buffer).Decode(&domain)
-		if err != nil {
-			return "", fmt.Errorf("failed to parse domain: %w\n\nOutput:\n%s", err, buffer)
-		}
-
-		url = fmt.Sprintf("http://%s.%s%s", route.Host, domain.Entity.Name, route.Path)
+		url = fmt.Sprintf("http://%s", routes.Resources[0].URL)
 	}
 
 	return url, nil

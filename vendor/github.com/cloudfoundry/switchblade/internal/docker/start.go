@@ -29,8 +29,8 @@ type StartPhase interface {
 //go:generate faux --interface StartClient --output fakes/start_client.go
 type StartClient interface {
 	ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, platform *specs.Platform, containerName string) (container.CreateResponse, error)
-	CopyToContainer(ctx context.Context, containerID, dstPath string, content io.Reader, options types.CopyToContainerOptions) error
-	ContainerStart(ctx context.Context, containerID string, options types.ContainerStartOptions) error
+	CopyToContainer(ctx context.Context, containerID, dstPath string, content io.Reader, options container.CopyToContainerOptions) error
+	ContainerStart(ctx context.Context, containerID string, options container.StartOptions) error
 	ContainerInspect(ctx context.Context, containerID string) (types.ContainerJSON, error)
 }
 
@@ -141,7 +141,7 @@ func (s Start) Run(ctx context.Context, logs io.Writer, name, command string) (s
 	}
 	defer lifecycleTarball.Close()
 
-	err = s.client.CopyToContainer(ctx, resp.ID, "/", lifecycleTarball, types.CopyToContainerOptions{})
+	err = s.client.CopyToContainer(ctx, resp.ID, "/", lifecycleTarball, container.CopyToContainerOptions{})
 	if err != nil {
 		return "", "", fmt.Errorf("failed to copy lifecycle into container: %w", err)
 	}
@@ -152,12 +152,12 @@ func (s Start) Run(ctx context.Context, logs io.Writer, name, command string) (s
 	}
 	defer dropletTarball.Close()
 
-	err = s.client.CopyToContainer(ctx, resp.ID, "/home/vcap/", dropletTarball, types.CopyToContainerOptions{})
+	err = s.client.CopyToContainer(ctx, resp.ID, "/home/vcap/", dropletTarball, container.CopyToContainerOptions{})
 	if err != nil {
 		return "", "", fmt.Errorf("failed to copy droplet into container: %w", err)
 	}
 
-	err = s.client.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{})
+	err = s.client.ContainerStart(ctx, resp.ID, container.StartOptions{})
 	if err != nil {
 		return "", "", fmt.Errorf("failed to start container: %w", err)
 	}
