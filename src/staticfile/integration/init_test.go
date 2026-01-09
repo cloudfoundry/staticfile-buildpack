@@ -24,17 +24,19 @@ var settings struct {
 		Path    string
 	}
 
-	Cached       bool
-	Serial       bool
-	FixturesPath string
-	GitHubToken  string
-	Platform     string
-	Stack        string
+	Cached               bool
+	Serial               bool
+	KeepFailedContainers bool
+	FixturesPath         string
+	GitHubToken          string
+	Platform             string
+	Stack                string
 }
 
 func init() {
 	flag.BoolVar(&settings.Cached, "cached", false, "run cached buildpack tests")
 	flag.BoolVar(&settings.Serial, "serial", false, "run serial buildpack tests")
+	flag.BoolVar(&settings.KeepFailedContainers, "keep-failed-containers", false, "preserve failed test containers for debugging")
 	flag.StringVar(&settings.Platform, "platform", "cf", `switchblade platform to test against ("cf" or "docker")`)
 	flag.StringVar(&settings.GitHubToken, "github-token", "", "use the token to make GitHub API requests")
 	flag.StringVar(&settings.Stack, "stack", "cflinuxfs4", "stack to use as default when pusing apps")
