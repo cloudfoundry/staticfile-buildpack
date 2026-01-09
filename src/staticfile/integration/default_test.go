@@ -66,7 +66,7 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		context("when deploying a staticfile app", func() {
-			it.Focus("properly logs stdout and stderr", func() {
+			it("properly logs stdout and stderr", func() {
 				deployment, _, err := platform.Deploy.
 					Execute(name, filepath.Join(fixtures, "default", "simple"))
 				Expect(err).NotTo(HaveOccurred())
