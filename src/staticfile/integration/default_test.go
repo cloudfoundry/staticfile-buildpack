@@ -66,7 +66,7 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		context("when deploying a staticfile app", func() {
-			it.Focus("properly logs stdout and stderr", func() {
+			it("properly logs stdout and stderr", func() {
 				if name != "" && !t.Skipped() && (!settings.KeepFailedContainers || !t.Failed()) {
 					Expect(platform.Delete.Execute(name)).To(Succeed())
 				}
