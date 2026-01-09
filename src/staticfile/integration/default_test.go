@@ -32,8 +32,12 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		it.After(func() {
-			if !t.Skipped() && name != "" {
-				platform.Delete.Execute(name)
+			if t.Failed() && name != "" {
+				t.Logf("❌ FAILED TEST - App/Container: %s", name)
+				t.Logf("   Platform: %s", settings.Platform)
+			}
+			if name != "" && !t.Skipped() && (!settings.KeepFailedContainers || !t.Failed()) {
+				Expect(platform.Delete.Execute(name)).To(Succeed())
 			}
 		})
 
@@ -62,10 +66,9 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		context("when deploying a staticfile app", func() {
-			it("properly logs stdout and stderr", func() {
-				// This test uses docker commands directly and only works with Docker platform
-				if settings.Platform != "docker" {
-					t.SkipNow()
+			it.Focus("properly logs stdout and stderr", func() {
+				if name != "" && !t.Skipped() && (!settings.KeepFailedContainers || !t.Failed()) {
+					Expect(platform.Delete.Execute(name)).To(Succeed())
 				}
 
 				deployment, _, err := platform.Deploy.
