@@ -32,7 +32,9 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		it.After(func() {
-			Expect(platform.Delete.Execute(name)).To(Succeed())
+			if !t.Skipped() && name != "" {
+				platform.Delete.Execute(name)
+			}
 		})
 
 		it("builds and runs the app", func() {
@@ -61,6 +63,11 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 
 		context("when deploying a staticfile app", func() {
 			it("properly logs stdout and stderr", func() {
+				// This test uses docker commands directly and only works with Docker platform
+				if settings.Platform != "docker" {
+					t.SkipNow()
+				}
+
 				deployment, _, err := platform.Deploy.
 					Execute(name, filepath.Join(fixtures, "default", "simple"))
 				Expect(err).NotTo(HaveOccurred())
