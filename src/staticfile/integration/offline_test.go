@@ -27,7 +27,13 @@ func testOffline(platform switchblade.Platform, fixtures string) func(*testing.T
 		})
 
 		it.After(func() {
-			Expect(platform.Delete.Execute(name)).To(Succeed())
+			if t.Failed() && name != "" {
+				t.Logf("❌ FAILED TEST - App/Container: %s", name)
+				t.Logf("   Platform: %s", settings.Platform)
+			}
+			if name != "" && (!settings.KeepFailedContainers || !t.Failed()) {
+				Expect(platform.Delete.Execute(name)).To(Succeed())
+			}
 		})
 
 		context("when deploying a simple app without internet", func() {
