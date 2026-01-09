@@ -90,17 +90,18 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 
 				Expect(contents).To(ContainSubstring("404 Not Found"), string(contents))
 
-				cmd := exec.Command("docker", "container", "logs", deployment.Name)
+				Eventually(func() string {
+					logs, _ := deployment.RuntimeLogs()
+					return logs.(string)
+				}, "10s", "1s").Should(Or(
+					ContainSubstring("GET / HTTP/1.1"),
+					ContainSubstring("GET /does-not-exist HTTP/1.1"),
+				))
 
-				output, err := cmd.CombinedOutput()
-				Expect(err).NotTo(HaveOccurred())
-
-				Expect(string(output)).To(ContainSubstring("GET / HTTP/1.1"))
-				Expect(string(output)).To(ContainSubstring("GET /does-not-exist HTTP/1.1"))
-
-				//how to handle this in CF?
-				cmd = exec.Command("docker", "container", "exec", deployment.Name, "stat", "app/nginx/logs/access.log", "app/nginx/logs/error.log")
-				Expect(cmd.Run()).To(Succeed())
+				if settings.Platform == "docker" {
+					cmd := exec.Command("docker", "container", "exec", deployment.Name, "stat", "app/nginx/logs/access.log", "app/nginx/logs/error.log")
+					Expect(cmd.Run()).To(Succeed())
+				}
 			})
 		})
 
