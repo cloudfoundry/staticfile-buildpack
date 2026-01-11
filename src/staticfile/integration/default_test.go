@@ -92,7 +92,7 @@ func testDefault(platform switchblade.Platform, fixtures string) func(*testing.T
 
 				Eventually(func() string {
 					logs, _ := deployment.RuntimeLogs()
-					return logs.(string)
+					return logs
 				}, "10s", "1s").Should(Or(
 					ContainSubstring("GET / HTTP/1.1"),
 					ContainSubstring("GET /does-not-exist HTTP/1.1"),
