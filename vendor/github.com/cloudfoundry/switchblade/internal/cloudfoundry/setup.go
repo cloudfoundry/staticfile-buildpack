@@ -183,7 +183,12 @@ func (s Setup) Run(log io.Writer, home, name, source string) (string, error) {
 			Env:    env,
 		})
 		if err != nil {
-			return "", fmt.Errorf("failed to create-shared-domain: %w\n\nOutput:\n%s", err, log)
+			logStr := log.(*bytes.Buffer).String()
+			if strings.Contains(logStr, "already in use") {
+				fmt.Fprintf(log, "TCP domain already exists, continuing...\n")
+			} else {
+				return "", fmt.Errorf("failed to create-shared-domain: %w\n\nOutput:\n%s", err, log)
+			}
 		}
 	}
 
