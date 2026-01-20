@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
@@ -17,7 +17,7 @@ type TeardownPhase interface {
 
 //go:generate faux --interface TeardownClient --output fakes/teardown_client.go
 type TeardownClient interface {
-	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
+	ContainerRemove(ctx context.Context, containerID string, options container.RemoveOptions) error
 }
 
 type Teardown struct {
@@ -33,7 +33,7 @@ func NewTeardown(client TeardownClient, workspace string) Teardown {
 }
 
 func (t Teardown) Run(ctx context.Context, name string) error {
-	err := t.client.ContainerRemove(ctx, name, types.ContainerRemoveOptions{Force: true})
+	err := t.client.ContainerRemove(ctx, name, container.RemoveOptions{Force: true})
 	if err != nil && !client.IsErrNotFound(err) {
 		return fmt.Errorf("failed to remove container: %w", err)
 	}

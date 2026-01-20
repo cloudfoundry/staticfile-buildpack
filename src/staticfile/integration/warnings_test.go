@@ -29,7 +29,13 @@ func testWarnings(platform switchblade.Platform, fixtures string) func(*testing.
 		})
 
 		it.After(func() {
-			Expect(platform.Delete.Execute(name)).To(Succeed())
+			if t.Failed() && name != "" {
+				t.Logf("❌ FAILED TEST - App/Container: %s", name)
+				t.Logf("   Platform: %s", settings.Platform)
+			}
+			if name != "" && (!settings.KeepFailedContainers || !t.Failed()) {
+				Expect(platform.Delete.Execute(name)).To(Succeed())
+			}
 		})
 
 		context("when app has an nginx include conf file", func() {

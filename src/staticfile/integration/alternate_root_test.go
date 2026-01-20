@@ -27,7 +27,13 @@ func testAlternateRoot(platform switchblade.Platform, fixtures string) func(*tes
 		})
 
 		it.After(func() {
-			Expect(platform.Delete.Execute(name)).To(Succeed())
+			if t.Failed() && name != "" {
+				t.Logf("❌ FAILED TEST - App/Container: %s", name)
+				t.Logf("   Platform: %s", settings.Platform)
+			}
+			if name != "" && (!settings.KeepFailedContainers || !t.Failed()) {
+				Expect(platform.Delete.Execute(name)).To(Succeed())
+			}
 		})
 
 		context("the path is default", func() {

@@ -12,6 +12,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/errdefs"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
@@ -33,11 +34,11 @@ type SetupPhase interface {
 
 //go:generate faux --interface SetupClient --output fakes/setup_client.go
 type SetupClient interface {
-	ImagePull(ctx context.Context, ref string, options types.ImagePullOptions) (io.ReadCloser, error)
+	ImagePull(ctx context.Context, ref string, options image.PullOptions) (io.ReadCloser, error)
 	ContainerCreate(ctx context.Context, config *container.Config, hostConfig *container.HostConfig, networkingConfig *network.NetworkingConfig, platform *specs.Platform, containerName string) (container.CreateResponse, error)
-	CopyToContainer(ctx context.Context, containerID, dstPath string, content io.Reader, options types.CopyToContainerOptions) error
+	CopyToContainer(ctx context.Context, containerID, dstPath string, content io.Reader, options container.CopyToContainerOptions) error
 	ContainerInspect(ctx context.Context, containerID string) (types.ContainerJSON, error)
-	ContainerRemove(ctx context.Context, containerID string, options types.ContainerRemoveOptions) error
+	ContainerRemove(ctx context.Context, containerID string, options container.RemoveOptions) error
 }
 
 //go:generate faux --interface LifecycleBuilder --output fakes/lifecycle_builder.go
@@ -106,7 +107,7 @@ func (s Setup) Run(ctx context.Context, logs io.Writer, name, path string) (stri
 		return "", fmt.Errorf("failed to archive source code: %w", err)
 	}
 
-	pullLogs, err := s.client.ImagePull(ctx, fmt.Sprintf("cloudfoundry/%s:latest", s.stack), types.ImagePullOptions{})
+	pullLogs, err := s.client.ImagePull(ctx, fmt.Sprintf("cloudfoundry/%s:latest", s.stack), image.PullOptions{})
 	if err != nil {
 		return "", fmt.Errorf("failed to pull base image: %w", err)
 	}
@@ -159,7 +160,7 @@ func (s Setup) Run(ctx context.Context, logs io.Writer, name, path string) (stri
 		return "", fmt.Errorf("failed to inspect staging container: %w", err)
 	}
 	if err == nil {
-		err = s.client.ContainerRemove(ctx, ctnr.ID, types.ContainerRemoveOptions{Force: true})
+		err = s.client.ContainerRemove(ctx, ctnr.ID, container.RemoveOptions{Force: true})
 		if err != nil {
 			return "", fmt.Errorf("failed to remove conflicting container: %w", err)
 		}
@@ -213,7 +214,7 @@ func (s Setup) Run(ctx context.Context, logs io.Writer, name, path string) (stri
 			return "", fmt.Errorf("failed to open tarball: %w", err)
 		}
 
-		err = s.client.CopyToContainer(ctx, resp.ID, "/", tarball, types.CopyToContainerOptions{})
+		err = s.client.CopyToContainer(ctx, resp.ID, "/", tarball, container.CopyToContainerOptions{})
 		if err != nil {
 			return "", fmt.Errorf("failed to copy tarball to container: %w", err)
 		}
