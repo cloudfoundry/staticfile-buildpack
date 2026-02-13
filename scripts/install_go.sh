@@ -12,17 +12,15 @@ function main() {
   fi
 
   local version expected_sha dir
-  version="1.22.5"
-  expected_sha="ddb12ede43eef214c7d4376761bd5ba6297d5fa7a06d5635ea3e7a276b3db730"
+  version="1.25.6"
+  expected_sha="0ed64e3b9cb9b1c2ec57880dae2427b0ee2676f2ae2fb53c2e1bb838c500f9fb"
   dir="/tmp/go${version}"
 
   mkdir -p "${dir}"
 
   if [[ ! -f "${dir}/bin/go" ]]; then
     local url
-    # TODO: use exact stack based dep, after go buildpack has cflinuxfs4 support
-    #url="https://buildpacks.cloudfoundry.org/dependencies/go/go_${version}_linux_x64_${CF_STACK}_${expected_sha:0:8}.tgz"
-    url="https://buildpacks.cloudfoundry.org/dependencies/go/go_${version}_linux_x64_cflinuxfs3_${expected_sha:0:8}.tgz"
+    url="https://buildpacks.cloudfoundry.org/dependencies/go/go_${version}_linux_x64_${CF_STACK}_${expected_sha:0:8}.tgz"
 
     echo "-----> Download go ${version}"
     curl "${url}" \
