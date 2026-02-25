@@ -29,7 +29,6 @@ function main() {
         output="${output}.exe"
       fi
 
-      rm -f "${output}"
       CGO_ENABLED=0 \
       GOOS="${os}" \
         go build \
