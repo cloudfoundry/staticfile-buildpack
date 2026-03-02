@@ -48,6 +48,7 @@ var _ = Describe("Supply", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockManifest = NewMockManifest(mockCtrl)
 		mockInstaller = NewMockInstaller(mockCtrl)
+		DeferCleanup(os.RemoveAll, depsDir)
 	})
 
 	JustBeforeEach(func() {
@@ -60,13 +61,6 @@ var _ = Describe("Supply", func() {
 			Installer: mockInstaller,
 			Log:       logger,
 		}
-	})
-
-	AfterEach(func() {
-		mockCtrl.Finish()
-
-		err = os.RemoveAll(depsDir)
-		Expect(err).To(BeNil())
 	})
 
 	Describe("InstallNginx", func() {

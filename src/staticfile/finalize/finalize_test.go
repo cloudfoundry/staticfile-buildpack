@@ -48,6 +48,13 @@ var _ = Describe("Compile", func() {
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockYaml = NewMockYAML(mockCtrl)
+		DeferCleanup(func() {
+			err = os.RemoveAll(buildDir)
+			Expect(err).To(BeNil())
+
+			err = os.RemoveAll(depDir)
+			Expect(err).To(BeNil())
+		})
 	})
 
 	JustBeforeEach(func() {
@@ -58,16 +65,6 @@ var _ = Describe("Compile", func() {
 			YAML:     mockYaml,
 			Log:      logger,
 		}
-	})
-
-	AfterEach(func() {
-		mockCtrl.Finish()
-
-		err = os.RemoveAll(buildDir)
-		Expect(err).To(BeNil())
-
-		err = os.RemoveAll(depDir)
-		Expect(err).To(BeNil())
 	})
 
 	Describe("WriteStartupFiles", func() {
@@ -909,7 +906,7 @@ var _ = Describe("Compile", func() {
 			Expect(err).To(BeNil())
 		})
 
-		AfterEach(func() {
+		DeferCleanup(func() {
 			err = os.RemoveAll(appRootDir)
 			Expect(err).To(BeNil())
 		})
