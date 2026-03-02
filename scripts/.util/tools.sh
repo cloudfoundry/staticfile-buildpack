@@ -40,7 +40,7 @@ function util::tools::ginkgo::install() {
     pushd /tmp > /dev/null || return
       GOBIN="${dir}" \
         go install \
-          github.com/onsi/ginkgo/ginkgo@latest
+          github.com/onsi/ginkgo/v2/ginkgo@latest
     popd > /dev/null || return
   fi
 }

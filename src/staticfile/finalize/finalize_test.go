@@ -906,9 +906,11 @@ var _ = Describe("Compile", func() {
 			Expect(err).To(BeNil())
 		})
 
-		DeferCleanup(func() {
-			err = os.RemoveAll(appRootDir)
-			Expect(err).To(BeNil())
+		BeforeEach(func() {
+			DeferCleanup(func() {
+				err = os.RemoveAll(appRootDir)
+				Expect(err).To(BeNil())
+			})
 		})
 
 		Context("The appRootDir is <buildDir>/public", func() {
