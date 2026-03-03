@@ -2,7 +2,6 @@ package finalize
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -110,18 +109,18 @@ func (sf *Finalizer) WriteStartupFiles() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(filepath.Join(profiledDir, "staticfile.sh"), []byte(initScript), 0755)
+	err = os.WriteFile(filepath.Join(profiledDir, "staticfile.sh"), []byte(initScript), 0755)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(filepath.Join(sf.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
+	err = os.WriteFile(filepath.Join(sf.BuildDir, "start_logging.sh"), []byte(startLoggingScript), 0755)
 	if err != nil {
 		return err
 	}
 
 	bootScript := filepath.Join(sf.BuildDir, "boot.sh")
-	return ioutil.WriteFile(bootScript, []byte(startCommand), 0755)
+	return os.WriteFile(bootScript, []byte(startCommand), 0755)
 }
 
 func (sf *Finalizer) LoadStaticfile() error {
@@ -258,12 +257,12 @@ func (sf *Finalizer) CopyFilesToPublic(appRootDir string) error {
 		return nil
 	}
 
-	tmpDir, err := ioutil.TempDir("", "staticfile-buildpack.approot.")
+	tmpDir, err := os.MkdirTemp("", "staticfile-buildpack.approot.")
 	if err != nil {
 		return err
 	}
 
-	files, err := ioutil.ReadDir(appRootDir)
+	files, err := os.ReadDir(appRootDir)
 	if err != nil {
 		return err
 	}
@@ -341,7 +340,7 @@ func (sf *Finalizer) ConfigureNginx() error {
 				sf.Log.Warning("overriding nginx.conf is deprecated and highly discouraged, as it breaks the functionality of the Staticfile and Staticfile.auth configuration directives. Please use the NGINX buildpack available at: https://github.com/cloudfoundry/nginx-buildpack")
 			}
 		} else {
-			err = ioutil.WriteFile(confDest, []byte(contents), 0644)
+			err = os.WriteFile(confDest, []byte(contents), 0644)
 		}
 
 		if err != nil {

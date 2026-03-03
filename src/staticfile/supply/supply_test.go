@@ -1,7 +1,6 @@
 package supply_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -33,7 +32,7 @@ var _ = Describe("Supply", func() {
 	)
 
 	BeforeEach(func() {
-		depsDir, err = ioutil.TempDir("", "staticfile-buildpack.deps.")
+		depsDir, err = os.MkdirTemp("", "staticfile-buildpack.deps.")
 		Expect(err).To(BeNil())
 
 		depsIdx = "32"

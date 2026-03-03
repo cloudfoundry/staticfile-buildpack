@@ -2,7 +2,6 @@ package finalize_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -37,10 +36,10 @@ var _ = Describe("Compile", func() {
 	)
 
 	BeforeEach(func() {
-		buildDir, err = ioutil.TempDir("", "staticfile-buildpack.build.")
+		buildDir, err = os.MkdirTemp("", "staticfile-buildpack.build.")
 		Expect(err).To(BeNil())
 
-		depDir, err = ioutil.TempDir("", "staticfile-buildpack.depDir.")
+		depDir, err = os.MkdirTemp("", "staticfile-buildpack.depDir.")
 		Expect(err).To(BeNil())
 
 		buffer = new(bytes.Buffer)
@@ -75,7 +74,7 @@ var _ = Describe("Compile", func() {
 			err = finalizer.WriteStartupFiles()
 			Expect(err).To(BeNil())
 
-			contents, err := ioutil.ReadFile(filepath.Join(depDir, "profile.d", "staticfile.sh"))
+			contents, err := os.ReadFile(filepath.Join(depDir, "profile.d", "staticfile.sh"))
 			Expect(err).To(BeNil())
 			Expect(string(contents)).To(ContainSubstring("export LD_LIBRARY_PATH=$APP_ROOT/nginx/lib:$LD_LIBRARY_PATH"))
 		})
@@ -84,7 +83,7 @@ var _ = Describe("Compile", func() {
 			err = finalizer.WriteStartupFiles()
 			Expect(err).To(BeNil())
 
-			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "start_logging.sh"))
+			contents, err := os.ReadFile(filepath.Join(buildDir, "start_logging.sh"))
 			Expect(err).To(BeNil())
 			Expect(string(contents)).To(Equal("\ncat < $APP_ROOT/nginx/logs/access.log &\n(>&2 cat) < $APP_ROOT/nginx/logs/error.log &\n"))
 		})
@@ -102,7 +101,7 @@ var _ = Describe("Compile", func() {
 			err = finalizer.WriteStartupFiles()
 			Expect(err).To(BeNil())
 
-			contents, err := ioutil.ReadFile(filepath.Join(buildDir, "boot.sh"))
+			contents, err := os.ReadFile(filepath.Join(buildDir, "boot.sh"))
 			Expect(err).To(BeNil())
 			Expect(string(contents)).To(Equal("#!/bin/sh\nset -ex\n$APP_ROOT/start_logging.sh\nnginx -p $APP_ROOT/nginx -c $APP_ROOT/nginx/conf/nginx.conf\n"))
 		})
@@ -350,7 +349,7 @@ var _ = Describe("Compile", func() {
 
 		Context("Staticfile.auth is present", func() {
 			BeforeEach(func() {
-				err = ioutil.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("some credentials"), 0644)
+				err = os.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("some credentials"), 0644)
 				Expect(err).To(BeNil())
 			})
 			JustBeforeEach(func() {
@@ -428,7 +427,7 @@ var _ = Describe("Compile", func() {
 
 			Context("the directory exists but is actually a file", func() {
 				BeforeEach(func() {
-					ioutil.WriteFile(filepath.Join(buildDir, "actually_a_file"), []byte("xxx"), 0644)
+					os.WriteFile(filepath.Join(buildDir, "actually_a_file"), []byte("xxx"), 0644)
 					staticfile.RootDir = "actually_a_file"
 				})
 
@@ -544,13 +543,13 @@ var _ = Describe("Compile", func() {
 				err = os.MkdirAll(filepath.Join(buildDir, "public"), 0755)
 				Expect(err).To(BeNil())
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "public", "nginx.conf"), []byte("nginx configuration"), 0644)
+				err = os.WriteFile(filepath.Join(buildDir, "public", "nginx.conf"), []byte("nginx configuration"), 0644)
 				Expect(err).To(BeNil())
 			})
 
 			It("uses the custom configuration", func() {
 				Expect(filepath.Join(buildDir, "nginx", "conf", "nginx.conf")).To(BeARegularFile())
-				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+				data, err = os.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
 				Expect(err).To(BeNil())
 				Expect(data).To(Equal([]byte("nginx configuration")))
 			})
@@ -568,7 +567,7 @@ var _ = Describe("Compile", func() {
 			leadCloseWsp := regexp.MustCompile(`(?m)^\s+`)
 			stripStartWsp := func(inp string) string { return leadCloseWsp.ReplaceAllString(inp, "") }
 			readNginxConfAndStrip := func() string {
-				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
+				data, err = os.ReadFile(filepath.Join(buildDir, "nginx", "conf", "nginx.conf"))
 				Expect(err).To(BeNil())
 				return stripStartWsp(string(data))
 			}
@@ -820,7 +819,7 @@ var _ = Describe("Compile", func() {
 			Context("there is a Staticfile.auth", func() {
 				BeforeEach(func() {
 					staticfile.BasicAuth = true
-					err = ioutil.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("authentication info"), 0644)
+					err = os.WriteFile(filepath.Join(buildDir, "Staticfile.auth"), []byte("authentication info"), 0644)
 					Expect(err).To(BeNil())
 				})
 
@@ -830,7 +829,7 @@ var _ = Describe("Compile", func() {
 				})
 
 				It("copies the Staticfile.auth to .htpasswd", func() {
-					data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", ".htpasswd"))
+					data, err = os.ReadFile(filepath.Join(buildDir, "nginx", "conf", ".htpasswd"))
 					Expect(err).To(BeNil())
 					Expect(string(data)).To(Equal("authentication info"))
 				})
@@ -856,12 +855,12 @@ var _ = Describe("Compile", func() {
 				err = os.MkdirAll(filepath.Join(buildDir, "public"), 0755)
 				Expect(err).To(BeNil())
 
-				err = ioutil.WriteFile(filepath.Join(buildDir, "public", "mime.types"), []byte("mime types info"), 0644)
+				err = os.WriteFile(filepath.Join(buildDir, "public", "mime.types"), []byte("mime types info"), 0644)
 				Expect(err).To(BeNil())
 			})
 
 			It("uses the custom configuration", func() {
-				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
+				data, err = os.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
 				Expect(err).To(BeNil())
 				Expect(data).To(Equal([]byte("mime types info")))
 			})
@@ -869,7 +868,7 @@ var _ = Describe("Compile", func() {
 
 		Context("custom mime.types does NOT exist", func() {
 			It("uses the provided mime.types", func() {
-				data, err = ioutil.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
+				data, err = os.ReadFile(filepath.Join(buildDir, "nginx", "conf", "mime.types"))
 				Expect(err).To(BeNil())
 				Expect(string(data)).To(Equal(finalize.MimeTypes))
 			})
@@ -888,14 +887,14 @@ var _ = Describe("Compile", func() {
 			buildDirFiles = []string{"Staticfile", "Staticfile.auth", "manifest.yml", ".profile", "stackato.yml"}
 
 			for _, file := range buildDirFiles {
-				err = ioutil.WriteFile(filepath.Join(buildDir, file), []byte(file+"contents"), 0644)
+				err = os.WriteFile(filepath.Join(buildDir, file), []byte(file+"contents"), 0644)
 				Expect(err).To(BeNil())
 			}
 
 			appRootFiles = []string{".hidden.html", "index.html"}
 
 			for _, file := range appRootFiles {
-				err = ioutil.WriteFile(filepath.Join(appRootDir, file), []byte(file+"contents"), 0644)
+				err = os.WriteFile(filepath.Join(appRootDir, file), []byte(file+"contents"), 0644)
 				Expect(err).To(BeNil())
 			}
 
@@ -920,7 +919,7 @@ var _ = Describe("Compile", func() {
 				err = os.MkdirAll(appRootDir, 0755)
 				Expect(err).To(BeNil())
 
-				err = ioutil.WriteFile(filepath.Join(appRootDir, "index2.html"), []byte("html contents"), 0644)
+				err = os.WriteFile(filepath.Join(appRootDir, "index2.html"), []byte("html contents"), 0644)
 			})
 
 			It("doesn't copy any files", func() {
@@ -944,7 +943,7 @@ var _ = Describe("Compile", func() {
 			Context("host dotfiles is set", func() {
 				BeforeEach(func() {
 					staticfile.HostDotFiles = true
-					appRootDir, err = ioutil.TempDir("", "staticfile-buildpack.app_root.")
+					appRootDir, err = os.MkdirTemp("", "staticfile-buildpack.app_root.")
 					Expect(err).To(BeNil())
 				})
 
@@ -979,7 +978,7 @@ var _ = Describe("Compile", func() {
 				Context("and <buildDir>/public exists", func() {
 					BeforeEach(func() {
 						Expect(os.Mkdir(filepath.Join(buildDir, "public"), 0755)).To(Succeed())
-						Expect(ioutil.WriteFile(filepath.Join(buildDir, "public", "orig.html"), []byte("html contents"), 0644)).To(Succeed())
+						Expect(os.WriteFile(filepath.Join(buildDir, "public", "orig.html"), []byte("html contents"), 0644)).To(Succeed())
 					})
 					It("overrides <buildDir>/public", func() {
 						Expect(filepath.Join(buildDir, "public", "orig.html")).ToNot(BeAnExistingFile())
