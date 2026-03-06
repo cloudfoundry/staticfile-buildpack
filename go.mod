@@ -4,11 +4,10 @@ go 1.24.0
 
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.8.0
-	github.com/cloudfoundry/libbuildpack v0.0.0-20240717165421-f2ae8069fcba
+	github.com/cloudfoundry/libbuildpack v0.0.0-20260306121953-8ab9253c8181
 	github.com/cloudfoundry/switchblade v0.9.4
 	github.com/golang/mock v1.6.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
-	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.39.0
 	github.com/sclevine/spec v1.4.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.32.0 // indirect
@@ -64,7 +63,6 @@ require (
 	golang.org/x/tools v0.41.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241104194629-dd2ea8efbc28 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241104194629-dd2ea8efbc28 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
