@@ -147,7 +147,7 @@ func downloadDependency(dependency Dependency, cacheDir string) (File, error) {
 	}
 
 	if err := checkSha256(filepath.Join(cacheDir, file), dependency.SHA256); err != nil {
-		return File{}, err
+		return File{}, fmt.Errorf("%s (%s %s): %v", dependency.URI, dependency.Name, dependency.Version, err)
 	}
 
 	return File{file, filepath.Join(cacheDir, file)}, nil
@@ -275,23 +275,30 @@ func DownloadFromURI(uri, fileName string) error {
 	if u.Scheme == "file" {
 		source, err = os.Open(u.Path)
 		if err != nil {
+			os.Remove(fileName)
 			return err
 		}
 		defer source.Close()
 	} else {
 		response, err := http.Get(uri)
 		if err != nil {
+			os.Remove(fileName)
 			return err
 		}
 		defer response.Body.Close()
-		source = response.Body
 
 		if response.StatusCode < 200 || response.StatusCode > 299 {
-			return fmt.Errorf("could not download: %d", response.StatusCode)
+			os.Remove(fileName)
+			return fmt.Errorf("could not download %s: %d", uri, response.StatusCode)
 		}
+
+		source = response.Body
 	}
 
 	_, err = io.Copy(output, source)
+	if err != nil {
+		os.Remove(fileName)
+	}
 
 	return err
 }

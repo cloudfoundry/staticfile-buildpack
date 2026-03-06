@@ -32,6 +32,19 @@ func (i *Installer) SetAppCacheDir(appCacheDir string) (err error) {
 }
 
 func (i *Installer) InstallDependency(dep Dependency, outputDir string) error {
+	return i.InstallDependencyWithStrip(dep, outputDir, 0)
+}
+
+// InstallDependencyWithStrip installs a dependency with optional path stripping
+// stripComponents works like tar's --strip-components flag:
+//
+//	0 = extract as-is (default, same as InstallDependency)
+//	1 = remove top-level directory
+//	2 = remove two levels, etc.
+//
+// This is useful for archives that extract to a top-level directory
+// (e.g., apache-tomcat-9.0.98.tar.gz extracts to apache-tomcat-9.0.98/)
+func (i *Installer) InstallDependencyWithStrip(dep Dependency, outputDir string, stripComponents int) error {
 	i.manifest.log.BeginStep("Installing %s %s", dep.Name, dep.Version)
 
 	tmpDir, err := ioutil.TempDir("", "downloads")
@@ -72,14 +85,23 @@ func (i *Installer) InstallDependency(dep Dependency, outputDir string) error {
 	}
 
 	if strings.HasSuffix(entry.URI, ".zip") {
+		if stripComponents > 0 {
+			return ExtractZipWithStrip(tmpFile, outputDir, stripComponents)
+		}
 		return ExtractZip(tmpFile, outputDir)
 	}
 
 	if strings.HasSuffix(entry.URI, ".tar.xz") {
+		if stripComponents > 0 {
+			return ExtractTarXzWithStrip(tmpFile, outputDir, stripComponents)
+		}
 		return ExtractTarXz(tmpFile, outputDir)
 	}
 
 	if strings.HasSuffix(entry.URI, ".tar.gz") || strings.HasSuffix(entry.URI, ".tgz") {
+		if stripComponents > 0 {
+			return ExtractTarGzWithStrip(tmpFile, outputDir, stripComponents)
+		}
 		return ExtractTarGz(tmpFile, outputDir)
 	}
 
@@ -206,6 +228,11 @@ func (i *Installer) CleanupAppCache() error {
 }
 
 func (i *Installer) InstallOnlyVersion(depName string, installDir string) error {
+	return i.InstallOnlyVersionWithStrip(depName, installDir, 0)
+}
+
+// InstallOnlyVersionWithStrip installs the only version of a dependency with optional path stripping
+func (i *Installer) InstallOnlyVersionWithStrip(depName string, installDir string, stripComponents int) error {
 	depVersions := i.manifest.AllDependencyVersions(depName)
 
 	if len(depVersions) > 1 {
@@ -215,7 +242,7 @@ func (i *Installer) InstallOnlyVersion(depName string, installDir string) error 
 	}
 
 	dep := Dependency{Name: depName, Version: depVersions[0]}
-	return i.InstallDependency(dep, installDir)
+	return i.InstallDependencyWithStrip(dep, installDir, stripComponents)
 }
 
 func (i *Installer) fetchAppCachedBuildpackDependency(entry *ManifestEntry, outputFile string) error {

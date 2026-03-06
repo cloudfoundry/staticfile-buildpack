@@ -140,7 +140,7 @@ func DeleteBuildpack(language string) error {
 }
 
 func UpdateBuildpack(language, file, stack string) error {
-	updateBuildpackArgs := []string{"update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file, "--enable"}
+	updateBuildpackArgs := []string{"update-buildpack", fmt.Sprintf("%s_buildpack", language), "-p", file}
 
 	stackAssociationSupported, err := ApiGreaterThan("2.113.0")
 	if err != nil {
@@ -159,7 +159,7 @@ func UpdateBuildpack(language, file, stack string) error {
 }
 
 func createBuildpack(language, file string) error {
-	command := exec.Command("cf", "create-buildpack", fmt.Sprintf("%s_buildpack", language), file, "100", "--enable")
+	command := exec.Command("cf", "create-buildpack", fmt.Sprintf("%s_buildpack", language), file, "100")
 	if data, err := command.CombinedOutput(); err != nil {
 		return fmt.Errorf("Failed to create buildpack by running '%s':\n%s\n%v", strings.Join(command.Args, " "), string(data), err)
 	}

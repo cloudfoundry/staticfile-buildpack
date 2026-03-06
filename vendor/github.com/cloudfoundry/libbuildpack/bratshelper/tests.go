@@ -9,7 +9,7 @@ import (
 
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
@@ -33,10 +33,10 @@ func UnbuiltBuildpack(depName string, copyBrats func(string) *cutlass.App) {
 			Expect(cmd.Run()).To(Succeed())
 			Expect(cutlass.CreateOrUpdateBuildpack(bpName, filepath.Join("/tmp", bpName+".zip"), "")).To(Succeed())
 			Expect(os.Remove(filepath.Join("/tmp", bpName+".zip"))).To(Succeed())
-		})
-		AfterEach(func() {
-			defaultCleanup(app)
-			Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
+			DeferCleanup(func() {
+				defaultCleanup(app)
+				Expect(cutlass.DeleteBuildpack(bpName)).To(Succeed())
+			})
 		})
 
 		It("runs", func() {
@@ -68,9 +68,9 @@ func DeployAppWithExecutableProfileScript(depName string, copyBrats func(string)
 			AddDotProfileScriptToApp(app.Path)
 			app.Buildpacks = []string{Data.Cached}
 			PushApp(app)
-		})
-		AfterEach(func() {
-			defaultCleanup(app)
+			DeferCleanup(func() {
+				defaultCleanup(app)
+			})
 		})
 
 		It("executes the .profile script", func() {
@@ -97,7 +97,7 @@ func ForAllSupportedVersions(depName string, copyBrats func(string) *cutlass.App
 		versions := manifest.AllDependencyVersions(depName)
 
 		var app *cutlass.App
-		AfterEach(func() {
+		DeferCleanup(func() {
 			defaultCleanup(app)
 		})
 
@@ -127,7 +127,7 @@ func ForAllSupportedVersions2(depName1, depName2 string, compatible func(string,
 		versions2 := manifest.AllDependencyVersions(depName2)
 
 		var app *cutlass.App
-		AfterEach(func() {
+		DeferCleanup(func() {
 			defaultCleanup(app)
 		})
 
