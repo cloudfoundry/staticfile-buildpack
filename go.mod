@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/Dynatrace/libbuildpack-dynatrace v1.8.0
 	github.com/cloudfoundry/libbuildpack v0.0.0-20260306121953-8ab9253c8181
-	github.com/cloudfoundry/switchblade v0.9.4
+	github.com/cloudfoundry/switchblade v0.9.5
 	github.com/golang/mock v1.6.0
 	github.com/kardolus/httpmock v0.0.0-20181110092731-53def6cd0f87
 	github.com/onsi/gomega v1.39.0
