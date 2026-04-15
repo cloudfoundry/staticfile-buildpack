@@ -2,10 +2,10 @@ package cutlass
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http/httptest"
 	"net/url"
+	"os"
 
 	"github.com/elazarl/goproxy"
 )
@@ -34,7 +34,7 @@ func main() {
 	proxyURL, err := url.Parse(p.URL)
 	listenMsg := fmt.Sprintf("Listening on Port: %s", proxyURL.Port())
 	fmt.Println(listenMsg)
-	if err := ioutil.WriteFile("server.log", []byte(listenMsg), 0644); err != nil {
+	if err := os.WriteFile("server.log", []byte(listenMsg), 0644); err != nil {
 		fmt.Println("Failed to write to log")
 	}
 

@@ -23,7 +23,7 @@ github.com/blang/semver
 # github.com/cenkalti/backoff/v4 v4.3.0
 ## explicit; go 1.18
 github.com/cenkalti/backoff/v4
-# github.com/cloudfoundry/libbuildpack v0.0.0-20260306121953-8ab9253c8181
+# github.com/cloudfoundry/libbuildpack v0.0.0-20260306125332-dcaf55eb6f33
 ## explicit; go 1.22.5
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/ansicleaner

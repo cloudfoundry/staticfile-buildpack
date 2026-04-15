@@ -8,7 +8,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,7 +56,7 @@ func OurRestoreAsset(dir, name string, funcMap template.FuncMap, shas map[string
 	}
 
 	oldSha256 := ""
-	if oldContents, err := ioutil.ReadFile(_filePath(dir, name)); err == nil {
+	if oldContents, err := os.ReadFile(_filePath(dir, name)); err == nil {
 		oldSha256 = checksumHex(oldContents)
 	}
 
@@ -72,7 +71,7 @@ func OurRestoreAsset(dir, name string, funcMap template.FuncMap, shas map[string
 		return err
 	}
 
-	if err := ioutil.WriteFile(_filePath(dir, name), b.Bytes(), info.Mode()); err != nil {
+	if err := os.WriteFile(_filePath(dir, name), b.Bytes(), info.Mode()); err != nil {
 		return err
 	}
 

@@ -2,7 +2,7 @@ package glow
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 )
@@ -25,7 +25,7 @@ func NewArchiver(packager Packager) Archiver {
 }
 
 func (a Archiver) Archive(dir, stack, tag string, cached bool) (string, error) {
-	version, err := ioutil.ReadFile(filepath.Join(dir, "VERSION"))
+	version, err := os.ReadFile(filepath.Join(dir, "VERSION"))
 	if err != nil {
 		return "", err
 	}

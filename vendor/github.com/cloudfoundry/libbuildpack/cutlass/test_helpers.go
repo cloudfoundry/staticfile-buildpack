@@ -5,9 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
-	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -111,7 +109,7 @@ func PackageUniquelyVersionedBuildpack(stack string, stackAssociationSupported b
 		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to find root: %v", err)
 	}
 
-	data, err := ioutil.ReadFile(filepath.Join(bpDir, "VERSION"))
+	data, err := os.ReadFile(filepath.Join(bpDir, "VERSION"))
 	if err != nil {
 		return VersionedBuildpackPackage{}, fmt.Errorf("Failed to read VERSION file: %v", err)
 	}
@@ -220,7 +218,7 @@ func CopyCfHome() error {
 	if cf_home == "" {
 		cf_home = os.Getenv("HOME")
 	}
-	cf_home_new, err := ioutil.TempDir("", "cf-home-copy")
+	cf_home_new, err := os.MkdirTemp("", "cf-home-copy")
 	if err != nil {
 		return err
 	}
@@ -235,8 +233,6 @@ func CopyCfHome() error {
 }
 
 func SeedRandom() {
-	seed := int64(time.Now().Nanosecond() + os.Getpid())
-	rand.Seed(seed)
 }
 
 func RemovePackagedBuildpack(buildpack VersionedBuildpackPackage) error {
@@ -265,7 +261,7 @@ func readVersionFromZip(filePath string) (string, error) {
 			return "", err
 		}
 
-		out, err := ioutil.ReadAll(rc)
+		out, err := io.ReadAll(rc)
 		if err != nil {
 			return "", err
 

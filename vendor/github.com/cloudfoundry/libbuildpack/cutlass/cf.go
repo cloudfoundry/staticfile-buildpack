@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -254,7 +254,7 @@ func (a *App) SpaceGUID() (string, error) {
 	if cfHome == "" {
 		cfHome = os.Getenv("HOME")
 	}
-	bytes, err := ioutil.ReadFile(filepath.Join(cfHome, ".cf", "config.json"))
+	bytes, err := os.ReadFile(filepath.Join(cfHome, ".cf", "config.json"))
 	if err != nil {
 		return "", err
 	}
@@ -466,7 +466,7 @@ func (a *App) Get(path string, headers map[string]string) (string, map[string][]
 		return "", map[string][]string{}, err
 	}
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", map[string][]string{}, err
 	}
