@@ -3,7 +3,6 @@ package bratshelper
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,7 +35,7 @@ func InitBpData(stack string, stackAssociationSupported bool) *BpData {
 	Data.BpDir, err = cutlass.FindRoot()
 	Expect(err).NotTo(HaveOccurred())
 
-	file, err := ioutil.ReadFile(filepath.Join(Data.BpDir, "manifest.yml"))
+	file, err := os.ReadFile(filepath.Join(Data.BpDir, "manifest.yml"))
 	Expect(err).ToNot(HaveOccurred())
 	obj := make(map[string]interface{})
 	Expect(yaml.Unmarshal(file, &obj)).To(Succeed())
