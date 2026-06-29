@@ -2,7 +2,6 @@ package cutlass
 
 import (
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -12,7 +11,7 @@ import (
 )
 
 func CopyFixture(srcDir string) (string, error) {
-	destDir, err := ioutil.TempDir("", "cutlass-fixture-copy")
+	destDir, err := os.MkdirTemp("", "cutlass-fixture-copy")
 	if err != nil {
 		return "", err
 	}

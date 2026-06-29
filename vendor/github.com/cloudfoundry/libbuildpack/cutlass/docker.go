@@ -3,7 +3,6 @@ package cutlass
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -51,7 +50,7 @@ func InternetTrafficForNetwork(networkName, fixturePath, buildpackPath string, e
 	session := DefaultLogger.Session("internet-traffic-for-network", data)
 
 	session.Debug("preparing-docker-build-context")
-	tmpDir, err := ioutil.TempDir("", "docker-context")
+	tmpDir, err := os.MkdirTemp("", "docker-context")
 	if err != nil {
 		return nil, false, nil, fmt.Errorf("failed to create docker context directory: %s", err)
 	}

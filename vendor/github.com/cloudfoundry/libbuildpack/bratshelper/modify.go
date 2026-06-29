@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 
 	yaml "gopkg.in/yaml.v2"
@@ -70,7 +69,7 @@ func modifyZipfile(path string, cb func(path string, r io.Reader) (io.Reader, er
 	}
 	defer r.Close()
 
-	newfile, err := ioutil.TempFile("", "buildpack.zip")
+	newfile, err := os.CreateTemp("", "buildpack.zip")
 	if err != nil {
 		return "", err
 	}
@@ -117,7 +116,7 @@ func modifyZipfile(path string, cb func(path string, r io.Reader) (io.Reader, er
 }
 
 func changeManifest(r io.Reader, cb func(*Manifest)) (io.Reader, error) {
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
