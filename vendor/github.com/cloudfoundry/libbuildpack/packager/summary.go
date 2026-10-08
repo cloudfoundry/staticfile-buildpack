@@ -62,5 +62,17 @@ func Summary(bpDir string) (string, error) {
 		}
 	}
 
+	if len(manifest.PackagingProfiles) > 0 {
+		out += "\nPackaging profiles:\n\n"
+		profileNames := make([]string, 0, len(manifest.PackagingProfiles))
+		for name := range manifest.PackagingProfiles {
+			profileNames = append(profileNames, name)
+		}
+		sort.Strings(profileNames)
+		for _, name := range profileNames {
+			out += fmt.Sprintf("  %-12s %s\n", name, manifest.PackagingProfiles[name].Description)
+		}
+	}
+
 	return out, nil
 }

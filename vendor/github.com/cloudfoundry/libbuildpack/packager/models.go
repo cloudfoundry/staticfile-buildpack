@@ -15,6 +15,12 @@ type Dependency struct {
 type SubDependency struct{ Name string }
 type Dependencies []Dependency
 
+// PackagingProfile defines a named dependency exclusion set for use at packaging time.
+type PackagingProfile struct {
+	Description string   `yaml:"description"`
+	Exclude     []string `yaml:"exclude"`
+}
+
 type Manifest struct {
 	Language     string       `yaml:"language"`
 	Stack        string       `yaml:"stack"`
@@ -25,6 +31,7 @@ type Manifest struct {
 		Name    string `yaml:"name"`
 		Version string `yaml:"version"`
 	} `yaml:"default_versions"`
+	PackagingProfiles map[string]PackagingProfile `yaml:"packaging_profiles"`
 }
 
 type File struct {
