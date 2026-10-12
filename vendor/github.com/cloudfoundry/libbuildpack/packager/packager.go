@@ -15,11 +15,16 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/cloudfoundry/libbuildpack"
 	"gopkg.in/yaml.v2"
 )
+
+// profileNameRe restricts profile names to safe characters that can be
+// embedded in a zip filename without escaping or path-traversal risk.
+var profileNameRe = regexp.MustCompile(`^[a-z0-9_-]+$`)
 
 type sha struct {
 	Sha map[string]string `yaml:"sha"`
@@ -152,7 +157,92 @@ func downloadDependency(dependency Dependency, cacheDir string) (File, error) {
 	return File{file, filepath.Join(cacheDir, file)}, nil
 }
 
+// PackageOptions configures optional selective-packaging behaviour for PackageWithOptions.
+// All fields are optional; zero values produce identical output to the legacy Package function.
+type PackageOptions struct {
+	// Profile is the name of a packaging_profiles entry in manifest.yml.
+	// Its exclude list is applied before Exclude and Include are processed.
+	Profile string
+	// Exclude is an additional list of dependency names to skip, unioned with
+	// any exclusions implied by Profile.
+	Exclude []string
+	// Include restores specific dependency names that would otherwise be excluded
+	// by Profile. It is a no-op (with a warning) when Profile is empty.
+	Include []string
+}
+
+// resolveExclusions returns the set of dependency names that should be skipped
+// during packaging, and the count of include names that actually overrode a
+// profile exclusion (used by the caller to decide the +custom filename suffix).
+// Resolution order:
+//  1. Profile's exclude list (if a profile is named).
+//  2. Explicit Exclude names are unioned in.
+//  3. Explicit Include names are removed (overrides profile exclusions).
+//
+// An error is returned if the profile name is unknown or if any exclude/include
+// name does not exist in the manifest (including names in the profile's exclude
+// list itself).
+func resolveExclusions(manifest Manifest, profile string, exclude []string, include []string) (map[string]struct{}, int, error) {
+	// Build a set of all known dependency names for validation.
+	depNames := make(map[string]struct{}, len(manifest.Dependencies))
+	for _, d := range manifest.Dependencies {
+		depNames[d.Name] = struct{}{}
+	}
+
+	// 1. Start with profile exclusions.
+	result := make(map[string]struct{})
+	if profile != "" {
+		if !profileNameRe.MatchString(profile) {
+			return nil, 0, fmt.Errorf("profile name %q is invalid: must match ^[a-z0-9_-]+$", profile)
+		}
+		p, ok := manifest.PackagingProfiles[profile]
+		if !ok {
+			return nil, 0, fmt.Errorf("packaging profile %q not found in manifest", profile)
+		}
+		for _, name := range p.Exclude {
+			if _, ok := depNames[name]; !ok {
+				return nil, 0, fmt.Errorf("profile %q references unknown dependency %q", profile, name)
+			}
+			result[name] = struct{}{}
+		}
+	}
+
+	// 2. Union with explicitly excluded names.
+	for _, name := range exclude {
+		if _, ok := depNames[name]; !ok {
+			return nil, 0, fmt.Errorf("dependency %q not found in manifest", name)
+		}
+		result[name] = struct{}{}
+	}
+
+	// 3. Remove explicitly included names (overrides profile).
+	// Count how many of these actually removed something from the set.
+	// It is a hard error to --include a name that was never excluded (likely a typo).
+	effectiveIncludes := 0
+	for _, name := range include {
+		if _, ok := depNames[name]; !ok {
+			return nil, 0, fmt.Errorf("dependency %q not found in manifest", name)
+		}
+		if _, wasExcluded := result[name]; !wasExcluded {
+			return nil, 0, fmt.Errorf("--include %q has no effect: dependency is not excluded by the profile or --exclude", name)
+		}
+		effectiveIncludes++
+		delete(result, name)
+	}
+
+	return result, effectiveIncludes, nil
+}
+
+// Package is the legacy entry point. It delegates to PackageWithOptions with
+// zero-value options so all existing callers remain unaffected.
 func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error) {
+	return PackageWithOptions(bpDir, cacheDir, version, stack, cached, PackageOptions{})
+}
+
+// PackageWithOptions creates a buildpack zip, optionally filtering dependencies
+// according to opts (profile, exclude, include). When opts is zero-value the
+// behaviour is identical to the legacy Package function.
+func PackageWithOptions(bpDir, cacheDir, version, stack string, cached bool, opts PackageOptions) (string, error) {
 	bpDir, err := filepath.Abs(bpDir)
 	if err != nil {
 		return "", err
@@ -175,6 +265,28 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 	manifest, err := readManifest(dir)
 	if err != nil {
 		return "", err
+	}
+
+	// --profile/--exclude/--include only apply to cached buildpacks.
+	if !cached && (opts.Profile != "" || len(opts.Exclude) > 0 || len(opts.Include) > 0) {
+		return "", fmt.Errorf("--profile/--exclude/--include are only valid for cached buildpacks")
+	}
+
+	// --include requires --profile (nothing to override otherwise).
+	if opts.Profile == "" && len(opts.Include) > 0 {
+		return "", fmt.Errorf("--include requires --profile")
+	}
+
+	// Resolve which dependency names to skip before the download loop.
+	// On uncached builds the exclusion set is never used, so skip validation.
+	excluded := map[string]struct{}{}
+	effectiveIncludes := 0
+	if cached {
+		var err2 error
+		excluded, effectiveIncludes, err2 = resolveExclusions(manifest, opts.Profile, opts.Exclude, opts.Include)
+		if err2 != nil {
+			return "", err2
+		}
 	}
 
 	if manifest.PrePackage != "" {
@@ -207,6 +319,12 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 	}
 	dependenciesForStack := []interface{}{}
 	for idx, d := range manifest.Dependencies {
+		// Skip excluded dependencies — they are not downloaded and are not
+		// written into the packaged manifest.yml.
+		if _, skip := excluded[d.Name]; skip {
+			continue
+		}
+
 		for _, s := range d.Stacks {
 			if stack == "" || s == stack {
 				dependencyMap := deps[idx]
@@ -242,7 +360,21 @@ func Package(bpDir, cacheDir, version, stack string, cached bool) (string, error
 		cachedPart = "-cached"
 	}
 
-	fileName := fmt.Sprintf("%s_buildpack%s%s-v%s.zip", manifest.Language, cachedPart, stackPart, version)
+	// Build the profile/exclusion suffix for the filename.
+	// +custom is only appended when there is genuine customisation on top of
+	// the profile: either an extra --exclude, or an --include that actually
+	// overrode one of the profile's exclusions (effectiveIncludes > 0).
+	profilePart := ""
+	if opts.Profile != "" {
+		profilePart = "-" + opts.Profile
+		if len(opts.Exclude) > 0 || effectiveIncludes > 0 {
+			profilePart += "+custom"
+		}
+	} else if len(opts.Exclude) > 0 {
+		profilePart = "-custom"
+	}
+
+	fileName := fmt.Sprintf("%s_buildpack%s%s%s-v%s.zip", manifest.Language, cachedPart, profilePart, stackPart, version)
 	zipFile := filepath.Join(bpDir, fileName)
 
 	if err := ZipFiles(zipFile, files); err != nil {
