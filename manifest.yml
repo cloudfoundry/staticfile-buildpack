@@ -29,14 +29,6 @@ dependencies:
   source: http://nginx.org/download/nginx-1.29.8.tar.gz
   source_sha256: 7f1b985dace8fe706dfc288b83927c928f0ae60bcb7507c2d4e0025eca7280c3
 - name: nginx
-  version: 1.30.5
-  uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.30.5_linux_x64_cflinuxfs5_907b3f6a.tgz
-  sha256: 907b3f6a9c3e6a0071b565c55b1e4ecb84c5523850ca8b7b533beff052692376
-  cf_stacks:
-  - cflinuxfs5
-  source: http://nginx.org/download/nginx-1.30.5.tar.gz
-  source_sha256: 6c20565aa2325cb82216ae804f4a4ff1875179014759a381c42ddc8e11c4906d
-- name: nginx
   version: 1.30.6
   uri: https://buildpacks.cloudfoundry.org/dependencies/nginx-static/nginx-static_1.30.6_linux_x64_cflinuxfs4_8f3a1362.tgz
   sha256: 8f3a1362eff20361d594c289b7e5f9a79ba77de99bd603920c0508d1c42d7a7b
